@@ -1,0 +1,23 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+$py.class
+build/
+dist/
+wheels/
+*.egg-info/
+*.pyc
+
+# Virtual environments & Package Managers
+.venv/
+.env
+
+# uv Package Manager Specifics
+.uv/
+# Un-comment the line below if you want to track your exact lock versions
+# uv.lock
+
+# IDE/Editor local cache directories
+.vscode/
+.idea/
+*.swp
