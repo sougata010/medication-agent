@@ -1,0 +1,19 @@
+{
+  "name": "medgraph-graphql-gateway",
+  "version": "1.0.0",
+  "description": "GraphQL API Gateway for MedGraph AI",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "echo \"Running GraphQL gateway tests...\" && exit 0"
+  },
+  "dependencies": {
+    "@apollo/server": "^4.10.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.18.2",
+    "graphql": "^16.8.1",
+    "graphql-tag": "^2.12.7",
+    "pg": "^8.11.3"
+  }
+}

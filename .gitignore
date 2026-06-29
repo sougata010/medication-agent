@@ -1,23 +1,133 @@
-# Python-generated files
-__pycache__/
-*.py[oc]
-$py.class
-build/
+# ==============================================================================
+# Node.js & React (MERN Stack / Frontend)
+# ==============================================================================
+# Dependency directories
+node_modules/
+jspm_packages/
+web_modules/
+
+# Next.js / Remix / Vite / Create React App build outputs
 dist/
-wheels/
-*.egg-info/
-*.pyc
+build/
+.next/
+out/
+.docusaurus/
+.cache/
 
-# Virtual environments & Package Managers
+# Debug logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Optional eslint cache
+.eslintcache
+
+# ==============================================================================
+# Python, uv, & Virtual Environments
+# ==============================================================================
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual Environments (Standard & uv)
 .venv/
-.env
-
-# uv Package Manager Specifics
+venv/
+ENV/
+env/
+# uv specific cache and directory locks
 .uv/
-# Un-comment the line below if you want to track your exact lock versions
-# uv.lock
 
-# IDE/Editor local cache directories
+# Distribution / packaging
+develop-eggs/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints
+
+# pytest and coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# ==============================================================================
+# LangChain, AI/ML, & Vector Databases
+# ==============================================================================
+# Local Vector Database stores (Accidental persistence)
+.chroma/
+chroma_db/
+faiss_index/
+.faiss/
+
+# Local LLM weights or downloaded models (Never commit large binaries)
+models/
+*.bin
+*.onnx
+*.pt
+*.pth
+
+# LangChain / LangGraph local tracing/log caches if generated locally
+.langchain/
+.langgraph/
+
+# Data directories (Raw datasets, synthetic data outputs)
+data/
+*.csv
+*.jsonl
+*.parquet
+
+# ==============================================================================
+# Security & Environment Variables (CRITICAL)
+# ==============================================================================
+# Local environment secret files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+*.env
+
+# Specific API key backups (just in case)
+*.pem
+*.key
+id_rsa
+id_sh
+
+# ==============================================================================
+# OS & IDE Specific
+# ==============================================================================
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+Ehthumbs.db
+Desktop.ini
+
+# IDES (VS Code, Cursor, JetBrains)
 .vscode/
+!.vscode/settings.json
+!.vscode/extensions.json
+.cursor/
 .idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
 *.swp
