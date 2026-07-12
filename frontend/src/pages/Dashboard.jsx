@@ -4,13 +4,16 @@ import { Link } from 'react-router-dom';
 import {
   Activity, Heart, Moon, Droplets, ShieldCheck, AlertTriangle,
   CheckCircle2, Clock, Pill, TrendingUp, ChevronRight, Brain,
-  FlaskConical, Zap, ArrowUpRight, X, Plus
+  FlaskConical, Zap, ArrowUpRight, X, Plus, Activity as ActivityIcon
 } from 'lucide-react';
+import { motion } from 'framer-motion';
+import Modal from '../components/Modal';
 
 export default function Dashboard() {
   const {
     reminders, healthMetrics, insights, weeklyAdherence, aiAnalysis,
-    prescriptions, labReports, handleLogAdherence, handleLogHealthMetrics
+    prescriptions, labReports, handleLogAdherence, handleLogHealthMetrics,
+    handleSendMessage
   } = useGlobalContext();
 
   const [isLogModalOpen, setIsLogModalOpen] = useState(false);
@@ -18,6 +21,11 @@ export default function Dashboard() {
   const [sleepInput, setSleepInput] = useState('');
   const [bpInput, setBpInput] = useState('');
   const [isLogging, setIsLogging] = useState(false);
+
+  const [isQuickAskOpen, setIsQuickAskOpen] = useState(false);
+  const [quickAskInput, setQuickAskInput] = useState('');
+  const [quickAskResponse, setQuickAskResponse] = useState('');
+  const [isAsking, setIsAsking] = useState(false);
 
   const submitHealthLog = async () => {
     setIsLogging(true);
@@ -199,12 +207,14 @@ export default function Dashboard() {
               {(weeklyAdherence || [0, 0, 0, 0, 0, 0, 0]).map((val, i) => (
                 <div key={i} className="flex-1 flex flex-col items-center gap-2">
                   <span className="text-[11px] font-bold text-gray-500">{val}%</span>
-                  <div className="w-full relative" style={{ height: '100px' }}>
-                    <div
-                      className={`absolute bottom-0 w-full rounded-t-lg transition-all duration-700 ${
+                  <div className="w-full relative bg-gray-50 rounded-t-lg" style={{ height: '100px' }}>
+                    <motion.div
+                      initial={{ height: 0 }}
+                      animate={{ height: `${Math.max((val / maxAdherence) * 100, 4)}%` }}
+                      transition={{ duration: 1, ease: 'easeOut', delay: i * 0.1 }}
+                      className={`absolute bottom-0 w-full rounded-t-lg ${
                         val >= 80 ? 'bg-emerald-500' : val >= 50 ? 'bg-amber-400' : 'bg-red-400'
                       }`}
-                      style={{ height: `${Math.max((val / maxAdherence) * 100, 4)}%` }}
                     />
                   </div>
                   <span className="text-[11px] font-bold text-gray-400">{weekLabels[i]}</span>
@@ -313,89 +323,130 @@ export default function Dashboard() {
                 <span className="text-sm font-bold text-white">Upload Document</span>
                 <ArrowUpRight className="w-4 h-4 text-white/60" />
               </Link>
-              <Link to="/dashboard/chat" className="flex items-center justify-between p-3 rounded-xl bg-white/10 hover:bg-white/15 transition-colors">
+              <button onClick={() => setIsQuickAskOpen(true)} className="flex items-center justify-between w-full p-3 rounded-xl bg-white/10 hover:bg-white/15 transition-colors">
                 <span className="text-sm font-bold text-white">Ask AI Assistant</span>
                 <ArrowUpRight className="w-4 h-4 text-white/60" />
-              </Link>
+              </button>
             </div>
           </div>
         </div>
       </div>
 
       {/* Log Vitals Modal */}
-      {isLogModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/40 backdrop-blur-sm animate-fade-in">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm overflow-hidden" onClick={e => e.stopPropagation()}>
-            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-              <h3 className="text-lg font-extrabold text-gray-900">Log Vitals</h3>
-              <button onClick={() => setIsLogModalOpen(false)} className="text-gray-400 hover:text-gray-600">
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-            <div className="p-6 flex flex-col gap-4">
-              <div>
-                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Hydration (e.g. 2L)</label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Droplets className="w-4 h-4 text-blue-400" />
-                  </div>
-                  <input
-                    type="text"
-                    value={hydrationInput}
-                    onChange={(e) => setHydrationInput(e.target.value)}
-                    placeholder="e.g. 2 Liters"
-                    className="block w-full pl-9 pr-3 py-2 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
-                  />
-                </div>
+      <Modal 
+        isOpen={isLogModalOpen} 
+        onClose={() => setIsLogModalOpen(false)} 
+        title="Log Vitals"
+        icon={ActivityIcon}
+      >
+        <div className="flex flex-col gap-4">
+          <div>
+            <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Hydration (e.g. 2L)</label>
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <Droplets className="w-4 h-4 text-blue-400" />
               </div>
-              
-              <div>
-                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Sleep (e.g. 8 hrs)</label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Moon className="w-4 h-4 text-purple-400" />
-                  </div>
-                  <input
-                    type="text"
-                    value={sleepInput}
-                    onChange={(e) => setSleepInput(e.target.value)}
-                    placeholder="e.g. 7.5 hrs"
-                    className="block w-full pl-9 pr-3 py-2 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition-all"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Blood Pressure</label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Heart className="w-4 h-4 text-red-400" />
-                  </div>
-                  <input
-                    type="text"
-                    value={bpInput}
-                    onChange={(e) => setBpInput(e.target.value)}
-                    placeholder="e.g. 120/80"
-                    className="block w-full pl-9 pr-3 py-2 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition-all"
-                  />
-                </div>
-              </div>
-
-              <button
-                onClick={submitHealthLog}
-                disabled={isLogging}
-                className="w-full mt-2 bg-gray-900 text-white rounded-xl py-2.5 text-sm font-bold shadow-sm hover:bg-gray-800 transition-colors flex items-center justify-center gap-2"
-              >
-                {isLogging ? (
-                  <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                ) : (
-                  "Save Vitals"
-                )}
-              </button>
+              <input
+                type="text"
+                value={hydrationInput}
+                onChange={(e) => setHydrationInput(e.target.value)}
+                placeholder="e.g. 2 Liters"
+                className="block w-full pl-9 pr-3 py-2 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+              />
             </div>
           </div>
+          
+          <div>
+            <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Sleep (e.g. 8 hrs)</label>
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <Moon className="w-4 h-4 text-purple-400" />
+              </div>
+              <input
+                type="text"
+                value={sleepInput}
+                onChange={(e) => setSleepInput(e.target.value)}
+                placeholder="e.g. 7.5 hrs"
+                className="block w-full pl-9 pr-3 py-2 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition-all"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Blood Pressure</label>
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <Heart className="w-4 h-4 text-red-400" />
+              </div>
+              <input
+                type="text"
+                value={bpInput}
+                onChange={(e) => setBpInput(e.target.value)}
+                placeholder="e.g. 120/80"
+                className="block w-full pl-9 pr-3 py-2 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition-all"
+              />
+            </div>
+          </div>
+
+          <button
+            onClick={submitHealthLog}
+            disabled={isLogging}
+            className="w-full mt-2 bg-gray-900 text-white rounded-xl py-2.5 text-sm font-bold shadow-sm hover:bg-gray-800 transition-colors flex items-center justify-center gap-2"
+          >
+            {isLogging ? (
+              <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+            ) : (
+              "Save Vitals"
+            )}
+          </button>
         </div>
-      )}
+      </Modal>
+
+      {/* Quick Ask AI Modal */}
+      <Modal 
+        isOpen={isQuickAskOpen} 
+        onClose={() => { setIsQuickAskOpen(false); setQuickAskResponse(''); setQuickAskInput(''); }} 
+        title="Quick Ask AI"
+        icon={Brain}
+      >
+        <div className="flex flex-col gap-4">
+          <p className="text-sm text-gray-500">Ask any quick medical question or check drug interactions.</p>
+          
+          <div className="relative">
+            <textarea
+              value={quickAskInput}
+              onChange={(e) => setQuickAskInput(e.target.value)}
+              placeholder="e.g. Can I take ibuprofen with lisinopril?"
+              rows={3}
+              className="block w-full p-4 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition-all resize-none"
+            />
+          </div>
+
+          <button
+            onClick={async (e) => {
+              if(!quickAskInput.trim()) return;
+              setIsAsking(true);
+              // Mock a small wait then navigate or show inline.
+              // Wait, handleSendMessage in GlobalContext actually pushes to chatMessages.
+              // We can just use the mutation directly here for a "Quick Answer", but to avoid duplicating gqlFetch, we'll just redirect to /dashboard/chat or we can just mock a quick inline response.
+              // Let's redirect to chat with the input if they ask!
+              await handleSendMessage(e, quickAskInput);
+              setIsAsking(false);
+              setIsQuickAskOpen(false);
+              setQuickAskInput('');
+              window.location.href = '/dashboard/chat'; // Redirect to see the answer
+            }}
+            disabled={isAsking || !quickAskInput.trim()}
+            className="w-full mt-2 bg-purple-600 text-white rounded-xl py-2.5 text-sm font-bold shadow-sm hover:bg-purple-700 transition-colors flex items-center justify-center gap-2"
+          >
+            {isAsking ? (
+              <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+            ) : (
+              "Ask Question"
+            )}
+          </button>
+        </div>
+      </Modal>
     </div>
   );
 }

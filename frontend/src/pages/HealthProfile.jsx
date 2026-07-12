@@ -35,7 +35,7 @@ export default function HealthProfile() {
           <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
             <div className="flex items-center gap-4 mb-6">
               <div className="w-14 h-14 rounded-full bg-gray-900 text-white flex items-center justify-center text-lg font-bold">
-                {user?.name?.substring(0, 2).toUpperCase() || 'MG'}
+                {user?.name?.substring(0, 2).toUpperCase() || 'VL'}
               </div>
               <div>
                 <h2 className="text-lg font-extrabold text-gray-900">{user?.name || 'Patient'}</h2>

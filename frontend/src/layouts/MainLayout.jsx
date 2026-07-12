@@ -27,9 +27,9 @@ export default function MainLayout() {
             className="flex items-center gap-3 cursor-pointer group"
             onClick={() => navigate('/')}
           >
-            <img src="/logo.png" alt="MedGraph Logo" className="w-8 h-8 object-contain drop-shadow-sm" />
+            <img src="/logo.png" alt="VitaLeaf Logo" className="w-8 h-8 object-contain drop-shadow-sm" />
             <span className="text-lg font-heading font-bold tracking-tight">
-              MedGraph
+              VitaLeaf
             </span>
           </div>
           
@@ -105,7 +105,7 @@ export default function MainLayout() {
         <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-text-muted">
           <div className="flex items-center gap-2">
             <Shield className="w-4 h-4 text-brand" />
-            <span>MedGraph AI Intelligence Engine. Encrypted & HIPAA Compliant (Demo).</span>
+            <span>VitaLeaf Intelligence Engine. Encrypted & HIPAA Compliant (Demo).</span>
           </div>
           <div className="flex items-center gap-6 font-medium">
             <a href="#" className="hover:text-brand transition-colors">Privacy</a>

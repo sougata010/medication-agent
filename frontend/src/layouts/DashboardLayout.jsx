@@ -56,8 +56,8 @@ export default function DashboardLayout() {
         {/* Logo */}
         <div className="h-16 flex items-center px-6 border-b border-gray-100 shrink-0">
           <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
-            <img src="/logo.png" alt="MedGraph" className="w-7 h-7 object-contain" />
-            <span className="font-extrabold text-lg tracking-tight text-gray-900">MedGraph</span>
+            <img src="/logo.png" alt="VitaLeaf" className="w-7 h-7 object-contain" />
+            <span className="font-extrabold text-lg tracking-tight text-gray-900">VitaLeaf</span>
           </div>
         </div>
 
@@ -65,7 +65,7 @@ export default function DashboardLayout() {
         <div className="px-4 py-4 border-b border-gray-100">
           <div className="flex items-center gap-3 p-3 rounded-xl bg-gray-50 border border-gray-100">
             <div className="w-9 h-9 rounded-full bg-gray-900 text-white flex items-center justify-center text-xs font-bold">
-              {user?.name?.substring(0, 2).toUpperCase() || 'MG'}
+              {user?.name?.substring(0, 2).toUpperCase() || 'VL'}
             </div>
             <div className="flex-1 min-w-0">
               <div className="text-sm font-semibold text-gray-900 truncate">{user?.name || 'Patient'}</div>
@@ -125,8 +125,8 @@ export default function DashboardLayout() {
 
           {/* Mobile Logo */}
           <div className="lg:hidden flex items-center gap-2">
-            <img src="/logo.png" alt="MedGraph" className="w-6 h-6 object-contain" />
-            <span className="font-extrabold text-base tracking-tight text-gray-900">MedGraph</span>
+            <img src="/logo.png" alt="VitaLeaf" className="w-6 h-6 object-contain" />
+            <span className="font-extrabold text-base tracking-tight text-gray-900">VitaLeaf</span>
           </div>
 
           {/* Desktop Search */}
@@ -147,7 +147,7 @@ export default function DashboardLayout() {
               <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white" />
             </button>
             <div className="hidden lg:flex w-8 h-8 rounded-full bg-gray-900 text-white items-center justify-center text-xs font-bold cursor-pointer">
-              {user?.name?.substring(0, 2).toUpperCase() || 'MG'}
+              {user?.name?.substring(0, 2).toUpperCase() || 'VL'}
             </div>
           </div>
         </header>

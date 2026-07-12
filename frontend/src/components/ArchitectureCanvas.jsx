@@ -256,7 +256,7 @@ export default function ArchitectureCanvas() {
           <Brain className={`w-12 h-12 transition-colors duration-500 ${isOverdrive ? 'text-purple-600' : effectiveNode ? 'text-blue-600' : 'text-gray-800'}`} />
         </div>
         <div className="mt-5 text-center bg-white/80 backdrop-blur-md px-4 py-1.5 rounded-full border border-gray-100 shadow-sm">
-          <div className={`font-extrabold tracking-widest text-[11px] transition-colors ${isOverdrive ? 'text-purple-600' : 'text-gray-900'}`}>{isOverdrive ? 'OVERDRIVE ACTIVE' : 'MEDGRAPH CORE'}</div>
+          <div className={`font-extrabold tracking-widest text-[11px] transition-colors ${isOverdrive ? 'text-purple-600' : 'text-gray-900'}`}>{isOverdrive ? 'OVERDRIVE ACTIVE' : 'VitaLeaf CORE'}</div>
         </div>
       </div>
 

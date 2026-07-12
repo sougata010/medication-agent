@@ -5,6 +5,7 @@ import {
   AlertTriangle, SkipForward, Calendar, Sun, Sunset, Moon as MoonIcon,
   CloudSun, X
 } from 'lucide-react';
+import Modal from '../components/Modal';
 
 export default function RemindersHub() {
   const { reminders = [], handleLogAdherence } = useGlobalContext();
@@ -333,40 +334,35 @@ export default function RemindersHub() {
       </div>
 
       {/* Skip Reason Modal */}
-      {showReasonModal && (
-        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl shadow-2xl border border-gray-200 w-full max-w-md p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-extrabold text-gray-900">Skip Dose</h3>
-              <button onClick={() => setShowReasonModal(null)} className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-400">
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-            <p className="text-sm text-gray-500 mb-4">Optionally provide a reason for skipping this dose. This helps your healthcare provider understand your adherence patterns.</p>
-            <textarea
-              value={skipReason}
-              onChange={(e) => setSkipReason(e.target.value)}
-              placeholder="E.g., Side effects, forgot, ran out of medication..."
-              rows={3}
-              className="w-full p-3 border border-gray-200 rounded-xl text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-gray-300 resize-none mb-4"
-            />
-            <div className="flex justify-end gap-3">
-              <button
-                onClick={() => setShowReasonModal(null)}
-                className="px-5 py-2.5 rounded-full border border-gray-200 text-gray-600 text-sm font-bold hover:bg-gray-50 transition-colors"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={() => handleSkipWithReason(showReasonModal)}
-                className="px-5 py-2.5 rounded-full bg-gray-900 text-white text-sm font-bold hover:bg-gray-800 transition-colors"
-              >
-                Confirm Skip
-              </button>
-            </div>
-          </div>
+      <Modal 
+        isOpen={!!showReasonModal} 
+        onClose={() => setShowReasonModal(null)} 
+        title="Skip Dose"
+        icon={AlertTriangle}
+      >
+        <p className="text-sm text-gray-500 mb-4">Optionally provide a reason for skipping this dose. This helps your healthcare provider understand your adherence patterns.</p>
+        <textarea
+          value={skipReason}
+          onChange={(e) => setSkipReason(e.target.value)}
+          placeholder="E.g., Side effects, forgot, ran out of medication..."
+          rows={3}
+          className="w-full p-3 border border-gray-200 rounded-xl text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-gray-300 resize-none mb-4"
+        />
+        <div className="flex justify-end gap-3">
+          <button
+            onClick={() => setShowReasonModal(null)}
+            className="px-5 py-2.5 rounded-full border border-gray-200 text-gray-600 text-sm font-bold hover:bg-gray-50 transition-colors"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={() => handleSkipWithReason(showReasonModal)}
+            className="px-5 py-2.5 rounded-full bg-gray-900 text-white text-sm font-bold hover:bg-gray-800 transition-colors"
+          >
+            Confirm Skip
+          </button>
         </div>
-      )}
+      </Modal>
     </div>
   );
 }

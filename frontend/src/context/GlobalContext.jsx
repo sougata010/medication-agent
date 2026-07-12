@@ -9,7 +9,7 @@ const GQL_ENDPOINT = 'http://localhost:4000/graphql';
 
 export const GlobalProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(() => {
-    const token = localStorage.getItem('medgraph_token');
+    const token = localStorage.getItem('VitaLeaf_token');
     if (!token) return false;
     try {
       const decoded = jwtDecode(token);
@@ -62,7 +62,7 @@ export const GlobalProvider = ({ children }) => {
   const [conditionInput, setConditionInput] = useState('');
 
   useEffect(() => {
-    const token = localStorage.getItem('medgraph_token');
+    const token = localStorage.getItem('VitaLeaf_token');
     if (token) {
       try {
         const decoded = jwtDecode(token);
@@ -70,17 +70,17 @@ export const GlobalProvider = ({ children }) => {
           initUser(decoded.userId);
           setIsAuthenticated(true);
         } else {
-          localStorage.removeItem('medgraph_token');
+          localStorage.removeItem('VitaLeaf_token');
         }
       } catch (e) {
-        localStorage.removeItem('medgraph_token');
+        localStorage.removeItem('VitaLeaf_token');
       }
     }
   }, []);
 
   const gqlFetch = async (query, variables = {}) => {
     try {
-      const token = localStorage.getItem('medgraph_token');
+      const token = localStorage.getItem('VitaLeaf_token');
       const headers = { 'Content-Type': 'application/json' };
       if (token) headers['Authorization'] = `Bearer ${token}`;
 
@@ -236,13 +236,13 @@ export const GlobalProvider = ({ children }) => {
   };
 
   const login = async (token, userData) => {
-    localStorage.setItem('medgraph_token', token);
+    localStorage.setItem('VitaLeaf_token', token);
     await initUser(userData.id);
     setIsAuthenticated(true);
   };
 
   const logout = () => {
-    localStorage.removeItem('medgraph_token');
+    localStorage.removeItem('VitaLeaf_token');
     setUserId(null);
     setIsAuthenticated(false);
     setUser({
@@ -666,6 +666,33 @@ export const GlobalProvider = ({ children }) => {
     }
   };
 
+  const handleAddManualMedication = async (medicationData, onSuccess) => {
+    const itemsInput = [{
+      drugName: medicationData.drugName,
+      dosage: medicationData.dosage,
+      frequency: medicationData.frequency,
+      duration: medicationData.duration,
+      timing: medicationData.timing || ['morning']
+    }];
+
+    const mutation = `
+      mutation ConfirmPrescription($userId: ID!, $items: [ConfirmPrescriptionItemInput!]!) {
+        confirmPrescription(userId: $userId, items: $items) {
+          id
+          uploadedAt
+        }
+      }
+    `;
+    
+    const data = await gqlFetch(mutation, { userId, items: itemsInput });
+    if (data && data.confirmPrescription) {
+      alert('Medication added successfully!');
+      fetchReminders(userId);
+      fetchPrescriptions(userId);
+      if (onSuccess) onSuccess();
+    }
+  };
+
   const totalReminders = reminders.length;
   const takenCount = reminders.filter(r => r.status === 'taken').length;
   const pendingCount = reminders.filter(r => r.status === 'pending').length;
@@ -735,7 +762,8 @@ export const GlobalProvider = ({ children }) => {
     insights,
     weeklyAdherence,
     aiAnalysis,
-    labReports
+    labReports,
+    handleAddManualMedication
   };
 
   return (

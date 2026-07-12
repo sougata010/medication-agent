@@ -11,7 +11,7 @@ export default function AboutUs() {
         className="text-center mb-16"
       >
         <h1 className="text-4xl md:text-5xl font-heading font-extrabold text-gray-900 tracking-tight mb-4">
-          About <span className="text-blue-600">MedGraph</span>
+          About <span className="text-blue-600">VitaLeaf</span>
         </h1>
         <p className="text-lg text-gray-500 font-medium max-w-2xl mx-auto">
           We are on a mission to orchestrate the world's healthcare data using advanced artificial intelligence and semantic knowledge graphs.
@@ -37,7 +37,7 @@ export default function AboutUs() {
         >
           <h2 className="text-2xl font-bold text-gray-900 mb-4">The Technology</h2>
           <p className="text-gray-500 leading-relaxed">
-            MedGraph is built on a proprietary LLM-driven architecture that processes OCR telemetry, checks against millions of known pharmaceutical interactions, and actively monitors patient adherence in real-time.
+            VitaLeaf is built on a proprietary LLM-driven architecture that processes OCR telemetry, checks against millions of known pharmaceutical interactions, and actively monitors patient adherence in real-time.
           </p>
         </motion.div>
       </div>

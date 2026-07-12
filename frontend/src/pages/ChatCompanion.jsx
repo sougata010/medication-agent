@@ -25,7 +25,7 @@ export default function ChatCompanion() {
   const fetchSessions = async () => {
     setLoadingSessions(true);
     try {
-      const token = localStorage.getItem('medgraph_token');
+      const token = localStorage.getItem('VitaLeaf_token');
       const headers = { 'Content-Type': 'application/json' };
       if (token) headers['Authorization'] = `Bearer ${token}`;
 
@@ -56,7 +56,7 @@ export default function ChatCompanion() {
   // Load a specific session's messages
   const loadSession = async (sessionId) => {
     try {
-      const token = localStorage.getItem('medgraph_token');
+      const token = localStorage.getItem('VitaLeaf_token');
       const headers = { 'Content-Type': 'application/json' };
       if (token) headers['Authorization'] = `Bearer ${token}`;
 
@@ -171,7 +171,7 @@ export default function ChatCompanion() {
               <div>
                 <h2 className="text-base font-extrabold text-gray-900 flex items-center gap-2">
                   <Sparkles className="w-4 h-4 text-blue-500" />
-                  MedGraph AI
+                  VitaLeaf
                 </h2>
                 <p className="text-[11px] text-gray-400 font-medium">Powered by LangGraph · Always consult your doctor</p>
               </div>
@@ -189,7 +189,7 @@ export default function ChatCompanion() {
                 <div className="w-16 h-16 rounded-2xl bg-gray-100 flex items-center justify-center mb-4 border border-gray-200">
                   <Bot className="w-8 h-8 text-gray-400" />
                 </div>
-                <h3 className="text-lg font-extrabold text-gray-900 mb-2">Ask MedGraph AI</h3>
+                <h3 className="text-lg font-extrabold text-gray-900 mb-2">Ask VitaLeaf</h3>
                 <p className="text-sm text-gray-400 font-medium max-w-sm">
                   Ask about drug interactions, side effects, dosage schedules, or any medication-related question.
                 </p>
@@ -276,7 +276,7 @@ export default function ChatCompanion() {
                 type="text"
                 value={chatInput}
                 onChange={(e) => setChatInput(e.target.value)}
-                placeholder="Ask MedGraph AI about your medications..."
+                placeholder="Ask VitaLeaf about your medications..."
                 className="flex-1 bg-transparent border-none outline-none text-sm text-gray-900 placeholder:text-gray-400"
                 disabled={chatLoading}
               />

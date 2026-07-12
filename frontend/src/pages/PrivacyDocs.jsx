@@ -9,7 +9,7 @@ export default function PrivacyPolicy() {
       <section style={{ marginBottom: '32px' }}>
         <h3 style={{ color: 'var(--primary-color)' }}>1. Data Collection</h3>
         <p style={{ color: 'var(--text-secondary)', lineHeight: '1.6' }}>
-          MedGraph AI collects information required to provide medication intelligence services, including uploaded prescription images, chat queries, and self-reported health profiles (allergies, conditions).
+          VitaLeaf collects information required to provide medication intelligence services, including uploaded prescription images, chat queries, and self-reported health profiles (allergies, conditions).
         </p>
       </section>
 

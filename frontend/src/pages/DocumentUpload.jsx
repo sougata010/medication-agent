@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useGlobalContext } from '../context/GlobalContext';
 import {
-  Upload, FileText, CheckCircle2, AlertTriangle, Eye,
-  Sparkles, ShieldCheck, X, Clock, FlaskConical
+  Sparkles, ShieldCheck, X, Clock, FlaskConical, Trash2
 } from 'lucide-react';
+import Modal from '../components/Modal';
 
 export default function DocumentUpload() {
   const navigate = useNavigate();
@@ -15,6 +15,7 @@ export default function DocumentUpload() {
   } = useGlobalContext();
 
   const [docType, setDocType] = useState('smart'); // 'prescription', 'labReport', or 'smart'
+  const [showDiscardModal, setShowDiscardModal] = useState(false);
 
   const onConfirm = async () => {
     await handleConfirmWizard();
@@ -44,8 +45,8 @@ export default function DocumentUpload() {
           </h3>
           <p className="text-sm text-gray-400 font-medium max-w-xs">
             {ocrLoading 
-              ? 'MedGraph AI is extracting medications and dosage data from your prescription image.'
-              : 'MedGraph AI is extracting structured biomarker data, cautions, and chemical details.'}
+              ? 'VitaLeaf is extracting medications and dosage data from your prescription image.'
+              : 'VitaLeaf is extracting structured biomarker data, cautions, and chemical details.'}
           </p>
         </div>
       </div>
@@ -273,7 +274,7 @@ export default function DocumentUpload() {
               </div>
               <div className="flex justify-end gap-3">
                 <button
-                  onClick={() => setOcrData(null)}
+                  onClick={() => setShowDiscardModal(true)}
                   className="px-5 py-2.5 rounded-full border border-gray-200 text-gray-600 text-sm font-bold hover:bg-gray-50 transition-colors"
                 >
                   Discard
@@ -290,6 +291,32 @@ export default function DocumentUpload() {
           </div>
         </div>
       </div>
+      {/* Discard Modal */}
+      <Modal 
+        isOpen={showDiscardModal} 
+        onClose={() => setShowDiscardModal(false)} 
+        title="Discard Extraction"
+        icon={Trash2}
+      >
+        <p className="text-sm text-gray-500 mb-6">Are you sure you want to discard this extracted data? This action cannot be undone.</p>
+        <div className="flex justify-end gap-3">
+          <button
+            onClick={() => setShowDiscardModal(false)}
+            className="px-5 py-2.5 rounded-full border border-gray-200 text-gray-600 text-sm font-bold hover:bg-gray-50 transition-colors"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={() => {
+              setShowDiscardModal(false);
+              setOcrData(null);
+            }}
+            className="px-5 py-2.5 rounded-full bg-red-600 text-white text-sm font-bold hover:bg-red-700 transition-colors"
+          >
+            Discard
+          </button>
+        </div>
+      </Modal>
     </div>
   );
 }

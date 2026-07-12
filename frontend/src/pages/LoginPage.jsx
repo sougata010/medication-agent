@@ -162,8 +162,8 @@ function LoginContent() {
       >
         <div className="text-center mb-8 flex flex-col items-center">
           <div className="flex items-center gap-2 cursor-pointer mb-6" onClick={() => navigate('/')}>
-            <img src="/logo.png" alt="MedGraph Logo" className="w-10 h-10 object-contain drop-shadow-md" />
-            <span className="font-extrabold text-2xl tracking-tight text-gray-900">MedGraph</span>
+            <img src="/logo.png" alt="VitaLeaf Logo" className="w-10 h-10 object-contain drop-shadow-md" />
+            <span className="font-extrabold text-2xl tracking-tight text-gray-900">VitaLeaf</span>
           </div>
           <h2 className="text-3xl font-heading font-extrabold text-gray-900 tracking-tight mb-2">
             {showForgot ? 'Reset Password' : (isLogin ? 'Welcome back' : 'Create account')}

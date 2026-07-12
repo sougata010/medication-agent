@@ -16,7 +16,7 @@ export default function Updates() {
       version: "v1.0.0",
       date: "June 2026",
       changes: [
-        "Initial Release of MedGraph AI.",
+        "Initial Release of VitaLeaf.",
         "Multi-Agent LangGraph integration.",
         "OCR Prescription Scanning capabilities.",
         "Intelligent AI Drug Companion chat.",

@@ -39,8 +39,8 @@ export default function LandingPage() {
       <nav className="fixed w-full z-50 bg-white/80 backdrop-blur-md border-b border-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2 cursor-pointer" onClick={() => window.scrollTo(0, 0)}>
-            <img src="/logo.png" alt="MedGraph Logo" className="w-8 h-8 object-contain" />
-            <span className="font-extrabold text-xl tracking-tight text-gray-900">MedGraph</span>
+            <img src="/logo.png" alt="VitaLeaf Logo" className="w-8 h-8 object-contain" />
+            <span className="font-extrabold text-xl tracking-tight text-gray-900">VitaLeaf</span>
           </div>
           
           <div className="hidden md:flex gap-8">
@@ -272,7 +272,7 @@ export default function LandingPage() {
                 <div className="w-12 h-12 rounded-2xl bg-blue-50 flex items-center justify-center border border-blue-100">
                   <ShieldCheck className="w-6 h-6 text-blue-600" />
                 </div>
-                <span className="font-extrabold tracking-tight text-2xl text-gray-900">MedGraph <span className="text-blue-600">Secure</span></span>
+                <span className="font-extrabold tracking-tight text-2xl text-gray-900">VitaLeaf <span className="text-blue-600">Secure</span></span>
               </div>
               <h2 className="text-3xl md:text-5xl font-heading font-extrabold text-gray-900 mb-6 leading-tight tracking-tight">
                 Enterprise-grade security built for healthcare compliance.
@@ -356,7 +356,7 @@ export default function LandingPage() {
             <div className="absolute top-0 right-0 w-64 h-64 bg-blue-100/50 rounded-full blur-[80px]"></div>
             
             <div className="relative z-10">
-              <h2 className="text-3xl md:text-4xl font-heading font-extrabold mb-4 tracking-tight text-gray-900">Join MedGraph Today</h2>
+              <h2 className="text-3xl md:text-4xl font-heading font-extrabold mb-4 tracking-tight text-gray-900">Join VitaLeaf Today</h2>
               <p className="text-gray-500 mb-8 max-w-md mx-auto text-lg font-medium">
                 Create your account and deploy your personalized medical intelligence dashboard in seconds.
               </p>
@@ -377,8 +377,8 @@ export default function LandingPage() {
           <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
             <div className="max-w-xs">
               <div className="flex items-center gap-2 mb-6 cursor-pointer" onClick={() => window.scrollTo(0, 0)}>
-                <img src="/logo.png" alt="MedGraph Logo" className="w-8 h-8 object-contain drop-shadow-sm" />
-                <span className="font-extrabold text-lg tracking-tight text-gray-900">MedGraph</span>
+                <img src="/logo.png" alt="VitaLeaf Logo" className="w-8 h-8 object-contain drop-shadow-sm" />
+                <span className="font-extrabold text-lg tracking-tight text-gray-900">VitaLeaf</span>
               </div>
               <p className="text-sm text-gray-500 font-medium">
                 The most advanced AI intelligence layer for healthcare data orchestration. Built for precision and scale.
@@ -413,7 +413,7 @@ export default function LandingPage() {
             </div>
           </div>
           <div className="max-w-7xl mx-auto pt-8 border-t border-gray-100 flex flex-col md:flex-row justify-between items-center gap-4">
-            <p className="text-sm text-gray-400 font-medium">© 2026 MedGraph OS. All rights reserved.</p>
+            <p className="text-sm text-gray-400 font-medium">© 2026 VitaLeaf OS. All rights reserved.</p>
             <div className="flex gap-4">
               <div className="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center cursor-pointer hover:bg-gray-100 transition-colors">
                 <span className="text-gray-400 text-xs font-bold">X</span>

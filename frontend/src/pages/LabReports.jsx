@@ -5,6 +5,7 @@ import {
   ChevronDown, Search, FileText, Calendar, Upload, ShieldAlert,
   Activity, CheckCircle, Pill, ChevronRight, XOctagon, Info
 } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 export default function LabReports() {
   const { labReports, handleUploadLabReport, labUploadLoading } = useGlobalContext();
@@ -88,7 +89,7 @@ export default function LabReports() {
       <div className="flex flex-col items-center justify-center py-32 animate-fade-in">
         <div className="w-16 h-16 border-4 border-gray-200 border-t-blue-500 rounded-full animate-spin mb-4" />
         <h2 className="text-xl font-extrabold text-gray-900 mb-2">Analyzing Chemical Composition</h2>
-        <p className="text-gray-500 font-medium text-center max-w-sm">MedGraph AI is extracting structured chemical data, banned status, and health warnings from the document.</p>
+        <p className="text-gray-500 font-medium text-center max-w-sm">VitaLeaf is extracting structured chemical data, banned status, and health warnings from the document.</p>
       </div>
     );
   }
@@ -220,9 +221,24 @@ export default function LabReports() {
       </div>
 
       {/* Medicine Trees */}
-      <div className="flex flex-col gap-8">
+      <motion.div 
+        className="flex flex-col gap-8"
+        initial="hidden"
+        animate="visible"
+        variants={{
+          visible: { transition: { staggerChildren: 0.1 } },
+          hidden: {}
+        }}
+      >
         {medicines.map((med, idx) => (
-          <div key={idx} className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+          <motion.div 
+            key={idx} 
+            className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden"
+            variants={{
+              hidden: { opacity: 0, y: 20 },
+              visible: { opacity: 1, y: 0 }
+            }}
+          >
             {/* Medicine Header */}
             <div className={`px-6 py-5 border-b border-gray-100 flex items-center justify-between ${med.hasBanned ? 'bg-red-50/50' : med.hasWarning ? 'bg-amber-50/30' : 'bg-gray-50/50'}`}>
               <div className="flex items-center gap-3">
@@ -337,7 +353,7 @@ export default function LabReports() {
                 );
               })}
             </div>
-          </div>
+          </motion.div>
         ))}
 
         {medicines.length === 0 && !labUploadLoading && (
@@ -346,7 +362,7 @@ export default function LabReports() {
             <p className="text-gray-500 font-medium">No medicines match your search query.</p>
           </div>
         )}
-      </div>
+      </motion.div>
     </div>
   );
 }
