@@ -10,6 +10,7 @@ import (
 	"time"
 
 	_ "github.com/lib/pq"
+	_ "modernc.org/sqlite"
 )
 
 type Reminder struct {
@@ -47,17 +48,29 @@ func loadEnvFile(path string) {
 	}
 }
 
-func getDBConnString() string {
+func getDBConnInfo() (string, string) {
+	appEnv := os.Getenv("APP_ENV")
+	if appEnv == "development" {
+		return "sqlite", "../medgraph.db"
+	}
+	
 	connStr := os.Getenv("DATABASE_URL")
 	if connStr == "" {
 		connStr = "postgresql://postgres:postgres@localhost:5432/medgraph_db?sslmode=disable"
 	}
-	return connStr
+	return "postgres", connStr
 }
 
 func connectDB() (*sql.DB, error) {
-	connStr := getDBConnString()
-	db, err := sql.Open("postgres", connStr)
+	driver, connStr := getDBConnInfo()
+	
+	if driver == "sqlite" {
+		log.Printf("Connecting to SQLite database: %s", connStr)
+	} else {
+		log.Printf("Connecting to PostgreSQL database.")
+	}
+
+	db, err := sql.Open(driver, connStr)
 	if err != nil {
 		return nil, err
 	}
@@ -76,6 +89,8 @@ func connectDB() (*sql.DB, error) {
 }
 
 func processDueReminders(db *sql.DB) error {
+	driver, _ := getDBConnInfo()
+
 	// Query reminders where scheduled_at is less than or equal to current time, and status is pending
 	query := `
 		SELECT r.id, r.user_id, r.medicine_id, r.scheduled_at, r.channel, r.status, m.name
@@ -83,6 +98,10 @@ func processDueReminders(db *sql.DB) error {
 		JOIN medicines m ON r.medicine_id = m.id
 		WHERE r.status = 'pending' AND r.scheduled_at <= $1
 	`
+	if driver == "sqlite" {
+		query = strings.ReplaceAll(query, "$1", "?")
+	}
+
 	rows, err := db.Query(query, time.Now())
 	if err != nil {
 		return fmt.Errorf("error querying reminders: %w", err)
@@ -112,6 +131,10 @@ func processDueReminders(db *sql.DB) error {
 
 		// 2. Update status in database to 'sent'
 		updateQuery := "UPDATE reminders SET status = 'sent' WHERE id = $1"
+		if driver == "sqlite" {
+			updateQuery = strings.ReplaceAll(updateQuery, "$1", "?")
+		}
+		
 		_, err := db.Exec(updateQuery, rem.ID)
 		if err != nil {
 			log.Printf("Failed to update reminder status in DB for ID %d: %v", rem.ID, err)

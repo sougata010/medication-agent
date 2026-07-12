@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Prescription Verification - MedGraph AI</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Configuration -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "text-clinical": "#334155",
+                        "secondary": "#006a61",
+                        "error": "#ba1a1a",
+                        "error-container": "#ffdad6",
+                        "on-secondary-fixed": "#00201d",
+                        "on-primary-container": "#86a0cd",
+                        "on-tertiary-container": "#c6955e",
+                        "on-error-container": "#93000a",
+                        "on-tertiary-fixed": "#2b1700",
+                        "surface": "#faf9fd",
+                        "on-primary-fixed-variant": "#2d476f",
+                        "secondary-container": "#86f2e4",
+                        "on-tertiary-fixed-variant": "#633f0f",
+                        "tertiary-container": "#4f2e00",
+                        "on-primary-fixed": "#001b3c",
+                        "surface-container-high": "#e9e7eb",
+                        "surface-container": "#efedf1",
+                        "surface-variant": "#e3e2e6",
+                        "tertiary": "#321b00",
+                        "on-tertiary": "#ffffff",
+                        "background": "#faf9fd",
+                        "on-surface": "#1a1c1e",
+                        "inverse-on-surface": "#f1f0f4",
+                        "border-muted": "#E2E8F0",
+                        "surface-dim": "#dad9dd",
+                        "surface-bright": "#faf9fd",
+                        "surface-container-low": "#f4f3f7",
+                        "secondary-fixed-dim": "#6bd8cb",
+                        "outline": "#74777f",
+                        "primary-fixed": "#d6e3ff",
+                        "tertiary-fixed": "#ffddba",
+                        "inverse-surface": "#2f3033",
+                        "primary-container": "#1a365d",
+                        "outline-variant": "#c4c6cf",
+                        "emergency-red": "#DC2626",
+                        "tertiary-fixed-dim": "#f2bc82",
+                        "on-secondary-fixed-variant": "#005049",
+                        "inverse-primary": "#adc7f7",
+                        "on-secondary-container": "#006f66",
+                        "on-surface-variant": "#43474e",
+                        "on-error": "#ffffff",
+                        "surface-tint": "#455f88",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary-fixed": "#89f5e7",
+                        "on-secondary": "#ffffff",
+                        "surface-container-highest": "#e3e2e6",
+                        "primary-fixed-dim": "#adc7f7",
+                        "clean-slate": "#F8FAFC",
+                        "on-background": "#1a1c1e",
+                        "primary": "#002045",
+                        "safety-amber": "#D97706",
+                        "on-primary": "#ffffff"
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    spacing: {
+                        "stack-lg": "32px",
+                        "unit": "4px",
+                        "gutter": "24px",
+                        "stack-md": "16px",
+                        "margin-mobile": "16px",
+                        "margin-desktop": "32px",
+                        "container-max-width": "1280px",
+                        "stack-sm": "8px"
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"],
+                        "clinical-data": ["Inter", "sans-serif"],
+                        "label-caps": ["Inter", "sans-serif"],
+                        "headline-md": ["Inter", "sans-serif"],
+                        "headline-lg": ["Inter", "sans-serif"],
+                        "headline-sm": ["Inter", "sans-serif"],
+                        "body-sm": ["Inter", "sans-serif"],
+                        "citation": ["Inter", "sans-serif"],
+                        "body-md": ["Inter", "sans-serif"],
+                        "body-lg": ["Inter", "sans-serif"]
+                    },
+                    fontSize: {
+                        "display": ["48px", { lineHeight: "56px", letterSpacing: "-0.02em", fontWeight: "700" }],
+                        "clinical-data": ["15px", { lineHeight: "20px", letterSpacing: "0.01em", fontWeight: "600" }],
+                        "label-caps": ["12px", { lineHeight: "16px", letterSpacing: "0.05em", fontWeight: "700" }],
+                        "headline-md": ["24px", { lineHeight: "32px", fontWeight: "600" }],
+                        "headline-lg": ["32px", { lineHeight: "40px", fontWeight: "600" }],
+                        "headline-sm": ["20px", { lineHeight: "28px", fontWeight: "600" }],
+                        "body-sm": ["14px", { lineHeight: "20px", fontWeight: "400" }],
+                        "citation": ["11px", { lineHeight: "14px", fontWeight: "400" }],
+                        "body-md": ["16px", { lineHeight: "24px", fontWeight: "400" }],
+                        "body-lg": ["18px", { lineHeight: "28px", fontWeight: "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        /* Hide scrollbar for cleaner clinical look in some panels */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        
+        /* Subtle custom scrollbar for main content */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f4f3f7; /* surface-container-low */
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #c4c6cf; /* outline-variant */
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #74777f; /* outline */
+        }
+    </style>
+</head>
+<body class="bg-surface-container-low text-on-surface font-body-md h-screen overflow-hidden flex selection:bg-secondary-container selection:text-on-secondary-container">
+<!-- JSON Component: SideNavBar -->
+<nav class="hidden md:flex flex-col w-64 h-full bg-clean-slate border-r border-border-muted z-40 shrink-0">
+<!-- Brand Header -->
+<div class="p-stack-md flex flex-col gap-stack-sm border-b border-border-muted">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[28px]" style="font-variation-settings: 'FILL' 1;">medical_services</span>
+<span class="font-headline-sm text-headline-sm font-bold text-primary">MedGraph AI</span>
+</div>
+</div>
+<!-- User Profile Area -->
+<div class="p-stack-md flex items-center gap-3 border-b border-border-muted bg-surface-container-lowest">
+<img alt="Medical Professional Profile" class="w-10 h-10 rounded-full object-cover border border-border-muted" data-alt="A small, professional headshot photo of a male doctor wearing a white lab coat over a light blue shirt, smiling subtly against a neutral gray background. The lighting is bright and even, typical of a corporate directory photo." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCaj9Jk7Bd8y4_nFryJp2NqL7CzTdS8-o3g7oTqZgvjdeUQJBRZ2FIfCTRzWc6ku8T26Ix3_goaPCIZupfctBeYus6SKh3Y_t6ld_xijRB64l2FQM-S2eQzDGMRlMzRe7T4Fbnp6_QhoUg_-9USfaaPL7svpOiUUdyJkVOU5jyxR7tho4YYNTh7wz4af05rp6oJsWnGGC2hfc4h42GtOps6_NIsRDvuMlpe4JbSt-ALUcbR7dksryJHPxwczC8wEvyCO9l6MEQfA8w"/>
+<div class="flex flex-col">
+<span class="font-clinical-data text-clinical-data text-on-surface">Dr. Clinical Lead</span>
+<span class="font-citation text-citation text-on-surface-variant">Vigilance Department</span>
+</div>
+</div>
+<!-- Navigation Links -->
+<div class="flex-1 overflow-y-auto p-stack-md flex flex-col gap-unit mt-stack-sm">
+<a class="flex items-center gap-stack-md text-text-clinical hover:bg-surface-container-high transition-all rounded-lg px-4 py-3" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-body-md text-body-md">Dashboard</span>
+</a>
+<!-- Active State: "Patient Records" matches the context of viewing a specific prescription -->
+<a class="flex items-center gap-stack-md bg-secondary-container text-on-secondary-container rounded-lg px-4 py-3 scale-[0.99] shadow-sm" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">folder_shared</span>
+<span class="font-body-md text-body-md font-semibold">Patient Records</span>
+</a>
+<a class="flex items-center gap-stack-md text-text-clinical hover:bg-surface-container-high transition-all rounded-lg px-4 py-3" href="#">
+<span class="material-symbols-outlined">pill</span>
+<span class="font-body-md text-body-md">Drug Interactions</span>
+</a>
+<a class="flex items-center gap-stack-md text-text-clinical hover:bg-surface-container-high transition-all rounded-lg px-4 py-3" href="#">
+<span class="material-symbols-outlined">event_available</span>
+<span class="font-body-md text-body-md">Adherence Log</span>
+</a>
+<a class="flex items-center gap-stack-md text-text-clinical hover:bg-surface-container-high transition-all rounded-lg px-4 py-3" href="#">
+<span class="material-symbols-outlined">warning</span>
+<span class="font-body-md text-body-md">Safety Alerts</span>
+</a>
+</div>
+<!-- CTA & Footer -->
+<div class="p-stack-md border-t border-border-muted flex flex-col gap-stack-sm">
+<button class="w-full bg-secondary text-on-secondary font-clinical-data text-clinical-data py-2 rounded-lg hover:opacity-90 transition-opacity flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-[18px]">add_circle</span>
+                Generate Report
+            </button>
+<div class="mt-stack-sm flex flex-col gap-unit">
+<a class="flex items-center gap-stack-md text-text-clinical hover:bg-surface-container-high transition-all rounded-lg px-4 py-2" href="#">
+<span class="material-symbols-outlined text-[20px]">settings</span>
+<span class="font-body-sm text-body-sm">Settings</span>
+</a>
+<a class="flex items-center gap-stack-md text-text-clinical hover:bg-surface-container-high transition-all rounded-lg px-4 py-2" href="#">
+<span class="material-symbols-outlined text-[20px]">help</span>
+<span class="font-body-sm text-body-sm">Support</span>
+</a>
+</div>
+</div>
+</nav>
+<!-- Main Content Area -->
+<div class="flex-1 flex flex-col min-w-0">
+<!-- JSON Component: TopNavBar -->
+<header class="bg-surface border-b border-border-muted shrink-0 z-30 shadow-sm">
+<div class="flex justify-between items-center w-full px-margin-desktop h-16 max-w-container-max-width mx-auto">
+<!-- Search / Context -->
+<div class="flex items-center gap-stack-md">
+<button class="md:hidden p-2 text-on-surface-variant hover:bg-surface-container rounded-full transition-colors">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<div class="relative hidden sm:block w-72">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline-variant text-[20px]">search</span>
+<input class="w-full pl-10 pr-4 py-2 bg-surface-container-low border border-border-muted rounded-full focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary font-body-sm text-body-sm transition-all text-on-surface placeholder:text-outline" placeholder="Search patient records..." type="text"/>
+</div>
+</div>
+<!-- Trailing Actions -->
+<div class="flex items-center gap-stack-md">
+<button class="relative p-2 text-on-surface-variant hover:text-secondary hover:bg-surface-container rounded-full transition-all duration-200">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-emergency-red rounded-full border-2 border-surface"></span>
+</button>
+<button class="p-2 text-on-surface-variant hover:text-secondary hover:bg-surface-container rounded-full transition-all duration-200">
+<span class="material-symbols-outlined">account_circle</span>
+</button>
+</div>
+</div>
+</header>
+<!-- Page Content: Prescription Verification -->
+<main class="flex-1 overflow-y-auto relative">
+<div class="max-w-container-max-width mx-auto px-margin-desktop py-stack-lg flex flex-col gap-stack-lg">
+<!-- Header Section -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-stack-md">
+<div>
+<div class="flex items-center gap-2 mb-2">
+<span class="font-label-caps text-label-caps text-primary uppercase tracking-wider bg-primary-fixed/30 px-2 py-1 rounded">Task: Human-in-the-loop</span>
+<span class="font-label-caps text-label-caps text-outline uppercase tracking-wider">Patient ID: #MRN-89234</span>
+</div>
+<h1 class="font-headline-lg text-headline-lg text-on-surface">Prescription Verification</h1>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">Review OCR extracted data against the uploaded source document.</p>
+</div>
+<div class="flex items-center gap-2 bg-surface-container p-2 rounded-lg border border-border-muted">
+<span class="material-symbols-outlined text-safety-amber text-[20px]">psychology</span>
+<span class="font-clinical-data text-clinical-data text-text-clinical">AI Confidence Score:</span>
+<span class="font-headline-sm text-headline-sm text-secondary font-bold">88%</span>
+</div>
+</div>
+<!-- Main Layout Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
+<!-- Left Side: Source Image Panel (col-span-5) -->
+<div class="lg:col-span-5 flex flex-col bg-surface-container-lowest rounded-xl border border-border-muted shadow-[0_2px_8px_rgba(0,0,0,0.04)] overflow-hidden h-[600px]">
+<!-- Panel Header -->
+<div class="bg-clean-slate border-b border-border-muted px-4 py-3 flex justify-between items-center shrink-0">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-on-surface-variant text-[20px]">image</span>
+<h2 class="font-clinical-data text-clinical-data text-on-surface">Source Document</h2>
+</div>
+<div class="flex items-center gap-1">
+<button class="p-1.5 text-on-surface-variant hover:bg-surface-variant rounded transition-colors" title="Zoom Out">
+<span class="material-symbols-outlined text-[18px]">zoom_out</span>
+</button>
+<button class="p-1.5 text-on-surface-variant hover:bg-surface-variant rounded transition-colors" title="Zoom In">
+<span class="material-symbols-outlined text-[18px]">zoom_in</span>
+</button>
+<button class="p-1.5 text-on-surface-variant hover:bg-surface-variant rounded transition-colors" title="Reset View">
+<span class="material-symbols-outlined text-[18px]">fit_screen</span>
+</button>
+</div>
+</div>
+<!-- Image Container (Simulated panning area) -->
+<div class="flex-1 bg-surface-container p-4 overflow-hidden relative group cursor-grab active:cursor-grabbing flex items-center justify-center">
+<!-- Overlay to indicate interactive area -->
+<div class="absolute inset-0 bg-secondary/0 group-hover:bg-secondary/5 transition-colors pointer-events-none z-10"></div>
+<!-- The Prescription Image -->
+<img alt="Scanned Prescription Document" class="max-w-full h-auto object-contain rounded border border-border-muted shadow-sm transform transition-transform duration-300 hover:scale-105" data-alt="A high-resolution, top-down photograph of a standard medical prescription pad paper lying on a clean white desk. The paper contains messy, cursive handwritten text in dark blue ink. Specific readable words include 'Amoxicillin' and '500mg'. The section specifying how often to take it is particularly scrawled and difficult to read. The lighting is bright, neutral, and evenly distributed, casting minimal shadows, typical of clinical documentation photography." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDbTMCR-mwYo5QUkav07uw5QlVpC6bpKroletlZWhs9k2xrMQVWuQExn0rMrLqsdRTKdFtzmBbgTWF_c6U2AA6V1P1OCLOcPcizad1-p7eFft2M5RtaGGGmjbxNR4cP2g6j2LWxuZ77E_QYCgIfNMCUSqs5flFTFyTRWU6JP62z2gOrzMYODj93GsmuMg82EqszEAGJck8Z0SVFxG6nEr0gsVT2GY06urcxb8SgWbpmbO2QBeaV7no6yiudGQqyrIZqrWDjtGGLsAo"/>
+<!-- Bounding Box Annotation (Simulated OCR targeting) -->
+<div class="absolute top-[45%] left-[20%] w-[60%] h-[15%] border-2 border-safety-amber border-dashed bg-safety-amber/5 z-20 pointer-events-none rounded flex items-start justify-end p-1">
+<span class="bg-safety-amber text-on-primary font-label-caps text-[10px] px-1.5 py-0.5 rounded-sm uppercase shadow-sm">Low Conf</span>
+</div>
+</div>
+<!-- Image Footer Info -->
+<div class="bg-surface px-4 py-2 border-t border-border-muted flex justify-between items-center shrink-0">
+<span class="font-citation text-citation text-on-surface-variant">Uploaded: Today, 09:42 AM</span>
+<span class="font-citation text-citation text-on-surface-variant">File: rx_scan_89234.jpg</span>
+</div>
+</div>
+<!-- Right Side: Structured Data Panel (col-span-7) -->
+<div class="lg:col-span-7 flex flex-col bg-surface-container-lowest rounded-xl border border-border-muted shadow-[0_2px_8px_rgba(0,0,0,0.04)] h-[600px]">
+<!-- Panel Header -->
+<div class="bg-clean-slate border-b border-border-muted px-stack-md py-4 shrink-0">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[22px]">data_object</span>
+<h2 class="font-headline-sm text-headline-sm text-primary">Extracted Structural Data</h2>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Review and correct fields below. Highlighted fields indicate low OCR confidence.</p>
+</div>
+<!-- Data Form Area -->
+<div class="flex-1 overflow-y-auto p-stack-md flex flex-col gap-stack-md">
+<!-- Field: Drug Name (High Confidence) -->
+<div class="flex flex-col gap-unit">
+<div class="flex justify-between items-center">
+<label class="font-clinical-data text-clinical-data text-text-clinical flex items-center gap-1">
+                                        Medication Name
+                                        <span class="material-symbols-outlined text-outline text-[16px] cursor-help" title="Identified from standard formulary database">info</span>
+</label>
+<span class="font-citation text-citation text-secondary flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">check_circle</span>
+                                        High Match (99%)
+                                    </span>
+</div>
+<div class="relative">
+<input class="w-full bg-surface border border-border-muted rounded-lg px-3 py-2.5 font-body-md text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors" readonly="" type="text" value="Amoxicillin"/>
+</div>
+</div>
+<!-- Field: Dosage (High Confidence) -->
+<div class="flex flex-col gap-unit mt-2">
+<div class="flex justify-between items-center">
+<label class="font-clinical-data text-clinical-data text-text-clinical">Dosage</label>
+<span class="font-citation text-citation text-secondary flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">check_circle</span>
+                                        High Match (96%)
+                                    </span>
+</div>
+<input class="w-full bg-surface border border-border-muted rounded-lg px-3 py-2.5 font-body-md text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors" readonly="" type="text" value="500 mg"/>
+</div>
+<!-- THE CONFIDENCE CHECKER: Frequency (Low Confidence) -->
+<div class="flex flex-col gap-unit mt-2 p-3 bg-safety-amber/5 border border-safety-amber/30 rounded-xl relative overflow-hidden">
+<!-- Indicator bar on left -->
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-safety-amber"></div>
+<div class="flex justify-between items-center pl-2">
+<label class="font-clinical-data text-clinical-data text-on-surface flex items-center gap-2">
+                                        Frequency / Instructions
+                                        <span class="bg-safety-amber text-on-primary font-label-caps px-1.5 py-0.5 rounded-sm uppercase text-[10px]">Review Required</span>
+</label>
+<span class="font-citation text-citation text-safety-amber font-medium flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">warning</span>
+                                        Low Confidence (42%)
+                                    </span>
+</div>
+<div class="relative pl-2 mt-1">
+<!-- Editable input for low confidence -->
+<input autofocus="" class="w-full bg-surface-container-lowest border-2 border-safety-amber rounded-lg px-3 py-2.5 font-body-md text-on-surface focus:outline-none focus:ring-2 focus:ring-safety-amber/50 transition-shadow shadow-sm" type="text" value="Take 1 pill every 8 hours"/>
+<div class="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-2 pointer-events-none">
+<span class="material-symbols-outlined text-safety-amber text-[20px]">edit_note</span>
+</div>
+</div>
+<p class="font-citation text-citation text-on-surface-variant pl-2 mt-1.5 flex items-start gap-1">
+<span class="material-symbols-outlined text-[14px] mt-0.5">visibility</span>
+                                    Handwriting obscured. Verify against area highlighted in original document.
+                                </p>
+</div>
+<!-- Field: Duration (High Confidence) -->
+<div class="flex flex-col gap-unit mt-2">
+<div class="flex justify-between items-center">
+<label class="font-clinical-data text-clinical-data text-text-clinical">Duration</label>
+<span class="font-citation text-citation text-secondary flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">check_circle</span>
+                                        High Match (91%)
+                                    </span>
+</div>
+<div class="flex gap-3">
+<input class="w-24 bg-surface border border-border-muted rounded-lg px-3 py-2.5 font-body-md text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors text-center" readonly="" type="number" value="7"/>
+<select class="flex-1 bg-surface border border-border-muted rounded-lg px-3 py-2.5 font-body-md text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors appearance-none pointer-events-none" disabled="">
+<option selected="">Days</option>
+<option>Weeks</option>
+</select>
+</div>
+</div>
+</div>
+<!-- Footer Actions & Disclaimer -->
+<div class="bg-clean-slate border-t border-border-muted p-stack-md flex flex-col gap-stack-md shrink-0 rounded-b-xl">
+<!-- Mandatory Disclaimer -->
+<div class="flex items-start gap-3 bg-primary-fixed/20 border border-primary-fixed rounded-lg p-3">
+<span class="material-symbols-outlined text-primary text-[20px] mt-0.5">policy</span>
+<p class="font-body-sm text-body-sm text-on-surface">
+<strong>Disclaimer:</strong> OCR is never silent. Please verify all data against your original prescription. AI-assisted extraction does not replace professional medical judgment.
+                                </p>
+</div>
+<!-- Action Buttons -->
+<div class="flex justify-end items-center gap-stack-md">
+<button class="px-5 py-2.5 rounded-lg border border-primary text-primary font-body-md font-semibold hover:bg-primary-fixed/20 transition-colors focus:outline-none focus:ring-2 focus:ring-primary/50">
+                                    Edit Details
+                                </button>
+<button class="px-5 py-2.5 rounded-lg bg-secondary text-on-secondary font-body-md font-semibold hover:bg-secondary-fixed-dim hover:text-on-secondary-fixed transition-colors focus:outline-none focus:ring-2 focus:ring-secondary/50 flex items-center gap-2 shadow-sm">
+<span class="material-symbols-outlined text-[20px]">verified</span>
+                                    Confirm Extraction
+                                </button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

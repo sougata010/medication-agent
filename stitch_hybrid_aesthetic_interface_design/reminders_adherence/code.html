@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+
+<html class="h-full" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Reminders &amp; Adherence Hub - MedGraph AI</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "surface-bright": "#faf9fd",
+                      "emergency-red": "#DC2626",
+                      "on-primary-fixed": "#001b3c",
+                      "safety-amber": "#D97706",
+                      "inverse-surface": "#2f3033",
+                      "on-primary-fixed-variant": "#2d476f",
+                      "primary-fixed": "#d6e3ff",
+                      "tertiary-container": "#4f2e00",
+                      "on-tertiary": "#ffffff",
+                      "surface": "#faf9fd",
+                      "on-error-container": "#93000a",
+                      "surface-variant": "#e3e2e6",
+                      "on-secondary-fixed": "#00201d",
+                      "on-primary": "#ffffff",
+                      "surface-container": "#efedf1",
+                      "surface-container-highest": "#e3e2e6",
+                      "on-tertiary-fixed-variant": "#633f0f",
+                      "tertiary": "#321b00",
+                      "background": "#faf9fd",
+                      "tertiary-fixed": "#ffddba",
+                      "on-secondary-container": "#006f66",
+                      "secondary-container": "#86f2e4",
+                      "on-primary-container": "#86a0cd",
+                      "clean-slate": "#F8FAFC",
+                      "primary-container": "#1a365d",
+                      "text-clinical": "#334155",
+                      "secondary-fixed-dim": "#6bd8cb",
+                      "surface-tint": "#455f88",
+                      "surface-container-lowest": "#ffffff",
+                      "secondary": "#006a61",
+                      "on-surface-variant": "#43474e",
+                      "inverse-primary": "#adc7f7",
+                      "on-secondary-fixed-variant": "#005049",
+                      "error": "#ba1a1a",
+                      "outline-variant": "#c4c6cf",
+                      "tertiary-fixed-dim": "#f2bc82",
+                      "primary-fixed-dim": "#adc7f7",
+                      "on-error": "#ffffff",
+                      "on-tertiary-fixed": "#2b1700",
+                      "on-secondary": "#ffffff",
+                      "surface-dim": "#dad9dd",
+                      "primary": "#002045",
+                      "secondary-fixed": "#89f5e7",
+                      "on-background": "#1a1c1e",
+                      "inverse-on-surface": "#f1f0f4",
+                      "surface-container-low": "#f4f3f7",
+                      "on-tertiary-container": "#c6955e",
+                      "outline": "#74777f",
+                      "error-container": "#ffdad6",
+                      "border-muted": "#E2E8F0",
+                      "on-surface": "#1a1c1e",
+                      "surface-container-high": "#e9e7eb"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "stack-md": "16px",
+                      "margin-mobile": "16px",
+                      "gutter": "24px",
+                      "container-max-width": "1280px",
+                      "stack-lg": "32px",
+                      "margin-desktop": "32px",
+                      "stack-sm": "8px",
+                      "unit": "4px"
+              },
+              "fontFamily": {
+                      "headline-sm": [
+                              "Inter"
+                      ],
+                      "body-md": [
+                              "Inter"
+                      ],
+                      "headline-lg": [
+                              "Inter"
+                      ],
+                      "body-sm": [
+                              "Inter"
+                      ],
+                      "body-lg": [
+                              "Inter"
+                      ],
+                      "headline-md": [
+                              "Inter"
+                      ],
+                      "clinical-data": [
+                              "Inter"
+                      ],
+                      "label-caps": [
+                              "Inter"
+                      ],
+                      "citation": [
+                              "Inter"
+                      ],
+                      "display": [
+                              "Inter"
+                      ]
+              },
+              "fontSize": {
+                      "headline-sm": [
+                              "20px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-lg": [
+                              "32px",
+                              {
+                                      "lineHeight": "40px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-sm": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-md": [
+                              "24px",
+                              {
+                                      "lineHeight": "32px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "clinical-data": [
+                              "15px",
+                              {
+                                      "lineHeight": "20px",
+                                      "letterSpacing": "0.01em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "label-caps": [
+                              "12px",
+                              {
+                                      "lineHeight": "16px",
+                                      "letterSpacing": "0.05em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "citation": [
+                              "11px",
+                              {
+                                      "lineHeight": "14px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "display": [
+                              "48px",
+                              {
+                                      "lineHeight": "56px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+    </script>
+</head>
+<body class="bg-surface text-on-surface font-body-md h-full flex flex-col md:flex-row">
+<!-- SideNavBar (Desktop) -->
+<nav class="hidden md:flex bg-clean-slate dark:bg-surface-container-low border-r border-border-muted dark:border-outline-variant w-64 flex-col fixed left-0 top-0 h-full z-40 p-4">
+<div class="mb-stack-lg flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">medical_services</span>
+<span class="font-headline-sm text-headline-sm font-bold text-primary dark:text-on-primary-fixed">MedGraph AI</span>
+</div>
+<div class="mb-stack-md">
+<div class="flex items-center gap-3 p-3 bg-surface-container-low rounded-lg">
+<img class="w-10 h-10 rounded-full object-cover" data-alt="A professional headshot of a middle-aged male patient with a calm expression. Studio lighting, soft shadows, neutral background. Used as a user profile avatar in a clinical dashboard setting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAL7gSmqVGNodabraVE8sSKrIGpNwFHwIOELz6kPa20oaBhqWUyoHiji_LKQjD8BQSHcYWB2tuvoXwJPXMjr3Ms2N1y6BOVgwGwkEufr_kjlUPUMTLYAgqr5MAKUiYrCH_tgOAlzALEzq6V5LpnB-dqy6HcoclWVwyskZqFm3jhSjDb5BVsnQ1uYLbW_3wxDGNuSn2AqTP8ZAtRgXDbz3t607FN3dc14g__5F0xFM88Ugy56OJFLF1SbeBkt3D1wZ7gL8rJFxuUGto"/>
+<div>
+<div class="font-clinical-data text-clinical-data text-primary">Patient Portal</div>
+<div class="font-citation text-citation text-secondary font-bold">Medication Adherence: 85%</div>
+</div>
+</div>
+</div>
+<ul class="flex-1 space-y-unit mt-stack-md">
+<li>
+<a class="flex items-center gap-3 text-on-surface-variant dark:text-outline mx-2 px-4 py-2 hover:bg-surface-container-highest dark:hover:bg-surface-variant rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span>Dashboard</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 text-on-surface-variant dark:text-outline mx-2 px-4 py-2 hover:bg-surface-container-highest dark:hover:bg-surface-variant rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined">medication</span>
+<span>Medications</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 text-on-surface-variant dark:text-outline mx-2 px-4 py-2 hover:bg-surface-container-highest dark:hover:bg-surface-variant rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined">biotech</span>
+<span>Lab Reports</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 bg-secondary-container dark:bg-secondary text-on-secondary-container dark:text-on-secondary font-bold rounded-lg mx-2 px-4 py-2 scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined">event_upcoming</span>
+<span>Reminders</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 text-on-surface-variant dark:text-outline mx-2 px-4 py-2 hover:bg-surface-container-highest dark:hover:bg-surface-variant rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined">local_pharmacy</span>
+<span>Pharmacy Finder</span>
+</a>
+</li>
+</ul>
+<div class="mt-auto space-y-unit">
+<button class="w-full mb-stack-md bg-emergency-red text-on-primary font-clinical-data text-clinical-data rounded-lg px-4 py-2 flex items-center justify-center gap-2 hover:opacity-90 transition-opacity">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">warning</span>
+                Emergency Protocol
+            </button>
+<a class="flex items-center gap-3 text-on-surface-variant dark:text-outline mx-2 px-4 py-2 hover:bg-surface-container-highest rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span>Settings</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant dark:text-outline mx-2 px-4 py-2 hover:bg-surface-container-highest rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined">gavel</span>
+<span>Disclaimers</span>
+</a>
+</div>
+</nav>
+<!-- TopNavBar (Mobile) -->
+<nav class="md:hidden bg-surface dark:bg-background border-b border-border-muted dark:border-outline-variant flex justify-between items-center w-full px-margin-mobile h-16 fixed top-0 z-40 shadow-[0_4px_6px_-1px_rgba(0,0,0,0.05)]">
+<div class="font-display text-headline-md font-bold text-primary dark:text-inverse-primary">MedGraph AI</div>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-primary dark:text-inverse-primary">account_circle</span>
+</div>
+</nav>
+<!-- Main Content Canvas -->
+<main class="flex-1 md:ml-64 pt-16 md:pt-0 pb-20 md:pb-12 min-h-screen bg-surface-bright p-margin-mobile md:p-margin-desktop max-w-container-max-width mx-auto w-full">
+<header class="mb-stack-lg pt-stack-md md:pt-0">
+<h1 class="font-headline-lg text-headline-lg text-primary tracking-tight">Reminders &amp; Adherence Hub</h1>
+<p class="font-body-md text-body-md text-text-clinical mt-unit">Manage schedules, track history, and configure alerts.</p>
+</header>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-gutter">
+<!-- Active Schedules (Main Column) -->
+<section class="col-span-1 md:col-span-8 flex flex-col gap-stack-md">
+<div class="flex items-center justify-between mb-unit">
+<h2 class="font-headline-md text-headline-md text-primary">Active Schedules</h2>
+<button class="text-secondary font-label-caps text-label-caps flex items-center gap-1 hover:opacity-80">
+<span class="material-symbols-outlined text-[16px]">add</span> ADD MEDICATION
+                    </button>
+</div>
+<!-- Schedule Card 1 -->
+<div class="bg-surface-container-lowest rounded-xl border border-border-muted p-4 shadow-[0_4px_12px_rgba(0,0,0,0.02)] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+<div class="flex items-start gap-4">
+<div class="bg-clean-slate p-3 rounded-lg flex-shrink-0">
+<span class="material-symbols-outlined text-secondary text-[24px]">pill</span>
+</div>
+<div>
+<h3 class="font-clinical-data text-clinical-data text-primary">Atorvastatin</h3>
+<p class="font-body-sm text-body-sm text-text-clinical">20mg • Take with water</p>
+<div class="flex items-center gap-2 mt-2">
+<span class="material-symbols-outlined text-[14px] text-outline">schedule</span>
+<span class="font-label-caps text-label-caps text-outline">08:00 AM - BEFORE FOOD</span>
+</div>
+</div>
+</div>
+<div class="flex gap-2 w-full sm:w-auto mt-2 sm:mt-0">
+<button class="flex-1 sm:flex-none bg-clean-slate border border-border-muted text-primary font-clinical-data text-clinical-data px-4 py-2 rounded-lg hover:bg-surface-variant transition-colors">Skip</button>
+<button class="flex-1 sm:flex-none bg-secondary text-on-secondary font-clinical-data text-clinical-data px-4 py-2 rounded-lg shadow-sm hover:opacity-90 transition-opacity">Take Now</button>
+</div>
+</div>
+<!-- Schedule Card 2 -->
+<div class="bg-surface-container-lowest rounded-xl border border-border-muted p-4 shadow-[0_4px_12px_rgba(0,0,0,0.02)] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+<div class="flex items-start gap-4">
+<div class="bg-clean-slate p-3 rounded-lg flex-shrink-0">
+<span class="material-symbols-outlined text-secondary text-[24px]">prescriptions</span>
+</div>
+<div>
+<h3 class="font-clinical-data text-clinical-data text-primary">Lisinopril</h3>
+<p class="font-body-sm text-body-sm text-text-clinical">10mg • No specific instructions</p>
+<div class="flex items-center gap-2 mt-2">
+<span class="material-symbols-outlined text-[14px] text-outline">schedule</span>
+<span class="font-label-caps text-label-caps text-outline">08:00 PM - AFTER DINNER</span>
+</div>
+</div>
+</div>
+<div class="flex gap-2 w-full sm:w-auto mt-2 sm:mt-0">
+<button class="flex-1 sm:flex-none bg-clean-slate border border-border-muted text-primary font-clinical-data text-clinical-data px-4 py-2 rounded-lg hover:bg-surface-variant transition-colors">Skip</button>
+<button class="flex-1 sm:flex-none bg-secondary text-on-secondary font-clinical-data text-clinical-data px-4 py-2 rounded-lg shadow-sm hover:opacity-90 transition-opacity">Take Now</button>
+</div>
+</div>
+</section>
+<!-- Sidebar Column -->
+<div class="col-span-1 md:col-span-4 flex flex-col gap-stack-lg">
+<!-- Notification Channels -->
+<section class="bg-surface-container-lowest rounded-xl border border-border-muted p-stack-md shadow-[0_4px_12px_rgba(0,0,0,0.02)]">
+<h2 class="font-headline-sm text-headline-sm text-primary mb-stack-sm flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px]">notifications_active</span> Channels
+                    </h2>
+<div class="space-y-3">
+<div class="flex items-center justify-between py-2 border-b border-border-muted">
+<span class="font-body-sm text-body-sm text-text-clinical flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">send</span> Push Notification
+                            </span>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox" value=""/>
+<div class="w-9 h-5 bg-surface-variant rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-secondary"></div>
+</label>
+</div>
+<div class="flex items-center justify-between py-2 border-b border-border-muted">
+<span class="font-body-sm text-body-sm text-text-clinical flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">mail</span> Email
+                            </span>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox" value=""/>
+<div class="w-9 h-5 bg-surface-variant rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-secondary"></div>
+</label>
+</div>
+<div class="flex items-center justify-between py-2 border-b border-border-muted">
+<span class="font-body-sm text-body-sm text-text-clinical flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">calendar_month</span> Calendar Sync
+                            </span>
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox" value=""/>
+<div class="w-9 h-5 bg-surface-variant rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-secondary"></div>
+</label>
+</div>
+<div class="flex items-center justify-between py-2">
+<span class="font-body-sm text-body-sm text-text-clinical flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">forum</span> Telegram
+                            </span>
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox" value=""/>
+<div class="w-9 h-5 bg-surface-variant rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-secondary"></div>
+</label>
+</div>
+</div>
+</section>
+<!-- Caregiver Access -->
+<section class="bg-primary-container rounded-xl p-stack-md shadow-md text-on-primary-container">
+<h2 class="font-headline-sm text-headline-sm mb-unit flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px]">group_add</span> Caregiver Access
+                    </h2>
+<p class="font-body-sm text-body-sm opacity-90 mb-stack-sm">Invite a family member or nurse to monitor your adherence.</p>
+<button class="w-full bg-surface-container-lowest text-primary-container font-clinical-data text-clinical-data px-4 py-2 rounded-lg shadow-sm hover:bg-surface-variant transition-colors flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-[18px]">mail</span> Send Invite
+                    </button>
+</section>
+</div>
+<!-- History Log (Full Width below) -->
+<section class="col-span-1 md:col-span-12 mt-stack-md bg-surface-container-lowest rounded-xl border border-border-muted p-stack-md shadow-[0_4px_12px_rgba(0,0,0,0.02)] overflow-hidden flex flex-col max-h-[400px]">
+<h2 class="font-headline-sm text-headline-sm text-primary mb-stack-sm flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px]">history</span> History Log
+                </h2>
+<div class="overflow-y-auto pr-2 space-y-2 flex-1">
+<!-- Log Item (Taken) -->
+<div class="flex items-center gap-3 p-3 bg-clean-slate rounded-lg border border-border-muted/50">
+<div class="w-2 h-2 rounded-full bg-secondary flex-shrink-0"></div>
+<div class="flex-1 flex justify-between items-center">
+<div>
+<span class="font-clinical-data text-clinical-data text-primary">Atorvastatin 20mg</span>
+<span class="font-body-sm text-body-sm text-text-clinical ml-2">Taken</span>
+</div>
+<span class="font-citation text-citation text-outline">Today, 08:05 AM</span>
+</div>
+</div>
+<!-- Log Item (Taken) -->
+<div class="flex items-center gap-3 p-3 bg-clean-slate rounded-lg border border-border-muted/50">
+<div class="w-2 h-2 rounded-full bg-secondary flex-shrink-0"></div>
+<div class="flex-1 flex justify-between items-center">
+<div>
+<span class="font-clinical-data text-clinical-data text-primary">Lisinopril 10mg</span>
+<span class="font-body-sm text-body-sm text-text-clinical ml-2">Taken</span>
+</div>
+<span class="font-citation text-citation text-outline">Yesterday, 08:15 PM</span>
+</div>
+</div>
+<!-- Log Item (Skipped) -->
+<div class="flex items-center gap-3 p-3 bg-surface-container-low rounded-lg border border-border-muted/50">
+<div class="w-2 h-2 rounded-full bg-outline flex-shrink-0"></div>
+<div class="flex-1 flex justify-between items-center">
+<div>
+<span class="font-clinical-data text-clinical-data text-primary opacity-60">Atorvastatin 20mg</span>
+<span class="font-body-sm text-body-sm text-outline ml-2">Skipped</span>
+</div>
+<span class="font-citation text-citation text-outline">Yesterday, 08:00 AM</span>
+</div>
+</div>
+<!-- Log Item (Missed) -->
+<div class="flex items-center gap-3 p-3 bg-[#fffbeb] rounded-lg border border-safety-amber/30">
+<div class="w-2 h-2 rounded-full bg-safety-amber flex-shrink-0"></div>
+<div class="flex-1 flex justify-between items-center">
+<div>
+<span class="font-clinical-data text-clinical-data text-primary">Lisinopril 10mg</span>
+<span class="font-body-sm text-body-sm text-safety-amber ml-2 font-semibold">Missed</span>
+</div>
+<span class="font-citation text-citation text-outline">Oct 12, 08:00 PM</span>
+</div>
+</div>
+</div>
+</section>
+</div>
+</main>
+<!-- Footer -->
+<footer class="fixed bottom-0 w-full z-50 flex flex-col md:flex-row justify-between items-center px-margin-mobile py-2 bg-emergency-red shadow-lg md:pl-[272px]">
+<div class="font-label-caps text-label-caps uppercase tracking-widest text-on-primary mb-2 md:mb-0">
+            © 2024 MedGraph AI. Clinical Decision Support Tool. Not a substitute for professional medical advice.
+        </div>
+<div class="flex gap-4">
+<a class="font-citation text-citation text-on-primary opacity-90 hover:opacity-100 transition-opacity focus:ring-2 focus:ring-white rounded" href="#">Emergency Contacts</a>
+<a class="font-citation text-citation text-on-primary opacity-90 hover:opacity-100 transition-opacity focus:ring-2 focus:ring-white rounded" href="#">Terms of Service</a>
+<a class="font-citation text-citation text-on-primary opacity-90 hover:opacity-100 transition-opacity focus:ring-2 focus:ring-white rounded" href="#">Privacy Policy</a>
+<a class="font-citation text-citation text-on-primary opacity-90 hover:opacity-100 transition-opacity focus:ring-2 focus:ring-white rounded" href="#">Source Citations</a>
+</div>
+</footer>
+<!-- Bottom Nav (Mobile) -->
+<div class="md:hidden fixed bottom-12 w-full bg-surface border-t border-border-muted flex justify-around py-3 z-40">
+<a class="flex flex-col items-center text-outline" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="text-[10px]">Dashboard</span>
+</a>
+<a class="flex flex-col items-center text-secondary" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">event_upcoming</span>
+<span class="text-[10px] font-bold">Reminders</span>
+</a>
+<a class="flex flex-col items-center text-outline" href="#">
+<span class="material-symbols-outlined">local_pharmacy</span>
+<span class="text-[10px]">Pharmacy</span>
+</a>
+</div>
+</body></html>

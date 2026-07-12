@@ -5,26 +5,32 @@ import (
 	"testing"
 )
 
-func TestGetDBConnString_Default(t *testing.T) {
-	// Clear env variable
+func TestGetDBConnStringDefault(t *testing.T) {
+	// Temporarily clear env
 	os.Unsetenv("DATABASE_URL")
 	
 	expected := "postgresql://postgres:postgres@localhost:5432/medgraph_db?sslmode=disable"
-	actual := getDBConnString()
+	driver, actual := getDBConnInfo()
 	
 	if actual != expected {
-		t.Errorf("Expected connection string to be %s, but got %s", expected, actual)
+		t.Errorf("Expected %s, got %s", expected, actual)
+	}
+	if driver != "postgres" {
+		t.Errorf("Expected postgres driver, got %s", driver)
 	}
 }
 
-func TestGetDBConnString_Custom(t *testing.T) {
+func TestGetDBConnStringCustom(t *testing.T) {
 	customURL := "postgresql://testuser:testpass@remotetest:5432/testdb"
 	os.Setenv("DATABASE_URL", customURL)
 	defer os.Unsetenv("DATABASE_URL")
 	
-	actual := getDBConnString()
+	driver, actual := getDBConnInfo()
 	
 	if actual != customURL {
-		t.Errorf("Expected connection string to be %s, but got %s", customURL, actual)
+		t.Errorf("Expected %s, got %s", customURL, actual)
+	}
+	if driver != "postgres" {
+		t.Errorf("Expected postgres driver, got %s", driver)
 	}
 }

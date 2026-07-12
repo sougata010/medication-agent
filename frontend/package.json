@@ -4,20 +4,39 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
+    "dev": "npm-run-all --parallel dev:*",
+    "dev:vite": "vite",
+    "dev:tailwind": "tailwindcss -i ./src/index.css -o ./src/output.css --watch",
+    "build": "tailwindcss -i ./src/index.css -o ./src/output.css && vite build",
     "lint": "oxlint",
     "preview": "vite preview"
   },
   "dependencies": {
+    "@fontsource/geist-mono": "^5.2.8",
+    "@fontsource/inter": "^5.2.8",
+    "@fontsource/space-grotesk": "^5.2.10",
+    "@react-oauth/google": "^0.13.5",
+    "@react-three/drei": "^10.7.7",
+    "@react-three/fiber": "^9.6.1",
+    "@simplewebauthn/browser": "^13.3.0",
+    "date-fns": "^4.4.0",
+    "framer-motion": "^12.42.2",
+    "jwt-decode": "^4.0.0",
+    "lucide-react": "^1.24.0",
     "react": "^19.2.7",
-    "react-dom": "^19.2.7"
+    "react-dom": "^19.2.7",
+    "react-router-dom": "^7.18.1",
+    "three": "^0.185.1"
   },
   "devDependencies": {
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.2",
+    "autoprefixer": "^10.5.2",
+    "npm-run-all": "^4.1.5",
     "oxlint": "^1.69.0",
+    "postcss": "^8.5.16",
+    "tailwindcss": "^3.4.19",
     "vite": "^8.1.0"
   }
 }

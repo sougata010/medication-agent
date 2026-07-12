@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Pharmacy Finder | MedGraph Intelligence</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-primary-fixed-variant": "#2d476f",
+                      "on-primary-fixed": "#001b3c",
+                      "on-primary": "#ffffff",
+                      "emergency-red": "#DC2626",
+                      "tertiary-container": "#4f2e00",
+                      "on-primary-container": "#86a0cd",
+                      "tertiary-fixed-dim": "#f2bc82",
+                      "surface-bright": "#faf9fd",
+                      "primary": "#002045",
+                      "on-tertiary": "#ffffff",
+                      "on-error": "#ffffff",
+                      "outline": "#74777f",
+                      "on-surface": "#1a1c1e",
+                      "inverse-on-surface": "#f1f0f4",
+                      "surface-dim": "#dad9dd",
+                      "surface-container-high": "#e9e7eb",
+                      "primary-container": "#1a365d",
+                      "on-tertiary-container": "#c6955e",
+                      "primary-fixed-dim": "#adc7f7",
+                      "on-secondary": "#ffffff",
+                      "error": "#ba1a1a",
+                      "secondary-fixed-dim": "#6bd8cb",
+                      "secondary-fixed": "#89f5e7",
+                      "surface-container-low": "#f4f3f7",
+                      "surface-container-highest": "#e3e2e6",
+                      "clean-slate": "#F8FAFC",
+                      "error-container": "#ffdad6",
+                      "background": "#faf9fd",
+                      "surface-tint": "#455f88",
+                      "on-secondary-container": "#006f66",
+                      "tertiary": "#321b00",
+                      "on-secondary-fixed-variant": "#005049",
+                      "on-background": "#1a1c1e",
+                      "on-tertiary-fixed-variant": "#633f0f",
+                      "border-muted": "#E2E8F0",
+                      "on-error-container": "#93000a",
+                      "surface-container-lowest": "#ffffff",
+                      "surface-container": "#efedf1",
+                      "inverse-surface": "#2f3033",
+                      "surface-variant": "#e3e2e6",
+                      "secondary-container": "#86f2e4",
+                      "on-tertiary-fixed": "#2b1700",
+                      "surface": "#faf9fd",
+                      "on-secondary-fixed": "#00201d",
+                      "text-clinical": "#334155",
+                      "safety-amber": "#D97706",
+                      "inverse-primary": "#adc7f7",
+                      "secondary": "#006a61",
+                      "on-surface-variant": "#43474e",
+                      "primary-fixed": "#d6e3ff",
+                      "outline-variant": "#c4c6cf",
+                      "tertiary-fixed": "#ffddba"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "stack-lg": "32px",
+                      "gutter": "24px",
+                      "stack-sm": "8px",
+                      "unit": "4px",
+                      "margin-desktop": "32px",
+                      "stack-md": "16px",
+                      "container-max-width": "1280px",
+                      "margin-mobile": "16px"
+              },
+              "fontFamily": {
+                      "headline-lg": ["Inter"],
+                      "body-sm": ["Inter"],
+                      "headline-md": ["Inter"],
+                      "citation": ["Inter"],
+                      "label-caps": ["Inter"],
+                      "body-lg": ["Inter"],
+                      "headline-sm": ["Inter"],
+                      "body-md": ["Inter"],
+                      "clinical-data": ["Inter"],
+                      "display": ["Inter"]
+              },
+              "fontSize": {
+                      "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "600"}],
+                      "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                      "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                      "citation": ["11px", {"lineHeight": "14px", "fontWeight": "400"}],
+                      "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                      "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                      "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                      "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                      "clinical-data": ["15px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600"}],
+                      "display": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+              }
+            }
+          }
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-background text-on-background flex h-screen overflow-hidden">
+<!-- SideNavBar -->
+<nav class="hidden md:flex flex-col h-full p-stack-md border-r border-border-muted bg-clean-slate dark:bg-surface-dim text-primary dark:text-primary-fixed-dim font-body-md text-body-md docked left-0 h-screen w-64 z-10 shrink-0">
+<div class="mb-stack-lg flex items-center gap-stack-sm px-stack-sm">
+<span class="material-symbols-outlined text-headline-md text-secondary" style="font-variation-settings: 'FILL' 1;">local_hospital</span>
+<div>
+<h1 class="text-headline-sm font-headline-sm text-primary dark:text-primary-fixed">Clinical Portal</h1>
+<p class="font-citation text-citation text-on-surface-variant">Vigilant Oversight</p>
+</div>
+</div>
+<div class="flex-1 space-y-unit">
+<a class="flex items-center gap-stack-sm px-stack-md py-stack-sm rounded-lg text-on-surface-variant dark:text-outline-variant hover:bg-surface-container-high transition-all" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span>Dashboard</span>
+</a>
+<a class="flex items-center gap-stack-sm px-stack-md py-stack-sm rounded-lg text-on-surface-variant dark:text-outline-variant hover:bg-surface-container-high transition-all" href="#">
+<span class="material-symbols-outlined">medication</span>
+<span>Medication Directory</span>
+</a>
+<a class="flex items-center gap-stack-sm px-stack-md py-stack-sm rounded-lg text-on-surface-variant dark:text-outline-variant hover:bg-surface-container-high transition-all" href="#">
+<span class="material-symbols-outlined">alarm</span>
+<span>Reminders Hub</span>
+</a>
+<a class="flex items-center gap-stack-sm px-stack-md py-stack-sm text-on-secondary-container bg-secondary-container dark:bg-secondary dark:text-on-secondary rounded-lg font-semibold transition-all scale-95 active:scale-100" href="#">
+<span class="material-symbols-outlined">local_pharmacy</span>
+<span>Pharmacy Finder</span>
+</a>
+<a class="flex items-center gap-stack-sm px-stack-md py-stack-sm rounded-lg text-on-surface-variant dark:text-outline-variant hover:bg-surface-container-high transition-all mt-auto" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span>Settings</span>
+</a>
+</div>
+<button class="mt-stack-lg w-full py-stack-sm bg-primary text-on-primary rounded-lg font-clinical-data text-clinical-data hover:bg-primary-container transition-colors shadow-sm">
+            Scan Prescription
+        </button>
+</nav>
+<!-- Main Content Area -->
+<div class="flex-1 flex flex-col h-full overflow-hidden bg-background">
+<!-- TopNavBar -->
+<header class="flex justify-between items-center w-full px-margin-desktop h-16 sticky top-0 z-50 bg-surface dark:bg-on-background shadow-sm text-primary dark:text-primary-fixed font-display text-body-md shrink-0">
+<div class="flex items-center gap-gutter">
+<span class="text-headline-sm font-headline-sm font-bold text-primary dark:text-primary-fixed hidden md:block">MedGraph Intelligence</span>
+<div class="relative max-w-md w-full ml-0 md:ml-stack-lg">
+<span class="material-symbols-outlined absolute left-stack-sm top-1/2 -translate-y-1/2 text-outline">search</span>
+<input class="w-full pl-10 pr-stack-sm py-2 bg-surface-container-low border border-border-muted rounded focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary font-body-sm text-body-sm text-on-surface placeholder-outline transition-colors" placeholder="Search Zip Code or Current Location..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-stack-md">
+<button class="text-on-surface-variant dark:text-outline-variant hover:text-secondary dark:hover:text-secondary-fixed transition-colors cursor-pointer active:opacity-80">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="text-on-surface-variant dark:text-outline-variant hover:text-secondary dark:hover:text-secondary-fixed transition-colors cursor-pointer active:opacity-80">
+<span class="material-symbols-outlined">help_outline</span>
+</button>
+<div class="w-8 h-8 rounded-full bg-surface-variant border border-border-muted overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a clinical researcher wearing a white lab coat, standing against a neutral clinical white background. The lighting is bright and even, typical of a modern medical facility, emphasizing clarity and trust. Soft, diffused overhead lighting highlights the researcher's focused expression. Shot with a shallow depth of field to keep the background clean and distraction-free." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDBD9K6M0-c67nBWTyvzYBGKei1aWtXU9z2C1HukdTk9sn1LCLei1i-hDesdFbQ6unKMwFIXkUA4mY_zjUHSoOxMC5RY1RCNCTvvxX13H69XmQmEYVGbQw7AUb6dw8NBzOMyFR6-jtbjBsYGdpq4hlLedmt81t6yz5U9u3Ix4_Lkv2VYOB7ozvE64mKHxjIZqFz0EPB0Xg4a37sqjjPQjFByHd0RcRshwPIt99obKKyOtsljbmKj1s93wPeW5OKgSyXfeD5WUL2w30"/>
+</div>
+</div>
+</header>
+<!-- Main Split View -->
+<main class="flex-1 flex flex-col md:flex-row overflow-hidden relative">
+<!-- List View (Left) -->
+<div class="w-full md:w-[450px] lg:w-[500px] flex-shrink-0 bg-surface border-r border-border-muted flex flex-col h-full z-10 shadow-[4px_0_15px_rgba(0,0,0,0.02)]">
+<!-- Filter/Header Bar -->
+<div class="p-stack-md border-b border-border-muted bg-clean-slate flex flex-col gap-stack-sm shrink-0">
+<div class="flex justify-between items-end">
+<div>
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Nearby Pharmacies</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Showing results near 10010</p>
+</div>
+<button class="flex items-center gap-unit text-primary hover:text-secondary font-clinical-data text-clinical-data text-sm transition-colors">
+<span class="material-symbols-outlined text-sm">filter_list</span>
+                            Filter
+                        </button>
+</div>
+<!-- Prescription Context -->
+<div class="mt-stack-sm p-stack-sm bg-surface rounded border border-border-muted flex flex-wrap gap-stack-sm items-center">
+<span class="font-label-caps text-label-caps text-outline uppercase">Checking Stock For:</span>
+<span class="inline-flex items-center px-2 py-1 rounded bg-secondary-container text-on-secondary-container font-citation text-citation">Atorvastatin 40mg</span>
+<span class="inline-flex items-center px-2 py-1 rounded bg-secondary-container text-on-secondary-container font-citation text-citation">Metformin 500mg</span>
+</div>
+</div>
+<!-- Pharmacy List -->
+<div class="flex-1 overflow-y-auto p-stack-md space-y-stack-md pb-24 md:pb-stack-md">
+<!-- Pharmacy Card 1 (Active/Selected) -->
+<div class="bg-surface rounded-lg border-2 border-secondary p-stack-md shadow-sm relative cursor-pointer hover:bg-surface-bright transition-colors group">
+<div class="absolute top-stack-md right-stack-md bg-secondary text-on-secondary font-label-caps text-[10px] px-2 py-0.5 rounded tracking-wider">SELECTED</div>
+<div class="flex justify-between items-start mb-stack-sm">
+<div>
+<h3 class="font-headline-sm text-headline-sm text-primary group-hover:text-secondary transition-colors">CVS Pharmacy</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">275 3rd Ave, New York, NY</p>
+</div>
+<div class="text-right">
+<span class="font-clinical-data text-clinical-data text-on-surface block">0.4 mi</span>
+<span class="font-citation text-citation text-secondary">Open until 9PM</span>
+</div>
+</div>
+<div class="border-t border-border-muted pt-stack-sm mt-stack-sm">
+<div class="flex justify-between items-center mb-unit">
+<span class="font-body-sm text-body-sm text-on-surface-variant">Atorvastatin (90 days)</span>
+<div class="flex items-center gap-stack-sm">
+<span class="material-symbols-outlined text-[16px] text-secondary">check_circle</span>
+<span class="font-clinical-data text-clinical-data text-on-surface">$12.00</span>
+</div>
+</div>
+<div class="flex justify-between items-center">
+<span class="font-body-sm text-body-sm text-on-surface-variant">Metformin (90 days)</span>
+<div class="flex items-center gap-stack-sm">
+<span class="material-symbols-outlined text-[16px] text-secondary">check_circle</span>
+<span class="font-clinical-data text-clinical-data text-on-surface">$8.50</span>
+</div>
+</div>
+</div>
+<div class="mt-stack-md flex justify-between items-center bg-clean-slate -mx-stack-md -mb-stack-md p-stack-md rounded-b-lg border-t border-border-muted">
+<div class="font-label-caps text-label-caps text-on-surface-variant">TOTAL COPAY</div>
+<div class="font-headline-md text-headline-md text-primary">$20.50</div>
+</div>
+</div>
+<!-- Pharmacy Card 2 -->
+<div class="bg-surface rounded-lg border border-border-muted p-stack-md shadow-[0_2px_4px_rgba(0,0,0,0.02)] cursor-pointer hover:border-primary hover:shadow-sm transition-all group">
+<div class="flex justify-between items-start mb-stack-sm">
+<div>
+<h3 class="font-headline-sm text-headline-sm text-primary group-hover:text-secondary transition-colors">Walgreens</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">33 E 23rd St, New York, NY</p>
+</div>
+<div class="text-right">
+<span class="font-clinical-data text-clinical-data text-on-surface block">0.6 mi</span>
+<span class="font-citation text-citation text-secondary">24 Hours</span>
+</div>
+</div>
+<div class="border-t border-border-muted pt-stack-sm mt-stack-sm">
+<div class="flex justify-between items-center mb-unit">
+<span class="font-body-sm text-body-sm text-on-surface-variant">Atorvastatin (90 days)</span>
+<div class="flex items-center gap-stack-sm">
+<span class="material-symbols-outlined text-[16px] text-safety-amber">warning</span>
+<span class="font-clinical-data text-clinical-data text-on-surface">$15.00</span>
+</div>
+</div>
+<div class="flex justify-between items-center">
+<span class="font-body-sm text-body-sm text-on-surface-variant">Metformin (90 days)</span>
+<div class="flex items-center gap-stack-sm">
+<span class="material-symbols-outlined text-[16px] text-secondary">check_circle</span>
+<span class="font-clinical-data text-clinical-data text-on-surface">$10.00</span>
+</div>
+</div>
+</div>
+<div class="mt-stack-md flex justify-between items-center bg-clean-slate -mx-stack-md -mb-stack-md p-stack-md rounded-b-lg border-t border-border-muted opacity-80">
+<div class="font-label-caps text-label-caps text-on-surface-variant">TOTAL COPAY</div>
+<div class="font-headline-md text-headline-md text-on-surface-variant">$25.00</div>
+</div>
+<div class="mt-stack-sm pt-stack-sm flex items-center gap-unit text-safety-amber font-citation text-citation bg-error-container/20 p-2 rounded">
+<span class="material-symbols-outlined text-[14px]">info</span>
+<span>Atorvastatin stock limited. Call to confirm.</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Map View (Right) -->
+<div class="hidden md:block flex-1 bg-surface-variant relative h-full">
+<!-- Map Placeholder Image -->
+<div class="absolute inset-0 w-full h-full bg-cover bg-center" data-alt="A highly detailed, professional, light-mode clinical map interface showing a section of Manhattan, New York. The map style is clean, vector-based, and muted, using a palette of soft whites, pale grays, and subtle blues typical of enterprise medical software. Street lines are thin and crisp. Several map markers are visible, specifically stylized as medical or pharmacy pins in deep teal and clinical blue. The lighting is flat and uniform, emphasizing legibility and precise data visualization over artistic flourish." data-location="Manhattan, NY" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuB3DNy11BM56DyuxCeJBXQusSfN59HxVc8GpBQab6XwTNXUmVlNt3qihsoIZ3o9wBfgg6DQrspxlOuVMYsN5ztj05MqGO6p7taQarv6T0f7mmpuwueNHfntY6JypP8_zywVl1lVD25czVbwG7pDFbw2zp0BQuq0NjzE8prOUq7-pSsJxSKo_byvLJireHseyJHOOBJCwC0xVXzDW83T_T8EHJiqk6uZgsUkK0cjRKhY0GVlxspp8CaerY6i49G51RNm0ahr2FQb9Uc')"></div>
+<!-- Map Overlays -->
+<div class="absolute top-stack-md right-stack-md flex flex-col gap-stack-sm">
+<button class="w-10 h-10 bg-surface rounded shadow-sm border border-border-muted flex items-center justify-center text-on-surface hover:text-primary transition-colors">
+<span class="material-symbols-outlined">add</span>
+</button>
+<button class="w-10 h-10 bg-surface rounded shadow-sm border border-border-muted flex items-center justify-center text-on-surface hover:text-primary transition-colors">
+<span class="material-symbols-outlined">remove</span>
+</button>
+<button class="w-10 h-10 bg-surface rounded shadow-sm border border-border-muted flex items-center justify-center text-primary mt-stack-sm hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined">my_location</span>
+</button>
+</div>
+</div>
+</main>
+</div>
+</body></html>

@@ -11,10 +11,11 @@ from dotenv import load_dotenv
 # Load env configurations
 load_dotenv()
 
-# Inject path
+# Inject path to project root
 agent_dir = os.path.dirname(os.path.abspath(__file__))
-if agent_dir not in sys.path:
-    sys.path.insert(0, agent_dir)
+root_dir = os.path.dirname(agent_dir)
+if root_dir not in sys.path:
+    sys.path.insert(0, root_dir)
 
 from agent.graph import run_agent
 from agent.tools.ocr import ocr
@@ -157,4 +158,4 @@ async def health_check():
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("app:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run("agent.app:app", host="0.0.0.0", port=8000, reload=True)

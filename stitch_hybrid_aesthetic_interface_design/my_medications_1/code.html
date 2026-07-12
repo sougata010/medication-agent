@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+
+<html class="h-full" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>MedGraph AI - Medication Management</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-bright": "#faf9fd",
+                        "emergency-red": "#DC2626",
+                        "on-primary-fixed": "#001b3c",
+                        "safety-amber": "#D97706",
+                        "inverse-surface": "#2f3033",
+                        "on-primary-fixed-variant": "#2d476f",
+                        "primary-fixed": "#d6e3ff",
+                        "tertiary-container": "#4f2e00",
+                        "on-tertiary": "#ffffff",
+                        "surface": "#faf9fd",
+                        "on-error-container": "#93000a",
+                        "surface-variant": "#e3e2e6",
+                        "on-secondary-fixed": "#00201d",
+                        "on-primary": "#ffffff",
+                        "surface-container": "#efedf1",
+                        "surface-container-highest": "#e3e2e6",
+                        "on-tertiary-fixed-variant": "#633f0f",
+                        "tertiary": "#321b00",
+                        "background": "#faf9fd",
+                        "tertiary-fixed": "#ffddba",
+                        "on-secondary-container": "#006f66",
+                        "secondary-container": "#86f2e4",
+                        "on-primary-container": "#86a0cd",
+                        "clean-slate": "#F8FAFC",
+                        "primary-container": "#1a365d",
+                        "text-clinical": "#334155",
+                        "secondary-fixed-dim": "#6bd8cb",
+                        "surface-tint": "#455f88",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary": "#006a61",
+                        "on-surface-variant": "#43474e",
+                        "inverse-primary": "#adc7f7",
+                        "on-secondary-fixed-variant": "#005049",
+                        "error": "#ba1a1a",
+                        "outline-variant": "#c4c6cf",
+                        "tertiary-fixed-dim": "#f2bc82",
+                        "primary-fixed-dim": "#adc7f7",
+                        "on-error": "#ffffff",
+                        "on-tertiary-fixed": "#2b1700",
+                        "on-secondary": "#ffffff",
+                        "surface-dim": "#dad9dd",
+                        "primary": "#002045",
+                        "secondary-fixed": "#89f5e7",
+                        "on-background": "#1a1c1e",
+                        "inverse-on-surface": "#f1f0f4",
+                        "surface-container-low": "#f4f3f7",
+                        "on-tertiary-container": "#c6955e",
+                        "outline": "#74777f",
+                        "error-container": "#ffdad6",
+                        "border-muted": "#E2E8F0",
+                        "on-surface": "#1a1c1e",
+                        "surface-container-high": "#e9e7eb"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-md": "16px",
+                        "margin-mobile": "16px",
+                        "gutter": "24px",
+                        "container-max-width": "1280px",
+                        "stack-lg": "32px",
+                        "margin-desktop": "32px",
+                        "stack-sm": "8px",
+                        "unit": "4px"
+                    },
+                    "fontFamily": {
+                        "headline-sm": ["Inter"],
+                        "body-md": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "clinical-data": ["Inter"],
+                        "label-caps": ["Inter"],
+                        "citation": ["Inter"],
+                        "display": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "600" }],
+                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "clinical-data": ["15px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600" }],
+                        "label-caps": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "700" }],
+                        "citation": ["11px", { "lineHeight": "14px", "fontWeight": "400" }],
+                        "display": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-surface h-full flex flex-col md:flex-row text-on-surface overflow-hidden">
+<!-- Desktop Side Navigation (Web) -->
+<nav class="hidden md:flex flex-col z-40 bg-clean-slate dark:bg-surface-container-low border-r border-border-muted dark:border-outline-variant w-64 h-full flex-shrink-0">
+<div class="p-margin-desktop border-b border-border-muted">
+<h1 class="font-headline-sm text-headline-sm font-bold text-primary dark:text-on-primary-fixed">MedGraph AI</h1>
+<p class="font-label-caps text-label-caps text-text-clinical mt-stack-sm uppercase">Patient Portal</p>
+</div>
+<div class="flex-1 overflow-y-auto py-stack-md">
+<ul class="space-y-unit">
+<li>
+<a class="flex items-center gap-stack-sm text-on-surface-variant dark:text-outline mx-2 px-4 py-2 hover:bg-surface-container-highest dark:hover:bg-surface-variant rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">dashboard</span>
+<span class="font-body-md text-body-md">Dashboard</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-stack-sm bg-secondary-container dark:bg-secondary text-on-secondary-container dark:text-on-secondary font-bold rounded-lg mx-2 px-4 py-2 opacity-80 scale-95 transition-all duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">medication</span>
+<span class="font-body-md text-body-md">Medications</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-stack-sm text-on-surface-variant dark:text-outline mx-2 px-4 py-2 hover:bg-surface-container-highest dark:hover:bg-surface-variant rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">biotech</span>
+<span class="font-body-md text-body-md">Lab Reports</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-stack-sm text-on-surface-variant dark:text-outline mx-2 px-4 py-2 hover:bg-surface-container-highest dark:hover:bg-surface-variant rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">event_upcoming</span>
+<span class="font-body-md text-body-md">Reminders</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-stack-sm text-on-surface-variant dark:text-outline mx-2 px-4 py-2 hover:bg-surface-container-highest dark:hover:bg-surface-variant rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">local_pharmacy</span>
+<span class="font-body-md text-body-md">Pharmacy Finder</span>
+</a>
+</li>
+</ul>
+</div>
+<div class="p-stack-md border-t border-border-muted">
+<button class="w-full bg-emergency-red text-on-primary font-body-md text-body-md py-2 rounded-lg hover:opacity-90 transition-opacity flex items-center justify-center gap-2">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">warning</span>
+                Emergency Protocol
+            </button>
+</div>
+<div class="p-stack-md border-t border-border-muted bg-surface-container-low">
+<ul class="space-y-unit">
+<li>
+<a class="flex items-center gap-stack-sm text-on-surface-variant dark:text-outline mx-2 px-4 py-2 hover:bg-surface-container-highest rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">settings</span>
+<span class="font-body-sm text-body-sm">Settings</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-stack-sm text-on-surface-variant dark:text-outline mx-2 px-4 py-2 hover:bg-surface-container-highest rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">gavel</span>
+<span class="font-body-sm text-body-sm">Disclaimers</span>
+</a>
+</li>
+</ul>
+</div>
+</nav>
+<!-- Mobile Top App Bar -->
+<header class="md:hidden flex justify-between items-center w-full px-margin-mobile py-stack-sm bg-surface dark:bg-background border-b border-border-muted dark:border-outline-variant shrink-0 z-40 relative">
+<h1 class="font-display text-headline-md font-bold text-primary dark:text-inverse-primary">MedGraph AI</h1>
+<button class="text-primary dark:text-inverse-primary p-2">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">menu</span>
+</button>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-1 flex flex-col md:flex-row overflow-hidden relative bg-surface-bright">
+<!-- Left Pane: Medication List & Uploads -->
+<div class="flex-1 flex flex-col h-full overflow-hidden border-r border-border-muted bg-surface">
+<header class="px-margin-desktop py-stack-md flex justify-between items-end border-b border-border-muted bg-white shrink-0">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-primary">Active Medications</h2>
+<p class="font-body-sm text-body-sm text-text-clinical mt-unit">Last reconciled: Today, 09:41 AM</p>
+</div>
+<button class="bg-secondary text-on-secondary font-body-sm text-body-sm px-4 py-2 rounded-lg hover:opacity-90 transition-opacity flex items-center gap-2 shadow-sm">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 0;">add</span>
+                    Add Medication
+                </button>
+</header>
+<div class="flex-1 overflow-y-auto p-margin-desktop space-y-gutter relative">
+<!-- Medication Data Table (Card List on Mobile) -->
+<div class="bg-white rounded-lg border border-border-muted shadow-sm overflow-hidden">
+<div class="grid grid-cols-12 gap-4 px-6 py-3 bg-clean-slate border-b border-border-muted">
+<div class="col-span-5 md:col-span-4 font-label-caps text-label-caps text-text-clinical uppercase">Medicine</div>
+<div class="col-span-3 md:col-span-2 font-label-caps text-label-caps text-text-clinical uppercase hidden md:block">Dosage</div>
+<div class="col-span-4 md:col-span-3 font-label-caps text-label-caps text-text-clinical uppercase">Frequency</div>
+<div class="col-span-3 md:col-span-3 font-label-caps text-label-caps text-text-clinical uppercase text-right">Status</div>
+</div>
+<!-- Row 1 (Active) -->
+<div class="grid grid-cols-12 gap-4 px-6 py-4 border-b border-border-muted hover:bg-surface-container-lowest cursor-pointer bg-primary-fixed/10 transition-colors items-center">
+<div class="col-span-12 md:col-span-4 flex flex-col">
+<span class="font-clinical-data text-clinical-data text-primary">Atorvastatin</span>
+<span class="font-body-sm text-body-sm text-text-clinical">Lipitor</span>
+</div>
+<div class="col-span-6 md:col-span-2 flex items-center">
+<span class="font-clinical-data text-clinical-data text-on-surface">40 mg</span>
+</div>
+<div class="col-span-6 md:col-span-3 flex items-center">
+<span class="font-body-sm text-body-sm text-on-surface">1x Daily (Evening)</span>
+</div>
+<div class="col-span-12 md:col-span-3 flex items-center justify-end">
+<span class="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-secondary-container text-on-secondary-container font-label-caps text-label-caps">
+<span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+                                Verified
+                            </span>
+</div>
+</div>
+<!-- Row 2 -->
+<div class="grid grid-cols-12 gap-4 px-6 py-4 border-b border-border-muted hover:bg-surface-container-lowest cursor-pointer transition-colors items-center">
+<div class="col-span-12 md:col-span-4 flex flex-col">
+<span class="font-clinical-data text-clinical-data text-primary">Metformin HCL</span>
+<span class="font-body-sm text-body-sm text-text-clinical">Glucophage</span>
+</div>
+<div class="col-span-6 md:col-span-2 flex items-center">
+<span class="font-clinical-data text-clinical-data text-on-surface">500 mg</span>
+</div>
+<div class="col-span-6 md:col-span-3 flex items-center">
+<span class="font-body-sm text-body-sm text-on-surface">2x Daily (With Meals)</span>
+</div>
+<div class="col-span-12 md:col-span-3 flex items-center justify-end">
+<span class="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-secondary-container text-on-secondary-container font-label-caps text-label-caps">
+<span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+                                Verified
+                            </span>
+</div>
+</div>
+<!-- Row 3 (Low Confidence / Needs Review) -->
+<div class="grid grid-cols-12 gap-4 px-6 py-4 hover:bg-surface-container-lowest cursor-pointer transition-colors items-center">
+<div class="col-span-12 md:col-span-4 flex flex-col">
+<span class="font-clinical-data text-clinical-data text-primary">Lisinopril</span>
+<span class="font-body-sm text-body-sm text-text-clinical">Prinivil</span>
+</div>
+<div class="col-span-6 md:col-span-2 flex items-center">
+<span class="font-clinical-data text-clinical-data text-on-surface px-1 bg-safety-amber/20 rounded">10 mg?</span>
+</div>
+<div class="col-span-6 md:col-span-3 flex items-center">
+<span class="font-body-sm text-body-sm text-on-surface">1x Daily</span>
+</div>
+<div class="col-span-12 md:col-span-3 flex items-center justify-end">
+<span class="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-safety-amber/20 text-on-tertiary-fixed-variant font-label-caps text-label-caps">
+<span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">error</span>
+                                Needs Review
+                            </span>
+</div>
+</div>
+</div>
+<!-- OCR Upload History -->
+<div class="mt-stack-lg">
+<h3 class="font-headline-sm text-headline-sm text-primary mb-stack-md flex items-center gap-2">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">document_scanner</span>
+                        Recent Prescriptions
+                    </h3>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+<!-- Upload Card 1 -->
+<div class="bg-white rounded-lg border border-border-muted p-4 shadow-[0_2px_4px_rgba(0,0,0,0.02)] flex flex-col gap-3">
+<div class="flex justify-between items-start">
+<div class="flex items-center gap-2">
+<div class="w-10 h-10 bg-clean-slate rounded flex items-center justify-center border border-border-muted">
+<span class="material-symbols-outlined text-text-clinical" style="font-variation-settings: 'FILL' 0;">image</span>
+</div>
+<div>
+<p class="font-clinical-data text-clinical-data text-primary">Rx_Scan_Oct12.jpg</p>
+<p class="font-citation text-citation text-text-clinical">Uploaded 2 days ago</p>
+</div>
+</div>
+<span class="w-2 h-2 rounded-full bg-secondary-fixed"></span>
+</div>
+<div class="mt-auto pt-2">
+<button class="w-full text-center py-1.5 border border-primary text-primary font-body-sm text-body-sm rounded hover:bg-primary-fixed/20 transition-colors">
+                                    Review Extraction
+                                </button>
+</div>
+</div>
+<!-- Upload Card 2 -->
+<div class="bg-white rounded-lg border border-border-muted p-4 shadow-[0_2px_4px_rgba(0,0,0,0.02)] flex flex-col gap-3 opacity-70">
+<div class="flex justify-between items-start">
+<div class="flex items-center gap-2">
+<div class="w-10 h-10 bg-clean-slate rounded flex items-center justify-center border border-border-muted">
+<span class="material-symbols-outlined text-text-clinical" style="font-variation-settings: 'FILL' 0;">description</span>
+</div>
+<div>
+<p class="font-clinical-data text-clinical-data text-primary">CVS_Refill_Sep.pdf</p>
+<p class="font-citation text-citation text-text-clinical">Processed Sep 28</p>
+</div>
+</div>
+</div>
+<div class="mt-auto pt-2">
+<button class="w-full text-center py-1.5 border border-border-muted text-text-clinical font-body-sm text-body-sm rounded bg-surface-container-low cursor-not-allowed">
+                                    Processed
+                                </button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Pane: Detail Card (Atorvastatin) -->
+<aside class="w-full md:w-[400px] lg:w-[480px] h-full overflow-y-auto bg-clean-slate border-l border-border-muted flex flex-col shrink-0">
+<div class="p-6 border-b border-border-muted bg-white sticky top-0 z-10">
+<div class="flex justify-between items-start">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-primary leading-tight">Atorvastatin</h2>
+<p class="font-body-md text-body-md text-text-clinical mt-1">Generic for Lipitor</p>
+</div>
+<button class="text-text-clinical hover:text-primary transition-colors">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+<div class="flex gap-2 mt-4">
+<span class="px-3 py-1 bg-secondary-container/30 text-secondary font-label-caps text-label-caps rounded border border-secondary-container">Statin</span>
+<span class="px-3 py-1 bg-surface-container text-on-surface-variant font-label-caps text-label-caps rounded border border-border-muted">Cholesterol</span>
+</div>
+</div>
+<div class="p-6 space-y-stack-lg">
+<!-- Clinical Summary -->
+<section>
+<h4 class="font-label-caps text-label-caps text-text-clinical uppercase tracking-wider mb-stack-sm flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">info</span> Mechanism of Action
+                    </h4>
+<p class="font-body-sm text-body-sm text-on-surface leading-relaxed">
+                        Atorvastatin is a selective, competitive inhibitor of HMG-CoA reductase, the rate-limiting enzyme that converts 3-hydroxy-3-methylglutaryl-coenzyme A to mevalonate, a precursor of sterols, including cholesterol.
+                    </p>
+<div class="mt-2 text-right">
+<a class="font-citation text-citation text-primary hover:underline flex items-center justify-end gap-1" href="#">
+                            Source: FDA Label <span class="material-symbols-outlined text-[12px]">open_in_new</span>
+</a>
+</div>
+</section>
+<!-- Interactions -->
+<section>
+<h4 class="font-label-caps text-label-caps text-text-clinical uppercase tracking-wider mb-stack-sm flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">warning</span> Interaction Summary
+                    </h4>
+<div class="bg-white border border-border-muted rounded-lg overflow-hidden shadow-sm">
+<!-- High Severity -->
+<div class="p-4 border-b border-border-muted flex gap-3 items-start bg-error-container/10">
+<span class="material-symbols-outlined text-error mt-0.5" style="font-variation-settings: 'FILL' 1;">error</span>
+<div>
+<p class="font-clinical-data text-clinical-data text-on-surface">Grapefruit Juice</p>
+<p class="font-body-sm text-body-sm text-text-clinical mt-1">
+                                    Concomitant administration with large quantities of grapefruit juice significantly increases AUC of atorvastatin, increasing risk of myopathy.
+                                </p>
+</div>
+</div>
+<!-- Moderate Severity -->
+<div class="p-4 flex gap-3 items-start">
+<span class="material-symbols-outlined text-safety-amber mt-0.5" style="font-variation-settings: 'FILL' 1;">warning</span>
+<div>
+<p class="font-clinical-data text-clinical-data text-on-surface">Clarithromycin</p>
+<p class="font-body-sm text-body-sm text-text-clinical mt-1">
+                                    CYP3A4 inhibitor. May increase plasma concentrations of atorvastatin. Dosage adjustment recommended if concurrent use is necessary.
+                                </p>
+</div>
+</div>
+</div>
+</section>
+<!-- Adherence Log Mini -->
+<section>
+<h4 class="font-label-caps text-label-caps text-text-clinical uppercase tracking-wider mb-stack-sm flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">calendar_today</span> 7-Day Adherence
+                    </h4>
+<div class="flex justify-between items-center bg-white p-4 rounded-lg border border-border-muted shadow-sm">
+<!-- Chips representing days -->
+<div class="flex flex-col items-center gap-1">
+<span class="font-citation text-citation text-text-clinical">M</span>
+<div class="w-6 h-6 rounded-full bg-secondary text-white flex items-center justify-center"><span class="material-symbols-outlined text-[14px]">check</span></div>
+</div>
+<div class="flex flex-col items-center gap-1">
+<span class="font-citation text-citation text-text-clinical">T</span>
+<div class="w-6 h-6 rounded-full bg-secondary text-white flex items-center justify-center"><span class="material-symbols-outlined text-[14px]">check</span></div>
+</div>
+<div class="flex flex-col items-center gap-1">
+<span class="font-citation text-citation text-text-clinical">W</span>
+<div class="w-6 h-6 rounded-full bg-safety-amber text-white flex items-center justify-center"><span class="material-symbols-outlined text-[14px]">priority_high</span></div>
+</div>
+<div class="flex flex-col items-center gap-1">
+<span class="font-citation text-citation text-text-clinical">T</span>
+<div class="w-6 h-6 rounded-full bg-secondary text-white flex items-center justify-center"><span class="material-symbols-outlined text-[14px]">check</span></div>
+</div>
+<div class="flex flex-col items-center gap-1">
+<span class="font-citation text-citation text-text-clinical">F</span>
+<div class="w-6 h-6 rounded-full bg-secondary text-white flex items-center justify-center"><span class="material-symbols-outlined text-[14px]">check</span></div>
+</div>
+<div class="flex flex-col items-center gap-1">
+<span class="font-citation text-citation text-text-clinical">S</span>
+<div class="w-6 h-6 rounded-full bg-surface-variant text-text-clinical flex items-center justify-center"><span class="material-symbols-outlined text-[14px]">remove</span></div>
+</div>
+<div class="flex flex-col items-center gap-1">
+<span class="font-citation text-citation text-text-clinical">S</span>
+<div class="w-6 h-6 rounded-full bg-surface-variant text-text-clinical flex items-center justify-center"><span class="material-symbols-outlined text-[14px]">remove</span></div>
+</div>
+</div>
+</section>
+</div>
+</aside>
+</main>
+<!-- Footer -->
+<footer class="fixed bottom-0 w-full z-50 flex flex-col md:flex-row justify-between items-center px-margin-mobile py-2 bg-emergency-red dark:bg-emergency-red shadow-lg shrink-0">
+<div class="font-label-caps text-label-caps uppercase tracking-widest text-on-primary">
+            © 2024 MedGraph AI. Clinical Decision Support Tool. Not a substitute for professional medical advice.
+        </div>
+<div class="flex gap-4 mt-2 md:mt-0">
+<a class="text-on-primary opacity-90 font-citation text-citation hover:opacity-100 transition-opacity focus:ring-2 focus:ring-white" href="#">Emergency Contacts</a>
+<a class="text-on-primary opacity-90 font-citation text-citation hover:opacity-100 transition-opacity focus:ring-2 focus:ring-white" href="#">Terms of Service</a>
+<a class="text-on-primary opacity-90 font-citation text-citation hover:opacity-100 transition-opacity focus:ring-2 focus:ring-white" href="#">Privacy Policy</a>
+<a class="text-on-primary opacity-90 font-citation text-citation hover:opacity-100 transition-opacity focus:ring-2 focus:ring-white" href="#">Source Citations</a>
+</div>
+</footer>
+</body></html>

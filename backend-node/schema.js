@@ -3,6 +3,7 @@ const { gql } = require('graphql-tag');
 const typeDefs = gql`
   type User {
     id: ID!
+    email: String!
     name: String!
     age: Int
     gender: String
@@ -68,6 +69,43 @@ const typeDefs = gql`
     unit: String!
     siValue: Float
     referenceRange: String
+    status: String
+    severity: String
+    chemicalType: String
+    category: String
+    normalMin: Float
+    normalMax: Float
+    confidence: Float
+    risk: String
+    recommendation: String
+  }
+
+  type HealthMetrics {
+    hydration: String!
+    sleep: String!
+    bloodPressure: String!
+  }
+
+  type Insight {
+    id: ID!
+    text: String!
+    type: String!
+  }
+
+  type AIAnalysis {
+    overallRisk: String!
+    drugInteraction: String!
+    foodInteraction: String!
+    kidneyWarning: String!
+    liverSafety: String!
+    confidence: String!
+  }
+
+  type DashboardMetrics {
+    healthMetrics: HealthMetrics!
+    insights: [Insight!]!
+    weeklyAdherence: [Int!]!
+    aiAnalysis: AIAnalysis!
   }
 
   type Reminder {
@@ -144,9 +182,35 @@ const typeDefs = gql`
     getReminders(userId: ID!): [Reminder!]!
     getChatSessions(userId: ID!): [ChatSession!]!
     getChatMessages(sessionId: ID!): [ChatMessage!]!
+    getDashboardMetrics(userId: ID!): DashboardMetrics!
+    getLabReports(userId: ID!): [LabReport!]!
+  }
+
+  type AuthPayload {
+    token: String
+    user: User
+    message: String
+  }
+
+  type PasskeyOptions {
+    challenge: String!
+    optionsJson: String!
   }
 
   type Mutation {
+    # Auth Mutations
+    register(email: String!, password: String!, name: String!): AuthPayload!
+    verifyOTP(email: String!, otp: String!): AuthPayload!
+    login(email: String!, password: String!): AuthPayload!
+    googleLogin(token: String!): AuthPayload!
+    generatePasskeyRegistrationOptions(email: String!): PasskeyOptions!
+    verifyPasskeyRegistration(email: String!, responseJson: String!): AuthPayload!
+    generatePasskeyAuthenticationOptions(email: String!): PasskeyOptions!
+    verifyPasskeyAuthentication(email: String!, responseJson: String!): AuthPayload!
+    requestPasswordReset(email: String!): AuthPayload!
+    resetPassword(email: String!, otp: String!, newPassword: String!): AuthPayload!
+
+    # Existing Mutations
     createUser(
       name: String!
       age: Int

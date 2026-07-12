@@ -11,7 +11,13 @@ class User(Base):
     __tablename__ = 'users'
     
     id = Column(Integer, primary_key=True, autoincrement=True)
+    email = Column(String(200), unique=True, nullable=False)
+    password_hash = Column(String(200), nullable=True)
     name = Column(String(100), nullable=False)
+    google_id = Column(String(200), nullable=True, unique=True)
+    is_verified = Column(Boolean, default=False)
+    otp_code = Column(String(10), nullable=True)
+    otp_expiry = Column(DateTime, nullable=True)
     age = Column(Integer, nullable=True)
     gender = Column(String(50), nullable=True)
     language = Column(String(50), default='en')
@@ -23,6 +29,20 @@ class User(Base):
     lab_reports = relationship("LabReport", back_populates="user", cascade="all, delete-orphan")
     reminders = relationship("Reminder", back_populates="user", cascade="all, delete-orphan")
     conversation_sessions = relationship("ConversationSession", back_populates="user", cascade="all, delete-orphan")
+    webauthn_credentials = relationship("WebauthnCredential", back_populates="user", cascade="all, delete-orphan")
+
+class WebauthnCredential(Base):
+    __tablename__ = 'webauthn_credentials'
+    
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    user_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
+    credential_id = Column(String(255), unique=True, nullable=False)
+    public_key = Column(Text, nullable=False)
+    counter = Column(Integer, default=0)
+    transports = Column(String(255), nullable=True)
+    created_at = Column(DateTime, default=datetime.datetime.utcnow)
+    
+    user = relationship("User", back_populates="webauthn_credentials")
 
 class MedicalProfile(Base):
     __tablename__ = 'medical_profiles'
@@ -96,6 +116,17 @@ class LabParameter(Base):
     unit = Column(String(50), nullable=False) # e.g. "mg/dL"
     si_value = Column(Float, nullable=True)
     reference_range = Column(String(100), nullable=True) # e.g. "0.7 - 1.3"
+    
+    # Rich fields for frontend
+    status = Column(String(50), nullable=True)
+    severity = Column(String(50), nullable=True)
+    chemical_type = Column(String(100), nullable=True)
+    category = Column(String(100), nullable=True)
+    normal_min = Column(Float, nullable=True)
+    normal_max = Column(Float, nullable=True)
+    confidence = Column(Float, nullable=True)
+    risk = Column(Text, nullable=True)
+    recommendation = Column(Text, nullable=True)
     
     lab_report = relationship("LabReport", back_populates="parameters")
 

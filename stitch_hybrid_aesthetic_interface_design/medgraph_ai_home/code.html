@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>MedGraph AI</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-container": "#86f2e4",
+                        "error-container": "#ffdad6",
+                        "surface-tint": "#455f88",
+                        "surface-container-highest": "#e3e2e6",
+                        "safety-amber": "#D97706",
+                        "outline": "#74777f",
+                        "surface-bright": "#faf9fd",
+                        "primary-container": "#1a365d",
+                        "emergency-red": "#DC2626",
+                        "on-tertiary-container": "#c6955e",
+                        "tertiary-fixed-dim": "#f2bc82",
+                        "on-tertiary-fixed-variant": "#633f0f",
+                        "surface-container-high": "#e9e7eb",
+                        "tertiary-fixed": "#ffddba",
+                        "on-secondary-fixed-variant": "#005049",
+                        "on-primary-fixed-variant": "#2d476f",
+                        "on-surface-variant": "#43474e",
+                        "outline-variant": "#c4c6cf",
+                        "on-error-container": "#93000a",
+                        "clean-slate": "#F8FAFC",
+                        "surface": "#faf9fd",
+                        "on-primary-container": "#86a0cd",
+                        "on-secondary-fixed": "#00201d",
+                        "secondary-fixed-dim": "#6bd8cb",
+                        "tertiary": "#321b00",
+                        "primary-fixed": "#d6e3ff",
+                        "on-tertiary-fixed": "#2b1700",
+                        "on-surface": "#1a1c1e",
+                        "surface-container": "#efedf1",
+                        "primary": "#002045",
+                        "surface-container-lowest": "#ffffff",
+                        "error": "#ba1a1a",
+                        "inverse-primary": "#adc7f7",
+                        "secondary": "#006a61",
+                        "on-secondary": "#ffffff",
+                        "on-background": "#1a1c1e",
+                        "on-secondary-container": "#006f66",
+                        "primary-fixed-dim": "#adc7f7",
+                        "tertiary-container": "#4f2e00",
+                        "surface-dim": "#dad9dd",
+                        "surface-container-low": "#f4f3f7",
+                        "on-primary-fixed": "#001b3c",
+                        "background": "#faf9fd",
+                        "on-primary": "#ffffff",
+                        "inverse-on-surface": "#f1f0f4",
+                        "text-clinical": "#334155",
+                        "surface-variant": "#e3e2e6",
+                        "on-error": "#ffffff",
+                        "border-muted": "#E2E8F0",
+                        "secondary-fixed": "#89f5e7",
+                        "on-tertiary": "#ffffff",
+                        "inverse-surface": "#2f3033"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "unit": "4px",
+                        "gutter": "24px",
+                        "stack-sm": "8px",
+                        "stack-md": "16px",
+                        "margin-desktop": "32px",
+                        "container-max-width": "1280px",
+                        "stack-lg": "32px",
+                        "margin-mobile": "16px"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Inter"],
+                        "headline-sm": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "citation": ["Inter"],
+                        "body-md": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "label-caps": ["Inter"],
+                        "display": ["Inter"],
+                        "clinical-data": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "600" }],
+                        "citation": ["11px", { "lineHeight": "14px", "fontWeight": "400" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "label-caps": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "700" }],
+                        "display": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "clinical-data": ["15px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .pb-safe { padding-bottom: env(safe-area-inset-bottom); }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface font-body-md antialiased md:hidden pb-24">
+<!-- TopAppBar -->
+<header class="w-full top-0 bg-surface flex justify-between items-center px-margin-mobile h-16 border-b border-muted">
+<div class="flex items-center gap-2 cursor-pointer active:opacity-80">
+<span class="material-symbols-outlined text-primary" data-icon="clinical_notes">clinical_notes</span>
+<span class="font-headline-md text-headline-md font-bold text-primary">MedGraph AI</span>
+</div>
+<div class="flex items-center cursor-pointer active:opacity-80 hover:bg-surface-container-low transition-colors rounded-full p-2">
+<span class="material-symbols-outlined text-primary" data-icon="notifications">notifications</span>
+</div>
+</header>
+<!-- Main Content -->
+<main class="px-margin-mobile pt-stack-lg flex flex-col gap-stack-lg">
+<!-- Hero Section -->
+<section class="flex flex-col gap-stack-md text-center">
+<h1 class="font-headline-lg text-headline-lg text-primary">Understand your prescriptions, stay on schedule, and manage medicines safely.</h1>
+<p class="font-body-md text-body-md text-on-surface-variant">The clinical-grade tool for managing your health protocols with precision and clarity.</p>
+<button class="bg-secondary text-on-secondary font-label-caps text-label-caps rounded px-6 py-3 w-full mt-stack-sm active:scale-95 transition-all">Get Started Free</button>
+</section>
+<!-- Illustration/Graphic Area -->
+<section class="rounded-xl overflow-hidden shadow-sm border border-muted bg-surface-container-lowest">
+<div class="p-stack-md bg-clean-slate border-b border-muted flex justify-between items-center">
+<span class="font-headline-sm text-headline-sm text-primary">Patient Overview</span>
+<span class="material-symbols-outlined text-secondary" data-icon="check_circle">check_circle</span>
+</div>
+<div class="p-stack-md flex flex-col gap-stack-sm">
+<div class="flex justify-between items-center py-2 border-b border-surface-variant">
+<div>
+<p class="font-clinical-data text-clinical-data text-text-clinical">Lisinopril 10mg</p>
+<p class="font-citation text-citation text-on-surface-variant">Daily at 08:00</p>
+</div>
+<div class="bg-secondary-container text-on-secondary-container px-3 py-1 rounded-full font-label-caps text-label-caps">Taken</div>
+</div>
+<div class="flex justify-between items-center py-2 border-b border-surface-variant">
+<div>
+<p class="font-clinical-data text-clinical-data text-text-clinical">Atorvastatin 20mg</p>
+<p class="font-citation text-citation text-on-surface-variant">Daily at 20:00</p>
+</div>
+<div class="bg-surface-variant text-on-surface-variant px-3 py-1 rounded-full font-label-caps text-label-caps">Upcoming</div>
+</div>
+</div>
+</section>
+<!-- Value Props -->
+<section class="grid grid-cols-1 gap-stack-md">
+<div class="flex gap-stack-md items-start p-stack-md rounded-xl bg-clean-slate border border-muted">
+<span class="material-symbols-outlined text-secondary text-3xl" data-icon="verified_user">verified_user</span>
+<div>
+<h3 class="font-headline-sm text-headline-sm text-primary mb-1">Safety First</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Automatic interaction checks and dosage verification for complete peace of mind.</p>
+</div>
+</div>
+<div class="flex gap-stack-md items-start p-stack-md rounded-xl bg-clean-slate border border-muted">
+<span class="material-symbols-outlined text-primary text-3xl" data-icon="insights">insights</span>
+<div>
+<h3 class="font-headline-sm text-headline-sm text-primary mb-1">Clear Insights</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Track adherence and view clinical-grade reports to share with your healthcare provider.</p>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center h-20 px-2 pb-safe bg-surface shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-50">
+<a class="flex flex-col items-center justify-center bg-secondary-container text-on-secondary-container rounded-xl px-3 py-1 hover:text-secondary transition-all active:scale-95 duration-200 cursor-pointer" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-label-caps text-label-caps mt-1">Dashboard</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-3 py-1 hover:text-secondary transition-all active:scale-95 duration-200 cursor-pointer" href="#">
+<span class="material-symbols-outlined" data-icon="medication">medication</span>
+<span class="font-label-caps text-label-caps mt-1">Medications</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-3 py-1 hover:text-secondary transition-all active:scale-95 duration-200 cursor-pointer" href="#">
+<span class="material-symbols-outlined" data-icon="alarm">alarm</span>
+<span class="font-label-caps text-label-caps mt-1">Reminders</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-3 py-1 hover:text-secondary transition-all active:scale-95 duration-200 cursor-pointer" href="#">
+<span class="material-symbols-outlined" data-icon="local_pharmacy">local_pharmacy</span>
+<span class="font-label-caps text-label-caps mt-1">Pharmacy</span>
+</a>
+</nav>
+</body></html>

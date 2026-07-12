@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>Atorvastatin Profile - MedGraph AI</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-container": "#86f2e4",
+                        "error-container": "#ffdad6",
+                        "surface-tint": "#455f88",
+                        "surface-container-highest": "#e3e2e6",
+                        "safety-amber": "#D97706",
+                        "outline": "#74777f",
+                        "surface-bright": "#faf9fd",
+                        "primary-container": "#1a365d",
+                        "emergency-red": "#DC2626",
+                        "on-tertiary-container": "#c6955e",
+                        "tertiary-fixed-dim": "#f2bc82",
+                        "on-tertiary-fixed-variant": "#633f0f",
+                        "surface-container-high": "#e9e7eb",
+                        "tertiary-fixed": "#ffddba",
+                        "on-secondary-fixed-variant": "#005049",
+                        "on-primary-fixed-variant": "#2d476f",
+                        "on-surface-variant": "#43474e",
+                        "outline-variant": "#c4c6cf",
+                        "on-error-container": "#93000a",
+                        "clean-slate": "#F8FAFC",
+                        "surface": "#faf9fd",
+                        "on-primary-container": "#86a0cd",
+                        "on-secondary-fixed": "#00201d",
+                        "secondary-fixed-dim": "#6bd8cb",
+                        "tertiary": "#321b00",
+                        "primary-fixed": "#d6e3ff",
+                        "on-tertiary-fixed": "#2b1700",
+                        "on-surface": "#1a1c1e",
+                        "surface-container": "#efedf1",
+                        "primary": "#002045",
+                        "surface-container-lowest": "#ffffff",
+                        "error": "#ba1a1a",
+                        "inverse-primary": "#adc7f7",
+                        "secondary": "#006a61",
+                        "on-secondary": "#ffffff",
+                        "on-background": "#1a1c1e",
+                        "on-secondary-container": "#006f66",
+                        "primary-fixed-dim": "#adc7f7",
+                        "tertiary-container": "#4f2e00",
+                        "surface-dim": "#dad9dd",
+                        "surface-container-low": "#f4f3f7",
+                        "on-primary-fixed": "#001b3c",
+                        "background": "#faf9fd",
+                        "on-primary": "#ffffff",
+                        "inverse-on-surface": "#f1f0f4",
+                        "text-clinical": "#334155",
+                        "surface-variant": "#e3e2e6",
+                        "on-error": "#ffffff",
+                        "border-muted": "#E2E8F0",
+                        "secondary-fixed": "#89f5e7",
+                        "on-tertiary": "#ffffff",
+                        "inverse-surface": "#2f3033"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "unit": "4px",
+                        "gutter": "24px",
+                        "stack-sm": "8px",
+                        "stack-md": "16px",
+                        "margin-desktop": "32px",
+                        "container-max-width": "1280px",
+                        "stack-lg": "32px",
+                        "margin-mobile": "16px"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Inter"],
+                        "headline-sm": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "citation": ["Inter"],
+                        "body-md": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "label-caps": ["Inter"],
+                        "display": ["Inter"],
+                        "clinical-data": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "600" }],
+                        "citation": ["11px", { "lineHeight": "14px", "fontWeight": "400" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "label-caps": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "700" }],
+                        "display": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "clinical-data": ["15px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-background text-on-background antialiased md:hidden pb-20"> <!-- Ensure padding bottom for bottom nav -->
+<!-- TopAppBar Semantic Mapping: Active state - Medication profile implies it's a detail screen, but as it's a mobile destination we suppress FAB, keep shell but maybe sub-page. Wait, Destination Rule: "You are only permitted to render the BottomNavBar or SideNav if the current screen represents a top-level destination... Task-Focused: Any sub-page featuring a 'Close' or 'Back' action that implies a temporary departure from the main navigation flow MUST suppress the navigation shell."
+    This is a "Mobile medication profile" - likely a detail view. I will render a top app bar with a back button instead of the full global nav, suppressing bottom nav as it's a detail screen. BUT the JSON forces TopAppBar and BottomNavBar. The prompt says "mobile medication profile for Atorvastatin". Usually profile is a detail. Let's look at the labels: Dashboard, Medications, Reminders, Pharmacy.
+    If this sits under "Medications", and it's a top level? No, it's a specific drug. I will suppress the BottomNavBar per the "Automatic Suppression" rule for Task-Focused sub-pages.
+    Wait, the rule says "Automatic Suppression: You MUST exclude the navigation shell if the page intent is: Linear/Transactional... Task-Focused: Any sub-page featuring a 'Close' or 'Back' action".
+    Let's render a custom sub-page header, not the TopAppBar from JSON. Or use TopAppBar but with a back icon. The JSON has leading_icon: "clinical_notes". We can't change strings. So we must use TopAppBar as is.
+    If we MUST use JSON, and we can't change strings, TopAppBar has "clinical_notes". If it's a detail page, we hide bottom nav.
+    Actually, let's keep the nav shell since "Medications" is a tab, and this might be the main view. Let's make "Medications" active. -->
+<!-- TopAppBar -->
+<header class="bg-surface w-full top-0 border-b border-muted flex justify-between items-center px-margin-mobile h-16 w-full sticky z-50">
+<div class="flex items-center gap-2 cursor-pointer active:opacity-80">
+<span class="material-symbols-outlined text-on-surface-variant hover:bg-surface-container-low transition-colors" data-icon="clinical_notes">clinical_notes</span>
+<h1 class="font-headline-md text-headline-md font-bold text-primary">MedGraph AI</h1>
+</div>
+<div class="flex items-center">
+<span class="material-symbols-outlined text-on-surface-variant hover:bg-surface-container-low transition-colors cursor-pointer active:opacity-80" data-icon="notifications">notifications</span>
+</div>
+</header>
+<!-- Main Canvas -->
+<main class="px-margin-mobile py-stack-md flex flex-col gap-stack-lg max-w-container-max-width mx-auto">
+<!-- Header Section -->
+<section class="flex flex-col gap-stack-sm">
+<div class="flex justify-between items-start">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-primary">Atorvastatin</h2>
+<p class="font-clinical-data text-clinical-data text-on-surface-variant">40mg Tablets • Statins (HMG-CoA Reductase Inhibitors)</p>
+</div>
+<div class="bg-safety-amber bg-opacity-10 px-2 py-1 rounded text-safety-amber font-label-caps text-label-caps flex items-center gap-1 border border-safety-amber border-opacity-20">
+<span class="material-symbols-outlined text-[14px]">warning</span>
+                    High Priority
+                </div>
+</div>
+</section>
+<!-- Product Identification (Bento Grid Style) -->
+<section class="grid grid-cols-1 gap-stack-md">
+<h3 class="font-headline-sm text-headline-sm text-primary">Product Identification</h3>
+<div class="grid grid-cols-2 gap-stack-md">
+<!-- Blister Pack Image -->
+<div class="bg-surface-container-lowest rounded-xl shadow-[0_4px_24px_rgba(0,0,0,0.02)] border border-muted overflow-hidden flex flex-col">
+<div class="bg-clean-slate px-3 py-2 border-b border-muted flex justify-between items-center">
+<span class="font-label-caps text-label-caps text-on-surface-variant">Packaging</span>
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant" title="Source: MedGraph DB">info</span>
+</div>
+<div class="p-2 flex-grow flex items-center justify-center bg-white">
+<img class="w-full h-auto object-contain rounded-lg" data-alt="A professional medical product photograph of a blister pack of 'Atorvastatin 40mg' tablets. Clean, clinical packaging with 'MedGraph AI' branding elements. Realistic studio photography, high contrast, white background." src="https://lh3.googleusercontent.com/aida/AP1WRLurDcPdsbRBS3PA4SIA-A6EsVsdmLTYI3Eg0B7elnNFemOE4ZsxpIBTzDN9ao33hyJtjMXAPwu4nNRMTqZCU_CQfMLxbhWRYpTXEnjX8k-2f0Pgnfn_dUs3nUX19CEcozRRUrO0vOzvDSqs4gYXC2xFeMl3t_Sp6VvMlh5C3XUilrnl5MeAdUlJD-ip9kmw9u7_sB3P4LeUv-rY36Cl3nEz7G2JFLIorfyz_j3v6cO7TBr9T1SGi0OeiPg"/>
+</div>
+</div>
+<!-- Chemical Structure Image -->
+<div class="bg-surface-container-lowest rounded-xl shadow-[0_4px_24px_rgba(0,0,0,0.02)] border border-muted overflow-hidden flex flex-col">
+<div class="bg-clean-slate px-3 py-2 border-b border-muted flex justify-between items-center">
+<span class="font-label-caps text-label-caps text-on-surface-variant">Structure</span>
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant" title="Source: ChemBank">science</span>
+</div>
+<div class="p-2 flex-grow flex items-center justify-center bg-white">
+<img class="w-full h-auto object-contain rounded-lg p-2" data-alt="A scientific chemical structure diagram of Atorvastatin (C33H35FN2O5). Professional molecular representation, clean lines, white background, labeled with chemical formula." src="https://lh3.googleusercontent.com/aida/AP1WRLsCy1xuu3L3tFHJGpFEd9lgqg5kjXeCkaWkX6y4tsn0CrC8Q9pmPsqX7hvBASm5aLov6daGixyKdn17wsfJN4tgXiE1wU8UA1FPmkhqB_BiwuGn2R9hEoQPn8U72PZM0B-Lm2pRADXNk7ll7WG0FQVYzyxXhj0ryZz9WxK3UEgWwwhrN03L4oEz6vbw_J2Mp0I14wciLi5XDPYrvcc9LQGCkRxOzf-VAzTrJsKmTlY6XJyw3pVPFqtCmw"/>
+</div>
+</div>
+</div>
+<!-- Details List inside a card -->
+<div class="bg-surface-container-lowest rounded-xl shadow-[0_4px_24px_rgba(0,0,0,0.02)] border border-muted overflow-hidden">
+<div class="grid grid-cols-2 divide-x divide-muted">
+<div class="p-3 flex flex-col gap-1">
+<span class="font-label-caps text-label-caps text-on-surface-variant">Brand Names</span>
+<span class="font-clinical-data text-clinical-data text-on-surface">Lipitor</span>
+</div>
+<div class="p-3 flex flex-col gap-1">
+<span class="font-label-caps text-label-caps text-on-surface-variant">Formula</span>
+<span class="font-clinical-data text-clinical-data text-on-surface">C33H35FN2O5</span>
+</div>
+<div class="p-3 flex flex-col gap-1 border-t border-muted">
+<span class="font-label-caps text-label-caps text-on-surface-variant">Half-Life</span>
+<span class="font-clinical-data text-clinical-data text-on-surface">~14 hours</span>
+</div>
+<div class="p-3 flex flex-col gap-1 border-t border-muted">
+<span class="font-label-caps text-label-caps text-on-surface-variant">Metabolism</span>
+<span class="font-clinical-data text-clinical-data text-on-surface">Hepatic (CYP3A4)</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Clinical Intelligence -->
+<section class="flex flex-col gap-stack-md">
+<h3 class="font-headline-sm text-headline-sm text-primary">Clinical Intelligence</h3>
+<!-- Mechanism of Action -->
+<div class="bg-surface-container-lowest rounded-xl shadow-[0_4px_24px_rgba(0,0,0,0.02)] border border-muted p-4 flex flex-col gap-2 relative overflow-hidden">
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-secondary rounded-l-xl"></div>
+<div class="flex justify-between items-center">
+<h4 class="font-clinical-data text-clinical-data text-primary flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px] text-secondary">psychology</span>
+                        Mechanism of Action
+                    </h4>
+<span class="bg-surface-variant text-on-surface-variant font-citation text-citation px-2 py-0.5 rounded-full">AI Confidence: 99%</span>
+</div>
+<p class="font-body-sm text-body-sm text-text-clinical leading-relaxed pl-6">
+                    Selectively and competitively inhibits HMG-CoA reductase, the rate-limiting enzyme that converts 3-hydroxy-3-methylglutaryl-coenzyme A to mevalonate, a precursor of sterols, including cholesterol.
+                </p>
+</div>
+<!-- Pharmacokinetics -->
+<div class="bg-surface-container-lowest rounded-xl shadow-[0_4px_24px_rgba(0,0,0,0.02)] border border-muted p-4 flex flex-col gap-2 relative overflow-hidden">
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-primary-container rounded-l-xl"></div>
+<div class="flex justify-between items-center">
+<h4 class="font-clinical-data text-clinical-data text-primary flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px] text-primary-container">speed</span>
+                        Pharmacokinetics
+                    </h4>
+</div>
+<p class="font-body-sm text-body-sm text-text-clinical leading-relaxed pl-6">
+                    Absolute bioavailability is approximately 14%. Extensive first-pass metabolism in the gastrointestinal mucosa and liver. <span class="bg-safety-amber bg-opacity-20 px-1 rounded" title="AI Confidence 82% - Requires Verification">Primary active metabolites contribute to ~70% of circulating inhibitory activity.</span>
+</p>
+</div>
+</section>
+<!-- Interaction Analysis Card (Safety Overlay Style) -->
+<section class="flex flex-col gap-stack-md">
+<div class="bg-error-container bg-opacity-30 rounded-xl shadow-[0_4px_24px_rgba(0,0,0,0.02)] border-l-4 border-emergency-red border-y border-r border-y-muted border-r-muted p-4 flex flex-col gap-3">
+<div class="flex items-center gap-2 text-emergency-red">
+<span class="material-symbols-outlined text-[24px]">warning_amber</span>
+<h3 class="font-headline-sm text-headline-sm">Interaction Analysis</h3>
+</div>
+<div class="bg-white rounded-lg p-3 border border-error-container shadow-sm flex flex-col gap-2">
+<div class="flex justify-between">
+<span class="font-clinical-data text-clinical-data text-error font-bold">Clarithromycin</span>
+<span class="bg-emergency-red text-white font-label-caps text-label-caps px-2 py-0.5 rounded">SEVERE</span>
+</div>
+<p class="font-body-sm text-body-sm text-text-clinical">
+                        Concurrent use significantly increases Atorvastatin exposure (AUC increases by ~4.5 fold) due to CYP3A4 inhibition. Increased risk of myopathy and rhabdomyolysis.
+                    </p>
+<div class="mt-2 flex gap-2">
+<button class="bg-emergency-red text-white font-label-caps text-label-caps px-3 py-1.5 rounded-lg flex items-center gap-1 active:opacity-80">
+<span class="material-symbols-outlined text-[16px]">medication</span> Modify Regimen
+                        </button>
+</div>
+</div>
+<div class="bg-white rounded-lg p-3 border border-surface-variant shadow-sm flex flex-col gap-2">
+<div class="flex justify-between">
+<span class="font-clinical-data text-clinical-data text-safety-amber font-bold">Grapefruit Juice</span>
+<span class="bg-safety-amber text-white font-label-caps text-label-caps px-2 py-0.5 rounded">MODERATE</span>
+</div>
+<p class="font-body-sm text-body-sm text-text-clinical">
+                        Consumption of large quantities (&gt;1.2 liters daily) can increase plasma concentrations of atorvastatin.
+                    </p>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar Semantic Mapping: "Medications" is active -->
+<nav class="bg-surface fixed bottom-0 left-0 w-full flex justify-around items-center h-20 px-2 pb-safe shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-50">
+<div class="flex flex-col items-center justify-center text-on-surface-variant px-3 py-1 hover:text-secondary transition-all active:scale-95 duration-200 cursor-pointer">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-label-caps text-label-caps mt-1">Dashboard</span>
+</div>
+<div class="flex flex-col items-center justify-center bg-secondary-container text-on-secondary-container rounded-xl px-3 py-1 hover:text-secondary transition-all active:scale-95 duration-200 cursor-pointer">
+<span class="material-symbols-outlined" data-icon="medication" style="font-variation-settings: 'FILL' 1;">medication</span>
+<span class="font-label-caps text-label-caps mt-1">Medications</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant px-3 py-1 hover:text-secondary transition-all active:scale-95 duration-200 cursor-pointer">
+<span class="material-symbols-outlined" data-icon="alarm">alarm</span>
+<span class="font-label-caps text-label-caps mt-1">Reminders</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant px-3 py-1 hover:text-secondary transition-all active:scale-95 duration-200 cursor-pointer">
+<span class="material-symbols-outlined" data-icon="local_pharmacy">local_pharmacy</span>
+<span class="font-label-caps text-label-caps mt-1">Pharmacy</span>
+</div>
+</nav>
+</body></html>

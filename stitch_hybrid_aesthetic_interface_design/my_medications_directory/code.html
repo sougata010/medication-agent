@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>My Medications - MedGraph Intelligence</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-primary-container": "#86a0cd",
+                      "emergency-red": "#DC2626",
+                      "on-background": "#1a1c1e",
+                      "outline": "#74777f",
+                      "primary-fixed-dim": "#adc7f7",
+                      "error": "#ba1a1a",
+                      "on-error-container": "#93000a",
+                      "secondary-fixed": "#89f5e7",
+                      "primary": "#002045",
+                      "on-tertiary": "#ffffff",
+                      "on-secondary-fixed": "#00201d",
+                      "on-secondary": "#ffffff",
+                      "surface-bright": "#faf9fd",
+                      "surface": "#faf9fd",
+                      "primary-container": "#1a365d",
+                      "outline-variant": "#c4c6cf",
+                      "surface-container-highest": "#e3e2e6",
+                      "tertiary-fixed-dim": "#f2bc82",
+                      "secondary-container": "#86f2e4",
+                      "text-clinical": "#334155",
+                      "on-secondary-container": "#006f66",
+                      "border-muted": "#E2E8F0",
+                      "inverse-on-surface": "#f1f0f4",
+                      "safety-amber": "#D97706",
+                      "surface-tint": "#455f88",
+                      "surface-container-high": "#e9e7eb",
+                      "surface-dim": "#dad9dd",
+                      "secondary": "#006a61",
+                      "surface-container": "#efedf1",
+                      "background": "#faf9fd",
+                      "tertiary-container": "#4f2e00",
+                      "on-tertiary-container": "#c6955e",
+                      "surface-variant": "#e3e2e6",
+                      "on-surface": "#1a1c1e",
+                      "on-error": "#ffffff",
+                      "inverse-primary": "#adc7f7",
+                      "clean-slate": "#F8FAFC",
+                      "surface-container-low": "#f4f3f7",
+                      "surface-container-lowest": "#ffffff",
+                      "on-tertiary-fixed-variant": "#633f0f",
+                      "on-secondary-fixed-variant": "#005049",
+                      "primary-fixed": "#d6e3ff",
+                      "on-surface-variant": "#43474e",
+                      "tertiary-fixed": "#ffddba",
+                      "on-primary-fixed-variant": "#2d476f",
+                      "on-primary": "#ffffff",
+                      "error-container": "#ffdad6",
+                      "secondary-fixed-dim": "#6bd8cb",
+                      "on-primary-fixed": "#001b3c",
+                      "on-tertiary-fixed": "#2b1700",
+                      "inverse-surface": "#2f3033",
+                      "tertiary": "#321b00"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "unit": "4px",
+                      "margin-mobile": "16px",
+                      "container-max-width": "1280px",
+                      "gutter": "24px",
+                      "stack-md": "16px",
+                      "stack-lg": "32px",
+                      "stack-sm": "8px",
+                      "margin-desktop": "32px"
+              },
+              "fontFamily": {
+                      "display": [
+                              "Inter"
+                      ],
+                      "body-md": [
+                              "Inter"
+                      ],
+                      "clinical-data": [
+                              "Inter"
+                      ],
+                      "headline-md": [
+                              "Inter"
+                      ],
+                      "body-lg": [
+                              "Inter"
+                      ],
+                      "citation": [
+                              "Inter"
+                      ],
+                      "headline-lg": [
+                              "Inter"
+                      ],
+                      "headline-sm": [
+                              "Inter"
+                      ],
+                      "body-sm": [
+                              "Inter"
+                      ],
+                      "label-caps": [
+                              "Inter"
+                      ]
+              },
+              "fontSize": {
+                      "display": [
+                              "48px",
+                              {
+                                      "lineHeight": "56px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "clinical-data": [
+                              "15px",
+                              {
+                                      "lineHeight": "20px",
+                                      "letterSpacing": "0.01em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "headline-md": [
+                              "24px",
+                              {
+                                      "lineHeight": "32px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "citation": [
+                              "11px",
+                              {
+                                      "lineHeight": "14px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-lg": [
+                              "32px",
+                              {
+                                      "lineHeight": "40px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "headline-sm": [
+                              "20px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-sm": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "label-caps": [
+                              "12px",
+                              {
+                                      "lineHeight": "16px",
+                                      "letterSpacing": "0.05em",
+                                      "fontWeight": "700"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+      </script>
+<style>
+        body {
+            background-color: theme('colors.background');
+            color: theme('colors.on-background');
+        }
+    </style>
+</head>
+<body class="flex h-screen overflow-hidden">
+<!-- SideNavBar -->
+<nav class="hidden md:flex flex-col h-full p-stack-md border-r border-border-muted bg-clean-slate dark:bg-surface-dim docked left-0 w-64 shrink-0">
+<div class="flex items-center gap-stack-sm mb-stack-lg">
+<img alt="MedGraph Logo" class="w-8 h-8 rounded-full" data-alt="A highly detailed, professional medical logo featuring a stylized blue cross or geometric graph pattern, set against a pristine white background. The style is modern, clinical, and reassuring, suitable for a healthcare technology platform. Lighting is flat and shadowless to emphasize the crisp vector-style shapes." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCC58JeN9M-AW5BvAdP0zoX6fJzdlUhRZC9TbVfZ_qS9PPJKct58OGAB6y-0bfwC5fUatOZhuNqrjfkVRfjR4w-GdC9_R1bE5FxYvjy0FLEiSAM_e_w1TQSeNH_nOZUR0WuaV1HRRC98DS2Xi1ZDJBFIDQF4C73QGfeHvE9fnLDdfML0VtrIeMfMV_qmHP_18EFMUffKS832KLM3QBQ8jbVjii36cuvogM9irB0Z8h-rTGcYuAl2l59yH6yrUGipQpbhlmsS-RKHd8"/>
+<div>
+<h1 class="text-headline-md font-headline-md text-primary dark:text-primary-fixed">Clinical Portal</h1>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Vigilant Oversight</p>
+</div>
+</div>
+<ul class="flex-1 flex flex-col gap-unit">
+<li>
+<a class="flex items-center gap-stack-sm p-stack-sm text-on-surface-variant dark:text-outline-variant hover:bg-surface-container-high dark:hover:bg-surface-variant transition-all scale-95 active:scale-100 rounded-lg" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">dashboard</span>
+<span class="font-body-md text-body-md">Dashboard</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-stack-sm p-stack-sm text-on-secondary-container bg-secondary-container dark:bg-secondary dark:text-on-secondary rounded-lg font-semibold scale-95 active:scale-100 transition-transform" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">medication</span>
+<span class="font-body-md text-body-md">Medication Directory</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-stack-sm p-stack-sm text-on-surface-variant dark:text-outline-variant hover:bg-surface-container-high dark:hover:bg-surface-variant transition-all scale-95 active:scale-100 rounded-lg" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">alarm</span>
+<span class="font-body-md text-body-md">Reminders Hub</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-stack-sm p-stack-sm text-on-surface-variant dark:text-outline-variant hover:bg-surface-container-high dark:hover:bg-surface-variant transition-all scale-95 active:scale-100 rounded-lg" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">local_pharmacy</span>
+<span class="font-body-md text-body-md">Pharmacy Finder</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-stack-sm p-stack-sm text-on-surface-variant dark:text-outline-variant hover:bg-surface-container-high dark:hover:bg-surface-variant transition-all scale-95 active:scale-100 rounded-lg" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">settings</span>
+<span class="font-body-md text-body-md">Settings</span>
+</a>
+</li>
+</ul>
+<button class="mt-auto w-full bg-secondary text-on-secondary font-clinical-data text-clinical-data py-stack-sm rounded-lg hover:opacity-90 transition-opacity">
+            Scan Prescription
+        </button>
+</nav>
+<!-- Main Content Canvas -->
+<div class="flex-1 flex flex-col h-full overflow-hidden bg-surface">
+<!-- TopNavBar (Mobile only in this simplified layout to represent responsiveness, though instructions say "TopAppBar on web". Merging intents for a clean dashboard) -->
+<header class="flex justify-between items-center w-full px-margin-desktop h-16 sticky top-0 z-50 bg-surface dark:bg-on-background shadow-sm md:hidden">
+<span class="text-headline-sm font-headline-sm font-bold text-primary dark:text-primary-fixed">MedGraph Intelligence</span>
+<div class="flex gap-stack-sm text-primary dark:text-primary-fixed">
+<span class="material-symbols-outlined cursor-pointer active:opacity-80 hover:text-secondary dark:hover:text-secondary-fixed transition-colors">notifications</span>
+<span class="material-symbols-outlined cursor-pointer active:opacity-80 hover:text-secondary dark:hover:text-secondary-fixed transition-colors">help_outline</span>
+</div>
+</header>
+<!-- Main Scrollable Area -->
+<main class="flex-1 overflow-y-auto p-margin-mobile md:p-margin-desktop">
+<div class="max-w-container-max-width mx-auto">
+<div class="mb-stack-lg flex justify-between items-end">
+<div>
+<h2 class="font-display text-display text-primary">Active Prescriptions</h2>
+<p class="font-body-lg text-body-lg text-text-clinical mt-unit">Verified clinical data and ongoing regimens.</p>
+</div>
+</div>
+<!-- Bento Grid for Medications -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter mb-stack-lg">
+<!-- Med Card 1 -->
+<div class="bg-surface-container-lowest rounded-xl border border-border-muted shadow-sm overflow-hidden flex flex-col">
+<div class="bg-clean-slate p-stack-sm border-b border-border-muted flex justify-between items-center">
+<span class="font-label-caps text-label-caps text-primary tracking-wider uppercase">Cardiovascular</span>
+<span class="flex items-center gap-1 text-secondary bg-secondary-container px-2 py-1 rounded-full font-citation text-citation">
+<span class="material-symbols-outlined text-[14px]">verified</span> Verified
+                            </span>
+</div>
+<div class="p-stack-md flex-1">
+<h3 class="font-headline-md text-headline-md text-primary mb-unit">Atorvastatin</h3>
+<div class="flex items-baseline gap-2 mb-stack-sm">
+<span class="font-clinical-data text-clinical-data text-text-clinical">40 mg</span>
+<span class="font-body-sm text-body-sm text-outline">Tablet</span>
+</div>
+<div class="bg-surface-container-low p-stack-sm rounded-lg flex items-start gap-stack-sm">
+<span class="material-symbols-outlined text-outline mt-1 text-[20px]">schedule</span>
+<div>
+<p class="font-body-sm text-body-sm text-on-surface">Take 1 tablet daily</p>
+<p class="font-citation text-citation text-outline">Evening, with or without food.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Med Card 2 - Needs Review -->
+<div class="bg-surface-container-lowest rounded-xl border border-safety-amber shadow-sm overflow-hidden flex flex-col relative">
+<div class="absolute top-0 left-0 w-1 h-full bg-safety-amber"></div>
+<div class="bg-clean-slate p-stack-sm border-b border-border-muted flex justify-between items-center pl-stack-md">
+<span class="font-label-caps text-label-caps text-primary tracking-wider uppercase">Endocrine</span>
+<span class="flex items-center gap-1 text-safety-amber bg-[#fef3c7] px-2 py-1 rounded-full font-citation text-citation">
+<span class="material-symbols-outlined text-[14px]">warning</span> Needs Review
+                            </span>
+</div>
+<div class="p-stack-md flex-1 pl-stack-lg">
+<div class="flex items-center gap-2 mb-unit">
+<h3 class="font-headline-md text-headline-md text-primary">Metformin</h3>
+<span class="material-symbols-outlined text-outline text-[16px] cursor-help hover:text-primary transition-colors" title="Source: Dr. Smith, 10/24/2023">info</span>
+</div>
+<div class="flex items-baseline gap-2 mb-stack-sm">
+<span class="font-clinical-data text-clinical-data text-text-clinical bg-amber-50 px-1 rounded">500 mg</span>
+<span class="font-body-sm text-body-sm text-outline">Tablet</span>
+</div>
+<div class="bg-surface-container-low p-stack-sm rounded-lg flex items-start gap-stack-sm">
+<span class="material-symbols-outlined text-outline mt-1 text-[20px]">schedule</span>
+<div>
+<p class="font-body-sm text-body-sm text-on-surface">Take 1 tablet twice daily</p>
+<p class="font-citation text-citation text-outline">With meals.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Med Card 3 -->
+<div class="bg-surface-container-lowest rounded-xl border border-border-muted shadow-sm overflow-hidden flex flex-col">
+<div class="bg-clean-slate p-stack-sm border-b border-border-muted flex justify-between items-center">
+<span class="font-label-caps text-label-caps text-primary tracking-wider uppercase">Respiratory</span>
+<span class="flex items-center gap-1 text-secondary bg-secondary-container px-2 py-1 rounded-full font-citation text-citation">
+<span class="material-symbols-outlined text-[14px]">verified</span> Verified
+                            </span>
+</div>
+<div class="p-stack-md flex-1">
+<h3 class="font-headline-md text-headline-md text-primary mb-unit">Albuterol</h3>
+<div class="flex items-baseline gap-2 mb-stack-sm">
+<span class="font-clinical-data text-clinical-data text-text-clinical">90 mcg/actuation</span>
+<span class="font-body-sm text-body-sm text-outline">Inhaler</span>
+</div>
+<div class="bg-surface-container-low p-stack-sm rounded-lg flex items-start gap-stack-sm">
+<span class="material-symbols-outlined text-outline mt-1 text-[20px]">schedule</span>
+<div>
+<p class="font-body-sm text-body-sm text-on-surface">2 puffs every 4-6 hours</p>
+<p class="font-citation text-citation text-outline">As needed for shortness of breath.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Recent Prescriptions Upload Section -->
+<div class="mt-stack-lg">
+<h3 class="font-headline-sm text-headline-sm text-primary border-b border-border-muted pb-unit mb-stack-md">Recent Documents</h3>
+<div class="flex flex-col md:flex-row gap-gutter">
+<!-- Upload Target -->
+<div class="flex-1 border-2 border-dashed border-outline-variant rounded-xl p-stack-lg flex flex-col items-center justify-center bg-surface hover:bg-surface-container-low transition-colors cursor-pointer text-center group">
+<div class="bg-primary-container text-on-primary-container p-stack-sm rounded-full mb-stack-sm group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-[32px]">upload_file</span>
+</div>
+<p class="font-clinical-data text-clinical-data text-primary mb-unit">Upload Prescription Image</p>
+<p class="font-body-sm text-body-sm text-outline">Drag &amp; drop or click to browse. AI will extract dosage data.</p>
+</div>
+<!-- Processing Queue -->
+<div class="flex-1 bg-surface-container-lowest border border-border-muted rounded-xl p-stack-md shadow-sm">
+<h4 class="font-clinical-data text-clinical-data text-text-clinical mb-stack-sm">Processing Queue</h4>
+<ul class="flex flex-col gap-stack-sm">
+<li class="flex items-center gap-stack-sm p-stack-sm bg-clean-slate rounded-lg border border-border-muted">
+<span class="material-symbols-outlined text-outline animate-spin">sync</span>
+<div class="flex-1">
+<p class="font-body-sm text-body-sm text-primary font-semibold">RX_Scan_Oct24.jpg</p>
+<div class="w-full bg-surface-container-high h-1 rounded-full mt-2">
+<div class="bg-secondary h-1 rounded-full w-2/3"></div>
+</div>
+</div>
+<span class="font-citation text-citation text-outline">Analyzing...</span>
+</li>
+<li class="flex items-center gap-stack-sm p-stack-sm bg-clean-slate rounded-lg border border-border-muted opacity-60">
+<span class="material-symbols-outlined text-secondary">check_circle</span>
+<div class="flex-1">
+<p class="font-body-sm text-body-sm text-primary font-semibold">Hospital_Discharge.pdf</p>
+<p class="font-citation text-citation text-outline mt-1">Processed yesterday</p>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer -->
+<footer class="w-full py-stack-lg mt-stack-lg border-t border-border-muted flex flex-col md:flex-row justify-between items-center text-outline">
+<span class="font-body-sm text-body-sm">© 2024 MedGraph Intelligence. Medical Rigor Guaranteed.</span>
+<div class="flex gap-stack-md mt-stack-sm md:mt-0">
+<a class="font-body-sm text-body-sm hover:text-primary transition-colors" href="#">Privacy Policy</a>
+<a class="font-body-sm text-body-sm hover:text-primary transition-colors" href="#">Pharmacological Sources</a>
+<a class="font-body-sm text-body-sm hover:text-primary transition-colors" href="#">Terms of Service</a>
+</div>
+</footer>
+</main>
+</div>
+</body></html>
