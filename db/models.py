@@ -139,6 +139,7 @@ class Reminder(Base):
     scheduled_at = Column(DateTime, nullable=False)
     channel = Column(String(50), nullable=False) # Email, Telegram, Discord, Calendar, Push
     status = Column(String(50), default='pending') # pending, sent, taken, skipped, missed
+    dosage = Column(String(100), nullable=True)
     
     user = relationship("User", back_populates="reminders")
     medicine = relationship("Medicine", back_populates="reminders")

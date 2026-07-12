@@ -2,75 +2,117 @@ import React, { useState, useMemo } from 'react';
 import { useGlobalContext } from '../context/GlobalContext';
 import {
   FlaskConical, CheckCircle2, AlertTriangle, AlertOctagon,
-  ChevronDown, TrendingUp, TrendingDown, Minus, Info, Search,
-  FileText, Calendar
+  ChevronDown, Search, FileText, Calendar, Upload, ShieldAlert,
+  Activity, CheckCircle, Pill, ChevronRight, XOctagon, Info
 } from 'lucide-react';
 
 export default function LabReports() {
-  const { labReports } = useGlobalContext();
+  const { labReports, handleUploadLabReport, labUploadLoading } = useGlobalContext();
   const [activeReportIdx, setActiveReportIdx] = useState(0);
   const [searchQuery, setSearchQuery] = useState('');
-  const [categoryFilter, setCategoryFilter] = useState('all');
 
   const currentReport = labReports && labReports.length > 0 ? labReports[activeReportIdx] : null;
   const parameters = currentReport ? currentReport.parameters : [];
 
-  // Get unique categories
-  const categories = useMemo(() => {
-    const cats = new Set(parameters.map(p => p.category).filter(Boolean));
-    return ['all', ...Array.from(cats)];
-  }, [parameters]);
-
-  // Filter parameters
-  const filteredParams = useMemo(() => {
-    return parameters.filter(p => {
-      const matchesSearch = !searchQuery || p.name.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchesCategory = categoryFilter === 'all' || p.category === categoryFilter;
-      return matchesSearch && matchesCategory;
+  // Group parameters by Category (Medicine Name)
+  const medicines = useMemo(() => {
+    const grouped = {};
+    parameters.forEach(p => {
+      const medName = p.category || 'Unknown Medicine';
+      if (!grouped[medName]) {
+        grouped[medName] = {
+          name: medName,
+          chemicals: [],
+          hasBanned: false,
+          hasWarning: false,
+        };
+      }
+      grouped[medName].chemicals.push(p);
+      if (p.status === 'Banned') grouped[medName].hasBanned = true;
+      if (p.status === 'Warning') grouped[medName].hasWarning = true;
     });
-  }, [parameters, searchQuery, categoryFilter]);
+    
+    // Filter by search query on medicine name or chemical name
+    return Object.values(grouped).filter(med => {
+      if (!searchQuery) return true;
+      const q = searchQuery.toLowerCase();
+      if (med.name.toLowerCase().includes(q)) return true;
+      return med.chemicals.some(c => c.name.toLowerCase().includes(q));
+    });
+  }, [parameters, searchQuery]);
 
   // Stats
-  const normalCount = parameters.filter(p => p.status === 'Normal').length;
-  const abnormalCount = parameters.filter(p => p.status !== 'Normal').length;
-  const criticalCount = parameters.filter(p => p.severity === 'critical').length;
+  const totalMedicines = Object.keys(useMemo(() => {
+    const grouped = {};
+    parameters.forEach(p => grouped[p.category || 'Unknown Medicine'] = true);
+    return grouped;
+  }, [parameters])).length;
 
-  const getStatusBadge = (status, severity) => {
-    if (status === 'Normal') {
+  const totalBanned = parameters.filter(p => p.status === 'Banned').length;
+  const totalWarnings = parameters.filter(p => p.status === 'Warning').length;
+
+  // Helper to parse recommendation JSON
+  const parseRecommendation = (recStr) => {
+    try {
+      if (!recStr) return null;
+      return JSON.parse(recStr);
+    } catch {
+      return { text: recStr, cautions: null, bannedIn: null, uses: null };
+    }
+  };
+
+  const getStatusBadge = (status) => {
+    if (status === 'Safe') {
       return (
-        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[11px] font-bold border border-emerald-100">
-          <CheckCircle2 className="w-3 h-3" /> Normal
+        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 text-[11px] font-bold border border-emerald-200 shadow-sm uppercase tracking-wider">
+          <CheckCircle2 className="w-3.5 h-3.5" /> Safe
         </span>
       );
     }
-    if (severity === 'critical') {
+    if (status === 'Banned') {
       return (
-        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-red-50 text-red-700 text-[11px] font-bold border border-red-100">
-          <AlertOctagon className="w-3 h-3" /> Critical
+        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-red-100 text-red-800 text-[11px] font-bold border border-red-300 shadow-sm uppercase tracking-wider animate-pulse">
+          <XOctagon className="w-3.5 h-3.5" /> Banned
         </span>
       );
     }
     return (
-      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 text-[11px] font-bold border border-amber-100">
-        <AlertTriangle className="w-3 h-3" /> {status}
+      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-100 text-amber-800 text-[11px] font-bold border border-amber-300 shadow-sm uppercase tracking-wider">
+        <AlertTriangle className="w-3.5 h-3.5" /> Warning
       </span>
     );
   };
 
-  const getTrendIcon = (value, normalMin, normalMax) => {
-    if (value > normalMax) return <TrendingUp className="w-3.5 h-3.5 text-red-500" />;
-    if (value < normalMin) return <TrendingDown className="w-3.5 h-3.5 text-amber-500" />;
-    return <Minus className="w-3.5 h-3.5 text-emerald-500" />;
-  };
+  if (labUploadLoading) {
+    return (
+      <div className="flex flex-col items-center justify-center py-32 animate-fade-in">
+        <div className="w-16 h-16 border-4 border-gray-200 border-t-blue-500 rounded-full animate-spin mb-4" />
+        <h2 className="text-xl font-extrabold text-gray-900 mb-2">Analyzing Chemical Composition</h2>
+        <p className="text-gray-500 font-medium text-center max-w-sm">MedGraph AI is extracting structured chemical data, banned status, and health warnings from the document.</p>
+      </div>
+    );
+  }
 
   if (!labReports || labReports.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-24 animate-fade-in">
-        <div className="w-20 h-20 rounded-full bg-gray-50 flex items-center justify-center mb-6 border border-gray-200">
-          <FlaskConical className="w-10 h-10 text-gray-300" />
+      <div className="flex flex-col gap-6 animate-fade-in">
+        <div>
+          <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight text-gray-900">Chemical Analysis Report</h1>
+          <p className="text-gray-500 font-medium mt-1">Upload a label or lab report for deep chemical breakdown</p>
         </div>
-        <h2 className="text-xl font-extrabold text-gray-900 mb-2">No Lab Reports</h2>
-        <p className="text-gray-500 font-medium text-center max-w-sm">Upload your lab reports to see detailed biomarker analysis with AI-powered insights.</p>
+        <div className="flex flex-col items-center justify-center py-24 bg-white rounded-2xl border-2 border-dashed border-gray-200 hover:border-gray-300 transition-colors relative group cursor-pointer">
+          <input
+            type="file"
+            accept="image/*,.pdf"
+            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+            onChange={handleUploadLabReport}
+          />
+          <div className="w-16 h-16 rounded-2xl bg-gray-50 flex items-center justify-center mb-6 border border-gray-200 group-hover:bg-gray-100 transition-colors">
+            <Upload className="w-8 h-8 text-gray-400 group-hover:text-blue-500 transition-colors" />
+          </div>
+          <h2 className="text-xl font-extrabold text-gray-900 mb-2">Upload Analysis Document</h2>
+          <p className="text-gray-500 font-medium text-center max-w-sm">Upload a PDF or image. AI will automatically extract medicines and their chemical structures to verify safety.</p>
+        </div>
       </div>
     );
   }
@@ -80,27 +122,42 @@ export default function LabReports() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight text-gray-900">Lab Reports</h1>
-          <p className="text-gray-500 font-medium mt-1">Detailed biomarker analysis and AI insights</p>
+          <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight text-gray-900">Chemical Analysis</h1>
+          <p className="text-gray-500 font-medium mt-1">Medicine-wise chemical breakdown and safety audit</p>
         </div>
         
-        {/* Report Picker */}
-        {labReports.length > 1 && (
-          <div className="relative">
-            <select
-              value={activeReportIdx}
-              onChange={(e) => setActiveReportIdx(Number(e.target.value))}
-              className="appearance-none bg-white border border-gray-200 rounded-xl px-4 py-2.5 pr-10 text-sm font-semibold text-gray-900 cursor-pointer hover:border-gray-300 transition-colors focus:outline-none focus:border-gray-400"
-            >
-              {labReports.map((r, i) => (
-                <option key={r.id} value={i}>
-                  Report {i + 1} — {new Date(r.uploadedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-                </option>
-              ))}
-            </select>
-            <ChevronDown className="w-4 h-4 text-gray-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+        <div className="flex items-center gap-3">
+          {/* Upload New Button */}
+          <div className="relative overflow-hidden cursor-pointer">
+            <input
+              type="file"
+              accept="image/*,.pdf"
+              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+              onChange={handleUploadLabReport}
+            />
+            <button className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gray-900 text-white text-sm font-bold shadow-sm hover:bg-gray-800 transition-colors">
+              <Upload className="w-4 h-4" /> Upload New
+            </button>
           </div>
-        )}
+
+          {/* Report Picker */}
+          {labReports.length > 1 && (
+            <div className="relative">
+              <select
+                value={activeReportIdx}
+                onChange={(e) => setActiveReportIdx(Number(e.target.value))}
+                className="appearance-none bg-white border border-gray-200 rounded-xl px-4 py-2.5 pr-10 text-sm font-semibold text-gray-900 cursor-pointer hover:border-gray-300 transition-colors focus:outline-none focus:border-gray-400"
+              >
+                {labReports.map((r, i) => (
+                  <option key={r.id} value={i}>
+                    Report {i + 1} — {new Date(r.uploadedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                  </option>
+                ))}
+              </select>
+              <ChevronDown className="w-4 h-4 text-gray-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Summary Cards */}
@@ -108,219 +165,188 @@ export default function LabReports() {
         <div className="bg-white rounded-2xl border border-gray-200 p-5 shadow-sm">
           <div className="flex items-center gap-3 mb-3">
             <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center border border-blue-100">
-              <FlaskConical className="w-5 h-5 text-blue-600" />
+              <Pill className="w-5 h-5 text-blue-600" />
             </div>
-            <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Total</span>
+            <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Medicines Analyzed</span>
           </div>
-          <div className="text-3xl font-extrabold text-gray-900">{parameters.length}</div>
-          <p className="text-xs text-gray-400 font-medium mt-1">Parameters Tested</p>
+          <div className="text-3xl font-extrabold text-gray-900">{totalMedicines}</div>
+          <p className="text-xs text-gray-400 font-medium mt-1">Total products found</p>
         </div>
         <div className="bg-white rounded-2xl border border-gray-200 p-5 shadow-sm">
           <div className="flex items-center gap-3 mb-3">
-            <div className="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center border border-emerald-100">
-              <CheckCircle2 className="w-5 h-5 text-emerald-600" />
+            <div className="w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center border border-red-100">
+              <XOctagon className="w-5 h-5 text-red-600" />
             </div>
-            <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">In Range</span>
+            <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Banned Substances</span>
           </div>
-          <div className="text-3xl font-extrabold text-emerald-600">{normalCount}</div>
-          <p className="text-xs text-gray-400 font-medium mt-1">Normal Results</p>
+          <div className={`text-3xl font-extrabold ${totalBanned > 0 ? 'text-red-600' : 'text-gray-900'}`}>{totalBanned}</div>
+          <p className="text-xs text-gray-400 font-medium mt-1">Illegal or banned chemicals</p>
         </div>
         <div className="bg-white rounded-2xl border border-gray-200 p-5 shadow-sm">
           <div className="flex items-center gap-3 mb-3">
-            <div className={`w-10 h-10 rounded-xl flex items-center justify-center border ${criticalCount > 0 ? 'bg-red-50 border-red-100' : 'bg-amber-50 border-amber-100'}`}>
-              <AlertTriangle className={`w-5 h-5 ${criticalCount > 0 ? 'text-red-600' : 'text-amber-600'}`} />
+            <div className="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center border border-amber-100">
+              <AlertTriangle className="w-5 h-5 text-amber-600" />
             </div>
-            <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Action</span>
+            <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Health Warnings</span>
           </div>
-          <div className={`text-3xl font-extrabold ${criticalCount > 0 ? 'text-red-600' : 'text-amber-600'}`}>{abnormalCount}</div>
-          <p className="text-xs text-gray-400 font-medium mt-1">{criticalCount > 0 ? `${criticalCount} Critical` : 'Needs Review'}</p>
+          <div className={`text-3xl font-extrabold ${totalWarnings > 0 ? 'text-amber-600' : 'text-gray-900'}`}>{totalWarnings}</div>
+          <p className="text-xs text-gray-400 font-medium mt-1">High dosages or side effects</p>
         </div>
       </div>
 
-      {/* Report Info */}
-      <div className="flex items-center gap-4 text-sm text-gray-500">
-        <div className="flex items-center gap-1.5">
-          <Calendar className="w-4 h-4" />
-          <span className="font-medium">Uploaded: {currentReport ? new Date(currentReport.uploadedAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : '—'}</span>
+      {/* Report Info & Search */}
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-gray-500">
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-1.5">
+            <Calendar className="w-4 h-4" />
+            <span className="font-medium">Date: {currentReport ? new Date(currentReport.uploadedAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : '—'}</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <FileText className="w-4 h-4" />
+            <span className="font-medium">ID: {currentReport?.id || '—'}</span>
+          </div>
         </div>
-        <div className="flex items-center gap-1.5">
-          <FileText className="w-4 h-4" />
-          <span className="font-medium">Report ID: {currentReport?.id || '—'}</span>
-        </div>
-      </div>
-
-      {/* Filters */}
-      <div className="flex flex-col sm:flex-row gap-3">
-        <div className="relative flex-1 max-w-sm">
+        
+        <div className="relative w-full sm:w-80">
           <Search className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
           <input
             type="text"
-            placeholder="Search parameters..."
+            placeholder="Search medicines or chemicals..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-gray-300 transition-colors"
+            className="w-full pl-10 pr-4 py-2 bg-white border border-gray-200 rounded-full text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-gray-300 transition-colors shadow-sm"
           />
-        </div>
-        <div className="flex gap-2 flex-wrap">
-          {categories.map(cat => (
-            <button
-              key={cat}
-              onClick={() => setCategoryFilter(cat)}
-              className={`px-3 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-colors border ${
-                categoryFilter === cat
-                  ? 'bg-gray-900 text-white border-gray-900'
-                  : 'bg-white text-gray-500 border-gray-200 hover:border-gray-300'
-              }`}
-            >
-              {cat === 'all' ? 'All' : cat}
-            </button>
-          ))}
         </div>
       </div>
 
-      {/* Parameter Table */}
-      <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead>
-              <tr className="border-b border-gray-100 bg-gray-50/80">
-                <th className="text-left px-5 py-3.5 text-[11px] font-bold text-gray-500 uppercase tracking-wider">Parameter</th>
-                <th className="text-left px-4 py-3.5 text-[11px] font-bold text-gray-500 uppercase tracking-wider">Value</th>
-                <th className="text-left px-4 py-3.5 text-[11px] font-bold text-gray-500 uppercase tracking-wider">Reference</th>
-                <th className="text-left px-4 py-3.5 text-[11px] font-bold text-gray-500 uppercase tracking-wider">Status</th>
-                <th className="text-left px-4 py-3.5 text-[11px] font-bold text-gray-500 uppercase tracking-wider hidden lg:table-cell">Category</th>
-                <th className="text-left px-4 py-3.5 text-[11px] font-bold text-gray-500 uppercase tracking-wider hidden xl:table-cell">Confidence</th>
-                <th className="text-left px-4 py-3.5 text-[11px] font-bold text-gray-500 uppercase tracking-wider hidden xl:table-cell">Risk / Recommendation</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-50">
-              {filteredParams.map((p) => {
-                const isAbnormal = p.status !== 'Normal';
+      {/* Medicine Trees */}
+      <div className="flex flex-col gap-8">
+        {medicines.map((med, idx) => (
+          <div key={idx} className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+            {/* Medicine Header */}
+            <div className={`px-6 py-5 border-b border-gray-100 flex items-center justify-between ${med.hasBanned ? 'bg-red-50/50' : med.hasWarning ? 'bg-amber-50/30' : 'bg-gray-50/50'}`}>
+              <div className="flex items-center gap-3">
+                <div className={`w-12 h-12 rounded-xl flex items-center justify-center border shadow-sm ${med.hasBanned ? 'bg-white border-red-200' : 'bg-white border-gray-200'}`}>
+                  <Pill className={`w-6 h-6 ${med.hasBanned ? 'text-red-500' : med.hasWarning ? 'text-amber-500' : 'text-blue-500'}`} />
+                </div>
+                <div>
+                  <h2 className="text-xl font-extrabold text-gray-900">{med.name}</h2>
+                  <div className="flex items-center gap-2 mt-1">
+                    <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">{med.chemicals.length} Chemicals Found</span>
+                    {med.hasBanned && (
+                      <span className="text-[10px] font-bold text-red-600 bg-red-100 px-2 py-0.5 rounded-full uppercase tracking-wider border border-red-200">
+                        Contains Banned Substance
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Chemical Breakdown List */}
+            <div className="divide-y divide-gray-100">
+              {med.chemicals.map((chem, cIdx) => {
+                const rec = parseRecommendation(chem.recommendation);
+                const isBanned = chem.status === 'Banned';
+                const isWarning = chem.status === 'Warning';
+                
                 return (
-                  <tr key={p.id} className={`transition-colors ${isAbnormal ? 'bg-amber-50/20 hover:bg-amber-50/40' : 'hover:bg-gray-50/50'}`}>
-                    {/* Parameter Name */}
-                    <td className="px-5 py-4">
-                      <div className="flex items-center gap-2">
-                        {getTrendIcon(p.value, p.normalMin, p.normalMax)}
+                  <div key={cIdx} className="p-6 transition-colors hover:bg-gray-50/30">
+                    {/* Top Row: Chemical Name, Value, Status */}
+                    <div className="flex flex-col md:flex-row md:items-start justify-between gap-4 mb-4">
+                      <div className="flex items-start gap-3">
+                        <div className="mt-1">
+                          <ChevronRight className="w-5 h-5 text-gray-300" />
+                        </div>
                         <div>
-                          <div className="text-sm font-semibold text-gray-900">{p.name}</div>
-                          <div className="text-[11px] text-gray-400 font-medium">{p.chemicalType || '—'}</div>
+                          <h3 className="text-lg font-bold text-gray-900">{chem.name}</h3>
+                          <div className="flex items-center gap-2 mt-0.5">
+                            <span className="text-xs font-semibold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-md border border-blue-100">
+                              {chem.chemicalType}
+                            </span>
+                            <span className="text-xs text-gray-500 font-medium">Confidence: {chem.confidence}%</span>
+                          </div>
                         </div>
                       </div>
-                    </td>
-                    {/* Value */}
-                    <td className="px-4 py-4">
-                      <span className={`text-lg font-extrabold ${
-                        p.status === 'Normal' ? 'text-gray-900' : 
-                        p.severity === 'critical' ? 'text-red-600' : 'text-amber-600'
-                      }`}>
-                        {p.value}
-                      </span>
-                      <span className="text-xs text-gray-400 font-medium ml-1">{p.unit}</span>
-                    </td>
-                    {/* Reference Range */}
-                    <td className="px-4 py-4">
-                      <span className="text-sm text-gray-500 font-medium">{p.referenceRange || `${p.normalMin}–${p.normalMax} ${p.unit}`}</span>
-                    </td>
-                    {/* Status */}
-                    <td className="px-4 py-4">
-                      {getStatusBadge(p.status, p.severity)}
-                    </td>
-                    {/* Category */}
-                    <td className="px-4 py-4 hidden lg:table-cell">
-                      <span className="px-2 py-1 rounded-md bg-gray-100 text-gray-600 text-[11px] font-bold uppercase tracking-wider">
-                        {p.category || '—'}
-                      </span>
-                    </td>
-                    {/* Confidence */}
-                    <td className="px-4 py-4 hidden xl:table-cell">
-                      <div className="flex items-center gap-2">
-                        <div className="w-16 h-1.5 rounded-full bg-gray-100 overflow-hidden">
-                          <div
-                            className={`h-full rounded-full ${(p.confidence || 0) >= 90 ? 'bg-emerald-500' : (p.confidence || 0) >= 70 ? 'bg-amber-400' : 'bg-red-400'}`}
-                            style={{ width: `${p.confidence || 0}%` }}
-                          />
+                      
+                      <div className="flex items-center gap-4 ml-8 md:ml-0">
+                        <div className="text-right">
+                          <div className="text-xl font-extrabold text-gray-900">
+                            {chem.value} <span className="text-sm text-gray-500 font-medium">{chem.unit}</span>
+                          </div>
                         </div>
-                        <span className="text-xs font-bold text-gray-500">{p.confidence || 0}%</span>
+                        <div className="w-px h-8 bg-gray-200 hidden md:block" />
+                        <div>
+                          {getStatusBadge(chem.status)}
+                        </div>
                       </div>
-                    </td>
-                    {/* Risk + Recommendation */}
-                    <td className="px-4 py-4 hidden xl:table-cell max-w-[280px]">
-                      {isAbnormal ? (
-                        <div className="flex flex-col gap-1">
-                          {p.risk && <p className="text-xs text-red-600 font-medium line-clamp-1" title={p.risk}>{p.risk}</p>}
-                          {p.recommendation && <p className="text-xs text-gray-500 line-clamp-1" title={p.recommendation}>💡 {p.recommendation}</p>}
+                    </div>
+
+                    {/* Infographic Style Details */}
+                    <div className="ml-8 grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                      
+                      {/* Uses / Insight */}
+                      <div className="bg-gray-50 rounded-xl p-4 border border-gray-100">
+                        <div className="flex items-center gap-1.5 mb-2">
+                          <Activity className="w-4 h-4 text-blue-500" />
+                          <h4 className="text-[11px] font-bold text-gray-500 uppercase tracking-wider">Clinical Uses</h4>
                         </div>
-                      ) : (
-                        <span className="text-xs text-gray-400">Within normal range</span>
-                      )}
-                    </td>
-                  </tr>
+                        <p className="text-sm text-gray-800 font-medium">{rec?.uses || 'No standard uses provided.'}</p>
+                        
+                        <div className="mt-3 pt-3 border-t border-gray-200">
+                          <div className="flex items-start gap-1.5">
+                            <Info className="w-3.5 h-3.5 text-blue-500 shrink-0 mt-0.5" />
+                            <p className="text-xs text-gray-600 font-medium">{chem.risk}</p>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Warnings & Cautions */}
+                      <div className={`${isWarning || isBanned ? 'bg-amber-50 border-amber-200' : 'bg-gray-50 border-gray-100'} rounded-xl p-4 border`}>
+                        <div className="flex items-center gap-1.5 mb-2">
+                          <ShieldAlert className={`w-4 h-4 ${isWarning || isBanned ? 'text-amber-500' : 'text-gray-400'}`} />
+                          <h4 className={`text-[11px] font-bold uppercase tracking-wider ${isWarning || isBanned ? 'text-amber-700' : 'text-gray-500'}`}>
+                            Health Warnings & Cautions
+                          </h4>
+                        </div>
+                        <p className={`text-sm font-medium ${isWarning || isBanned ? 'text-amber-900' : 'text-gray-800'}`}>
+                          {rec?.cautions || 'None specified.'}
+                        </p>
+                      </div>
+
+                      {/* Banned Status */}
+                      <div className={`${isBanned ? 'bg-red-50 border-red-200' : 'bg-gray-50 border-gray-100'} rounded-xl p-4 border`}>
+                        <div className="flex items-center gap-1.5 mb-2">
+                          <AlertOctagon className={`w-4 h-4 ${isBanned ? 'text-red-500' : 'text-gray-400'}`} />
+                          <h4 className={`text-[11px] font-bold uppercase tracking-wider ${isBanned ? 'text-red-700' : 'text-gray-500'}`}>
+                            Banned In
+                          </h4>
+                        </div>
+                        <p className={`text-sm font-medium ${isBanned ? 'text-red-900' : 'text-gray-800'}`}>
+                          {rec?.bannedIn || 'Not banned.'}
+                        </p>
+                        {isBanned && rec?.text && (
+                          <div className="mt-3 pt-3 border-t border-red-200">
+                            <p className="text-xs text-red-700 font-bold">{rec.text}</p>
+                          </div>
+                        )}
+                      </div>
+
+                    </div>
+                  </div>
                 );
               })}
-            </tbody>
-          </table>
-        </div>
+            </div>
+          </div>
+        ))}
 
-        {filteredParams.length === 0 && (
-          <div className="py-12 text-center">
-            <Search className="w-8 h-8 text-gray-200 mx-auto mb-3" />
-            <p className="text-gray-400 font-medium">No parameters match your search</p>
+        {medicines.length === 0 && !labUploadLoading && (
+          <div className="py-16 text-center bg-white rounded-2xl border border-gray-200">
+            <Search className="w-10 h-10 text-gray-200 mx-auto mb-3" />
+            <p className="text-gray-500 font-medium">No medicines match your search query.</p>
           </div>
         )}
       </div>
-
-      {/* Abnormal Detail Cards */}
-      {filteredParams.filter(p => p.status !== 'Normal').length > 0 && (
-        <div>
-          <h2 className="text-lg font-extrabold tracking-tight text-gray-900 mb-4 flex items-center gap-2">
-            <AlertTriangle className="w-5 h-5 text-amber-500" />
-            Detailed Analysis — Abnormal Results
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {filteredParams.filter(p => p.status !== 'Normal').map(p => (
-              <div key={p.id} className="bg-white rounded-2xl border border-gray-200 shadow-sm p-5">
-                <div className="flex items-start justify-between mb-3">
-                  <div>
-                    <h3 className="text-base font-extrabold text-gray-900">{p.name}</h3>
-                    <span className="text-xs text-gray-400 font-medium">{p.category} · {p.chemicalType}</span>
-                  </div>
-                  {getStatusBadge(p.status, p.severity)}
-                </div>
-                
-                {/* Value Bar */}
-                <div className="mb-4">
-                  <div className="flex items-baseline gap-1 mb-2">
-                    <span className={`text-2xl font-extrabold ${p.severity === 'critical' ? 'text-red-600' : 'text-amber-600'}`}>
-                      {p.value}
-                    </span>
-                    <span className="text-sm text-gray-400 font-medium">{p.unit}</span>
-                    <span className="text-xs text-gray-400 ml-2">Ref: {p.normalMin}–{p.normalMax}</span>
-                  </div>
-                  <div className="relative h-2 rounded-full bg-gray-100 overflow-hidden">
-                    <div className="absolute h-full bg-emerald-200" style={{ left: `${(p.normalMin / (p.normalMax * 2.5)) * 100}%`, width: `${((p.normalMax - p.normalMin) / (p.normalMax * 2.5)) * 100}%` }} />
-                    <div
-                      className={`absolute w-3 h-3 rounded-full top-1/2 -translate-y-1/2 border-2 border-white shadow-md ${p.severity === 'critical' ? 'bg-red-500' : 'bg-amber-500'}`}
-                      style={{ left: `${Math.min((p.value / (p.normalMax * 2.5)) * 100, 98)}%` }}
-                    />
-                  </div>
-                </div>
-
-                {/* AI Insight */}
-                <div className="bg-gray-50 rounded-xl p-4 border border-gray-100">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Info className="w-4 h-4 text-blue-500" />
-                    <span className="text-[11px] font-bold text-blue-600 uppercase tracking-wider">AI Insight</span>
-                    <span className="text-[10px] font-bold text-gray-400 ml-auto">{p.confidence}% conf.</span>
-                  </div>
-                  {p.risk && <p className="text-xs text-gray-600 mb-1"><strong>Risk:</strong> {p.risk}</p>}
-                  {p.recommendation && <p className="text-xs text-gray-500"><strong>Action:</strong> {p.recommendation}</p>}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
     </div>
   );
 }

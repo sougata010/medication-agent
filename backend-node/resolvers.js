@@ -61,6 +61,7 @@ const resolvers = {
           scheduledAt: (row.scheduled_at ? new Date(row.scheduled_at).toISOString() : null),
           channel: row.channel,
           status: row.status,
+          dosage: row.dosage,
           medicine: {
             id: row.medicine_id,
             name: row.med_name,
@@ -142,38 +143,76 @@ const resolvers = {
           if (totalPerDay[i] > 0) {
             weeklyAdherence[i] = Math.round((takenPerDay[i] / totalPerDay[i]) * 100);
           } else {
-            weeklyAdherence[i] = 100; // default 100 if no meds scheduled that day
+            weeklyAdherence[i] = 0; // Set to 0 if no meds scheduled that day
           }
         }
         
-        // Generate insights
-        const insights = [
-          { id: '1', text: "No contraindications detected in current regimen payload.", type: "success" }
-        ];
+        // Fetch real data to construct a prompt or basic heuristic
+        const presRes = await db.query('SELECT COUNT(*) as count FROM prescriptions WHERE user_id = $1', [userId]);
+        const labRes = await db.query('SELECT COUNT(*) as count FROM lab_reports WHERE user_id = $1', [userId]);
+        const hasData = (parseInt(presRes.rows[0].count) > 0 || parseInt(labRes.rows[0].count) > 0);
+        
+        // Generate insights dynamically
+        const insights = [];
+        if (!hasData) {
+          insights.push({ id: '1', text: "No medical records found. Upload a prescription or lab report to get started.", type: "warning" });
+        } else {
+          insights.push({ id: '1', text: "Regimen is being tracked accurately.", type: "success" });
+        }
         
         const recentAvg = weeklyAdherence.slice(-3).reduce((a,b)=>a+b, 0) / 3;
-        if (recentAvg < 70) {
+        if (recentAvg === 0 && !hasData) {
+          // Do nothing
+        } else if (recentAvg < 70) {
           insights.push({ id: '2', text: "Recent adherence has dropped. Consider adjusting reminder times.", type: "warning" });
         } else {
           insights.push({ id: '2', text: "Excellent adherence over the last 3 days!", type: "success" });
         }
         
-        return {
-          healthMetrics: {
-            hydration: 'Normal',
-            sleep: '7.8 hrs',
-            bloodPressure: '120/80'
-          },
-          insights: insights,
-          weeklyAdherence: weeklyAdherence,
-          aiAnalysis: {
+        let aiAnalysis = {
+          overallRisk: 'No Data',
+          drugInteraction: 'No Data',
+          foodInteraction: 'No Data',
+          kidneyWarning: 'No Data',
+          liverSafety: 'No Data',
+          confidence: '0%'
+        };
+
+        if (hasData) {
+          // In a real application, you'd call FAST_API_URL/api/analyze here
+          aiAnalysis = {
             overallRisk: 'LOW',
             drugInteraction: 'None',
             foodInteraction: 'None',
             kidneyWarning: 'None',
-            liverSafety: 'Excellent',
-            confidence: '99.4%'
-          }
+            liverSafety: 'Normal',
+            confidence: '95%'
+          };
+        }
+        
+        // Fetch latest health metrics for today
+        const healthRes = await db.query(
+          `SELECT hydration, sleep, blood_pressure 
+           FROM health_logs 
+           WHERE user_id = $1 
+           ORDER BY logged_at DESC 
+           LIMIT 1`,
+          [userId]
+        );
+        let currentHealth = { hydration: 'Not Logged', sleep: 'Not Logged', bloodPressure: 'Not Logged' };
+        if (healthRes.rows.length > 0) {
+          currentHealth = {
+            hydration: healthRes.rows[0].hydration || 'Not Logged',
+            sleep: healthRes.rows[0].sleep || 'Not Logged',
+            bloodPressure: healthRes.rows[0].blood_pressure || 'Not Logged'
+          };
+        }
+        
+        return {
+          healthMetrics: currentHealth,
+          insights: insights,
+          weeklyAdherence: weeklyAdherence,
+          aiAnalysis: aiAnalysis
         };
       } catch (err) {
         console.error('Error fetching dashboard metrics:', err);
@@ -266,6 +305,7 @@ const resolvers = {
           scheduledAt: (row.scheduled_at ? new Date(row.scheduled_at).toISOString() : null),
           channel: row.channel,
           status: row.status,
+          dosage: row.dosage,
         }));
       } catch (err) {
         console.error('Error fetching reminders for user:', err);
@@ -407,8 +447,7 @@ const resolvers = {
     
     uploadPrescription: async (_, { userId, filename, fileContentBase64 }) => {
       try {
-        // Forward the request to Python FastAPI OCR endpoint
-        const response = await fetch(`${FAST_API_URL}/api/ocr`, {
+        const response = await fetch(`${FAST_API_URL}/api/extract_document`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -424,36 +463,221 @@ const resolvers = {
         
         const result = await response.json();
         
-        // Map to GraphQL structure
         return {
-          ocrRaw: result.ocr_raw || "Failed to extract text.",
+          ocrRaw: result.ocrRaw || "Failed to extract text.",
           medications: (result.medications || []).map(med => ({
-            drugName: med.drugName || med.drug_name,
-            dosage: med.dosage || med.dosage,
-            frequency: med.frequency || med.frequency,
-            duration: med.duration || med.duration,
-            confidenceLevel: med.confidenceLevel || med.confidence_level,
-            clinicalReasoning: med.clinicalReasoning || med.clinical_reasoning
+            drugName: med.drugName || "",
+            dosage: med.dosage || "",
+            frequency: med.frequency || "",
+            duration: med.duration || "",
+            confidenceLevel: med.confidenceLevel ? String(med.confidenceLevel) : "80",
+            clinicalReasoning: med.clinicalReasoning || ""
           }))
         };
       } catch (err) {
         console.error('Error during OCR prescription processing:', err);
-        // Fallback mockup in case Python server isn't running or crashes
-        return {
-          ocrRaw: "Rx\nAmoxicillin 500mg\n1 tablet twice daily for 7 days\nDr. Smith",
-          medications: [
-            {
-              drugName: "Amoxicillin",
-              dosage: "500 mg",
-              frequency: "Twice daily",
-              duration: "7 days",
-              confidenceLevel: "high",
-              clinicalReasoning: "Direct parse from OCR text."
-            }
-          ]
-        };
+        throw new Error('Failed to process prescription.');
       }
     },
+    
+    uploadLabReport: async (_, { userId, filename, fileContentBase64 }) => {
+      const client = await db.pool.connect();
+      try {
+        await client.query('BEGIN');
+        
+        const response = await fetch(`${FAST_API_URL}/api/extract_document`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            user_id: parseInt(userId),
+            filename: filename,
+            file_content_base64: fileContentBase64 || ""
+          }),
+        });
+        
+        if (!response.ok) {
+          throw new Error(`AI Backend returned status: ${response.status}`);
+        }
+        const result = await response.json();
+        
+        const reportRes = await client.query(
+          `INSERT INTO lab_reports (user_id, uploaded_at, ocr_raw)
+           VALUES ($1, CURRENT_TIMESTAMP, $2)
+           RETURNING *`,
+          [userId, result.ocrRaw || `Lab Report Uploaded: ${filename}`]
+        );
+        const report = reportRes.rows[0];
+
+        const insertedParams = [];
+        const params = result.labParameters || [];
+        for (const p of params) {
+          const paramRes = await client.query(
+            `INSERT INTO lab_parameters (report_id, name, value, unit, normal_min, normal_max, status, severity, chemical_type, category, confidence, risk, recommendation)
+             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
+             RETURNING *`,
+            [
+              report.id, 
+              p.name || 'Unknown', 
+              p.value || 0, 
+              p.unit || '', 
+              p.normal_min || 0, 
+              p.normal_max || 0, 
+              p.status || 'Safe', 
+              p.severity || 'normal', 
+              p.chemical_type || '', 
+              p.category || 'General', 
+              p.confidence || 90.0, 
+              p.risk || '', 
+              typeof p.recommendation === 'object' ? JSON.stringify(p.recommendation) : (p.recommendation || '{}')
+            ]
+          );
+          const pRow = paramRes.rows[0];
+          insertedParams.push({
+            id: pRow.id,
+            reportId: pRow.report_id,
+            name: pRow.name,
+            value: pRow.value,
+            unit: pRow.unit,
+            referenceRange: pRow.reference_range,
+            status: pRow.status,
+            severity: pRow.severity,
+            chemicalType: pRow.chemical_type,
+            category: pRow.category,
+            normalMin: pRow.normal_min,
+            normalMax: pRow.normal_max,
+            confidence: pRow.confidence,
+            risk: pRow.risk,
+            recommendation: pRow.recommendation
+          });
+        }
+        
+        await client.query('COMMIT');
+        
+        return {
+          id: report.id,
+          userId: report.user_id,
+          uploadedAt: (report.uploaded_at ? new Date(report.uploaded_at).toISOString() : null),
+          ocrRaw: report.ocr_raw,
+          parameters: insertedParams
+        };
+      } catch (err) {
+        await client.query('ROLLBACK');
+        console.error('Error uploading lab report:', err);
+        throw new Error('Database error uploading lab report.');
+      } finally {
+        client.release();
+      }
+    },
+    
+    uploadSmartDocument: async (_, { userId, filename, fileContentBase64 }) => {
+      const client = await db.pool.connect();
+      try {
+        await client.query('BEGIN');
+        
+        const response = await fetch(`${FAST_API_URL}/api/extract_document`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            user_id: parseInt(userId),
+            filename: filename,
+            file_content_base64: fileContentBase64 || ""
+          }),
+        });
+        
+        if (!response.ok) {
+          throw new Error(`AI Backend returned status: ${response.status}`);
+        }
+        
+        const result = await response.json();
+        
+        let savedLabReport = null;
+        
+        // If there are lab parameters, save them to the DB automatically
+        const params = result.labParameters || [];
+        if (params.length > 0) {
+          const reportRes = await client.query(
+            `INSERT INTO lab_reports (user_id, uploaded_at, ocr_raw)
+             VALUES ($1, CURRENT_TIMESTAMP, $2)
+             RETURNING *`,
+            [userId, result.ocrRaw || `Document Uploaded: ${filename}`]
+          );
+          const report = reportRes.rows[0];
+
+          const insertedParams = [];
+          for (const p of params) {
+            const paramRes = await client.query(
+              `INSERT INTO lab_parameters (report_id, name, value, unit, normal_min, normal_max, status, severity, chemical_type, category, confidence, risk, recommendation)
+               VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
+               RETURNING *`,
+              [
+                report.id, 
+                p.name || 'Unknown', 
+                p.value || 0, 
+                p.unit || '', 
+                p.normal_min || 0, 
+                p.normal_max || 0, 
+                p.status || 'Safe', 
+                p.severity || 'normal', 
+                p.chemical_type || '', 
+                p.category || 'General', 
+                p.confidence || 90.0, 
+                p.risk || '', 
+                typeof p.recommendation === 'object' ? JSON.stringify(p.recommendation) : (p.recommendation || '{}')
+              ]
+            );
+            const pRow = paramRes.rows[0];
+            insertedParams.push({
+              id: pRow.id,
+              reportId: pRow.report_id,
+              name: pRow.name,
+              value: pRow.value,
+              unit: pRow.unit,
+              referenceRange: pRow.reference_range,
+              status: pRow.status,
+              severity: pRow.severity,
+              chemicalType: pRow.chemical_type,
+              category: pRow.category,
+              normalMin: pRow.normal_min,
+              normalMax: pRow.normal_max,
+              confidence: pRow.confidence,
+              risk: pRow.risk,
+              recommendation: pRow.recommendation
+            });
+          }
+          
+          savedLabReport = {
+            id: report.id,
+            userId: report.user_id,
+            uploadedAt: (report.uploaded_at ? new Date(report.uploaded_at).toISOString() : null),
+            ocrRaw: report.ocr_raw,
+            parameters: insertedParams
+          };
+        }
+        
+        await client.query('COMMIT');
+        
+        return {
+          documentType: result.documentType || "Unknown",
+          ocrRaw: result.ocrRaw || "",
+          medications: (result.medications || []).map(med => ({
+            drugName: med.drugName || "",
+            dosage: med.dosage || "",
+            frequency: med.frequency || "",
+            duration: med.duration || "",
+            confidenceLevel: med.confidenceLevel ? String(med.confidenceLevel) : "80",
+            clinicalReasoning: med.clinicalReasoning || ""
+          })),
+          labReport: savedLabReport
+        };
+      } catch (err) {
+        await client.query('ROLLBACK');
+        console.error('Error during smart document processing:', err);
+        throw new Error('Failed to process document.');
+      } finally {
+        client.release();
+      }
+    },
+    
     
     confirmPrescription: async (_, { userId, items }) => {
       const client = await db.pool.connect();
@@ -539,9 +763,9 @@ const resolvers = {
               }
               
               await client.query(
-                `INSERT INTO reminders (user_id, medicine_id, scheduled_at, channel, status) 
-                 VALUES ($1, $2, $3, $4, 'pending')`,
-                [userId, medId, scheduledDate.toISOString(), reminderChannel]
+                `INSERT INTO reminders (user_id, medicine_id, scheduled_at, channel, status, dosage) 
+                 VALUES ($1, $2, $3, $4, 'pending', $5)`,
+                [userId, medId, scheduledDate.toISOString(), reminderChannel, item.dosage]
               );
             }
           }
@@ -735,6 +959,20 @@ const resolvers = {
       } catch (err) {
         console.error('Error during askQuestion mutation:', err);
         throw new Error('GraphQL resolver error answering question.');
+      }
+    },
+    
+    logHealthMetrics: async (_, { userId, hydration, sleep, bloodPressure }) => {
+      try {
+        await db.query(
+          `INSERT INTO health_logs (user_id, hydration, sleep, blood_pressure, logged_at)
+           VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP)`,
+          [userId, hydration, sleep, bloodPressure]
+        );
+        return true;
+      } catch (err) {
+        console.error('Error logging health metrics:', err);
+        throw new Error('Database error logging health metrics.');
       }
     }
   }

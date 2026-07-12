@@ -51,6 +51,9 @@ export const GlobalProvider = ({ children }) => {
   const [ocrData, setOcrData] = useState(null); // { ocrRaw: '', medications: [] }
   const [ocrFileName, setOcrFileName] = useState('');
   const [ocrPreviewImage, setOcrPreviewImage] = useState(null);
+  
+  // Lab Upload States
+  const [labUploadLoading, setLabUploadLoading] = useState(false);
 
   // Profile Input States
   const [profileAllergies, setProfileAllergies] = useState([]);
@@ -295,6 +298,7 @@ export const GlobalProvider = ({ children }) => {
           scheduledAt
           channel
           status
+          dosage
           medicine {
             id
             name
@@ -507,6 +511,106 @@ export const GlobalProvider = ({ children }) => {
     reader.readAsDataURL(file);
   };
 
+  const handleUploadLabReport = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setLabUploadLoading(true);
+
+    const reader = new FileReader();
+    reader.onloadend = async () => {
+      const base64String = reader.result.replace('data:', '').replace(/^.+,/, '');
+      
+      const mutation = `
+        mutation UploadLabReport($userId: ID!, $filename: String!, $fileContentBase64: String) {
+          uploadLabReport(userId: $userId, filename: $filename, fileContentBase64: $fileContentBase64) {
+            id
+          }
+        }
+      `;
+      const data = await gqlFetch(mutation, {
+        userId,
+        filename: file.name,
+        fileContentBase64: base64String
+      });
+
+      setLabUploadLoading(false);
+      if (data && data.uploadLabReport) {
+        alert('Lab Report successfully analyzed and parameters extracted!');
+        fetchLabReports(userId);
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleUploadSmartDocument = async (e, setUIState) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setOcrFileName(file.name);
+    setOcrLoading(true);
+
+    const reader = new FileReader();
+    reader.onloadend = async () => {
+      setOcrPreviewImage(reader.result);
+      const base64String = reader.result.replace('data:', '').replace(/^.+,/, '');
+      
+      const mutation = `
+        mutation UploadSmartDocument($userId: ID!, $filename: String!, $fileContentBase64: String) {
+          uploadSmartDocument(userId: $userId, filename: $filename, fileContentBase64: $fileContentBase64) {
+            documentType
+            ocrRaw
+            medications {
+              drugName
+              dosage
+              frequency
+              duration
+              confidenceLevel
+              clinicalReasoning
+            }
+            labReport {
+              id
+            }
+          }
+        }
+      `;
+      const data = await gqlFetch(mutation, {
+        userId,
+        filename: file.name,
+        fileContentBase64: base64String
+      });
+
+      setOcrLoading(false);
+      if (data && data.uploadSmartDocument) {
+        const result = data.uploadSmartDocument;
+        let msgs = [];
+        if (result.labReport) {
+          msgs.push("Lab Report extracted and saved!");
+          fetchLabReports(userId);
+        }
+        if (result.medications && result.medications.length > 0) {
+          setOcrData({ ocrRaw: result.ocrRaw, medications: result.medications });
+        } else {
+          if (msgs.length > 0) alert(msgs.join(" "));
+          if (setUIState) setUIState(null); // Reset UI or navigate if no meds to verify
+        }
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleLogHealthMetrics = async (hydration, sleep, bloodPressure) => {
+    const mutation = `
+      mutation LogHealthMetrics($userId: ID!, $hydration: String, $sleep: String, $bloodPressure: String) {
+        logHealthMetrics(userId: $userId, hydration: $hydration, sleep: $sleep, bloodPressure: $bloodPressure)
+      }
+    `;
+    const data = await gqlFetch(mutation, { userId, hydration, sleep, bloodPressure });
+    if (data && data.logHealthMetrics) {
+      fetchDashboardMetrics(userId);
+      return true;
+    }
+    return false;
+  };
+
   const handleWizardChange = (index, field, value) => {
     if (!ocrData) return;
     const updatedMeds = [...ocrData.medications];
@@ -613,6 +717,10 @@ export const GlobalProvider = ({ children }) => {
     handleAddCondition,
     handleRemoveCondition,
     handleFileSelect,
+    handleUploadLabReport,
+    handleUploadSmartDocument,
+    handleLogHealthMetrics,
+    labUploadLoading,
     handleWizardChange,
     handleWizardTimingChange,
     handleConfirmWizard,

@@ -115,6 +115,7 @@ const typeDefs = gql`
     scheduledAt: String!
     channel: String!
     status: String!
+    dosage: String
     medicine: Medicine
   }
 
@@ -166,6 +167,13 @@ const typeDefs = gql`
   type PrescriptionExtraction {
     ocrRaw: String!
     medications: [PrescriptionItemExtraction!]!
+  }
+
+  type SmartUploadResult {
+    documentType: String!
+    ocrRaw: String!
+    medications: [PrescriptionItemExtraction!]!
+    labReport: LabReport
   }
 
   input ConfirmPrescriptionItemInput {
@@ -233,6 +241,18 @@ const typeDefs = gql`
       fileContentBase64: String
     ): PrescriptionExtraction!
     
+    uploadLabReport(
+      userId: ID!
+      filename: String!
+      fileContentBase64: String
+    ): LabReport!
+    
+    uploadSmartDocument(
+      userId: ID!
+      filename: String!
+      fileContentBase64: String
+    ): SmartUploadResult!
+    
     confirmPrescription(
       userId: ID!
       items: [ConfirmPrescriptionItemInput!]!
@@ -249,6 +269,13 @@ const typeDefs = gql`
       sessionId: String
       message: String!
     ): ChatResponse!
+    
+    logHealthMetrics(
+      userId: ID!
+      hydration: String
+      sleep: String
+      bloodPressure: String
+    ): Boolean!
   }
 `;
 

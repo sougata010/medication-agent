@@ -1,82 +1,131 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useGlobalContext } from '../context/GlobalContext';
 import {
   Upload, FileText, CheckCircle2, AlertTriangle, Eye,
-  Sparkles, ShieldCheck, X, Clock
+  Sparkles, ShieldCheck, X, Clock, FlaskConical
 } from 'lucide-react';
 
-export default function UploadRx() {
+export default function DocumentUpload() {
   const navigate = useNavigate();
   const {
     ocrData, setOcrData, ocrLoading, handleFileSelect, handleConfirmWizard,
-    handleWizardChange, handleWizardTimingChange, user, ocrPreviewImage
+    handleWizardChange, handleWizardTimingChange, user, ocrPreviewImage,
+    handleUploadLabReport, handleUploadSmartDocument, labUploadLoading
   } = useGlobalContext();
+
+  const [docType, setDocType] = useState('smart'); // 'prescription', 'labReport', or 'smart'
 
   const onConfirm = async () => {
     await handleConfirmWizard();
     navigate('/dashboard');
   };
 
+  const handleFileChange = (e) => {
+    if (docType === 'prescription') {
+      handleFileSelect(e);
+    } else if (docType === 'labReport') {
+      handleUploadLabReport(e);
+    } else {
+      handleUploadSmartDocument(e, (uiState) => {
+        // Callback if we need to reset UI or navigate if no wizard
+      });
+    }
+  };
+
+  // Loading State
+  if (ocrLoading || labUploadLoading) {
+    return (
+      <div className="flex-1 flex items-center justify-center py-24 animate-fade-in">
+        <div className="flex flex-col items-center gap-4 text-center">
+          <div className="w-16 h-16 border-4 border-gray-200 border-t-gray-900 rounded-full animate-spin" />
+          <h3 className="text-lg font-extrabold text-gray-900">
+            {ocrLoading ? 'Analyzing Prescription' : 'Analyzing Lab Report'}
+          </h3>
+          <p className="text-sm text-gray-400 font-medium max-w-xs">
+            {ocrLoading 
+              ? 'MedGraph AI is extracting medications and dosage data from your prescription image.'
+              : 'MedGraph AI is extracting structured biomarker data, cautions, and chemical details.'}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   // Upload State
-  if (!ocrData && !ocrLoading) {
+  if (!ocrData) {
     return (
       <div className="flex flex-col gap-6 animate-fade-in">
         <div>
-          <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight text-gray-900">Upload Prescription</h1>
-          <p className="text-gray-500 font-medium mt-1">Upload a clear photo or scan for AI extraction</p>
+          <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight text-gray-900">Upload Document</h1>
+          <p className="text-gray-500 font-medium mt-1">Select document type and upload for AI extraction</p>
+        </div>
+
+        {/* Document Type Selector */}
+        <div className="flex p-1 bg-gray-100 rounded-xl w-full max-w-lg mx-auto mb-2">
+          <button
+            onClick={() => setDocType('smart')}
+            className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-bold transition-all ${
+              docType === 'smart' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'
+            }`}
+          >
+            <Sparkles className="w-4 h-4 text-amber-500" /> Smart Auto-Detect
+          </button>
+          <button
+            onClick={() => setDocType('prescription')}
+            className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-bold transition-all ${
+              docType === 'prescription' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'
+            }`}
+          >
+            <FileText className="w-4 h-4" /> Prescription
+          </button>
+          <button
+            onClick={() => setDocType('labReport')}
+            className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-bold transition-all ${
+              docType === 'labReport' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'
+            }`}
+          >
+            <FlaskConical className="w-4 h-4" /> Lab Report
+          </button>
         </div>
 
         <div className="bg-white rounded-2xl border-2 border-dashed border-gray-200 hover:border-gray-400 transition-colors p-16 flex flex-col items-center justify-center text-center relative group cursor-pointer">
           <input
             type="file"
-            accept="image/*"
+            accept="image/*,.pdf"
             className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-            onChange={handleFileSelect}
+            onChange={handleFileChange}
           />
           <div className="w-16 h-16 rounded-2xl bg-gray-100 flex items-center justify-center mb-4 group-hover:bg-gray-200 transition-colors border border-gray-200">
             <Upload className="w-8 h-8 text-gray-400 group-hover:text-gray-600 transition-colors" />
           </div>
           <h3 className="text-lg font-extrabold text-gray-900 mb-2">Click to upload or drag and drop</h3>
-          <p className="text-sm text-gray-400 font-medium">PNG, JPG, GIF up to 10MB</p>
+          <p className="text-sm text-gray-400 font-medium">PNG, JPG, PDF up to 10MB</p>
         </div>
 
         {/* Info Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-5">
             <Sparkles className="w-5 h-5 text-blue-500 mb-3" />
-            <h4 className="text-sm font-bold text-gray-900 mb-1">AI-Powered OCR</h4>
-            <p className="text-xs text-gray-400">Neural extraction identifies medications, dosages, and schedules automatically.</p>
+            <h4 className="text-sm font-bold text-gray-900 mb-1">AI-Powered Extraction</h4>
+            <p className="text-xs text-gray-400">Neural extraction identifies medications, biomarkers, and schedules automatically.</p>
           </div>
           <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-5">
             <ShieldCheck className="w-5 h-5 text-emerald-500 mb-3" />
-            <h4 className="text-sm font-bold text-gray-900 mb-1">Human Verification</h4>
-            <p className="text-xs text-gray-400">Review and correct AI extractions before confirming your prescription.</p>
+            <h4 className="text-sm font-bold text-gray-900 mb-1">Clinical Safety</h4>
+            <p className="text-xs text-gray-400">Review AI extractions against medical safety guidelines and your profile.</p>
           </div>
           <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-5">
             <Clock className="w-5 h-5 text-purple-500 mb-3" />
-            <h4 className="text-sm font-bold text-gray-900 mb-1">Auto Reminders</h4>
-            <p className="text-xs text-gray-400">Confirmation automatically generates a full reminder schedule for each medication.</p>
+            <h4 className="text-sm font-bold text-gray-900 mb-1">Actionable Insights</h4>
+            <p className="text-xs text-gray-400">Generate auto-reminders for prescriptions and detailed analysis for lab reports.</p>
           </div>
         </div>
       </div>
     );
   }
 
-  // Loading State
-  if (ocrLoading) {
-    return (
-      <div className="flex-1 flex items-center justify-center py-24 animate-fade-in">
-        <div className="flex flex-col items-center gap-4 text-center">
-          <div className="w-16 h-16 border-4 border-gray-200 border-t-gray-900 rounded-full animate-spin" />
-          <h3 className="text-lg font-extrabold text-gray-900">Analyzing Prescription</h3>
-          <p className="text-sm text-gray-400 font-medium max-w-xs">MedGraph AI is extracting medications and dosage data from your prescription image.</p>
-        </div>
-      </div>
-    );
-  }
-
-  // Verification Wizard
+  // Verification Wizard (Only for Prescriptions right now)
   const avgConfidence = Math.round(ocrData.medications.reduce((acc, med) => acc + (med.confidenceLevel || 80), 0) / (ocrData.medications.length || 1));
 
   return (

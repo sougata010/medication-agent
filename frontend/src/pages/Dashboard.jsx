@@ -4,14 +4,30 @@ import { Link } from 'react-router-dom';
 import {
   Activity, Heart, Moon, Droplets, ShieldCheck, AlertTriangle,
   CheckCircle2, Clock, Pill, TrendingUp, ChevronRight, Brain,
-  FlaskConical, Zap, ArrowUpRight
+  FlaskConical, Zap, ArrowUpRight, X, Plus
 } from 'lucide-react';
 
 export default function Dashboard() {
   const {
     reminders, healthMetrics, insights, weeklyAdherence, aiAnalysis,
-    prescriptions, labReports, handleLogAdherence
+    prescriptions, labReports, handleLogAdherence, handleLogHealthMetrics
   } = useGlobalContext();
+
+  const [isLogModalOpen, setIsLogModalOpen] = useState(false);
+  const [hydrationInput, setHydrationInput] = useState('');
+  const [sleepInput, setSleepInput] = useState('');
+  const [bpInput, setBpInput] = useState('');
+  const [isLogging, setIsLogging] = useState(false);
+
+  const submitHealthLog = async () => {
+    setIsLogging(true);
+    await handleLogHealthMetrics(hydrationInput, sleepInput, bpInput);
+    setIsLogging(false);
+    setIsLogModalOpen(false);
+    setHydrationInput('');
+    setSleepInput('');
+    setBpInput('');
+  };
 
   const today = new Date();
   const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -137,7 +153,10 @@ export default function Dashboard() {
                           <h4 className={`text-sm font-semibold truncate ${isTaken ? 'text-emerald-700 line-through' : 'text-gray-900'}`}>
                             {r.medicine?.name || 'Unknown'}
                           </h4>
-                          <span className="text-xs text-gray-400">{r.medicine?.category || 'Medication'}</span>
+                          <span className="text-xs text-gray-400">
+                            {r.medicine?.category || 'Medication'}
+                            {r.dosage ? ` · ${r.dosage}` : ''}
+                          </span>
                         </div>
                         <div className="flex items-center gap-2">
                           {isTaken ? (
@@ -199,10 +218,19 @@ export default function Dashboard() {
         <div className="flex flex-col gap-6">
           {/* Health Metrics */}
           <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
-            <h3 className="text-sm font-extrabold tracking-tight text-gray-900 uppercase mb-4 flex items-center gap-2">
-              <Activity className="w-4 h-4 text-blue-600" />
-              Health Metrics
-            </h3>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-sm font-extrabold tracking-tight text-gray-900 uppercase flex items-center gap-2">
+                <Activity className="w-4 h-4 text-blue-600" />
+                Health Metrics
+              </h3>
+              <button 
+                onClick={() => setIsLogModalOpen(true)}
+                className="flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider bg-blue-50 text-blue-600 hover:bg-blue-100 px-2 py-1 rounded-md transition-colors"
+              >
+                <Plus className="w-3 h-3" />
+                Log Vitals
+              </button>
+            </div>
             <div className="flex flex-col gap-3">
               <div className="flex items-center justify-between p-3 rounded-xl bg-blue-50/50 border border-blue-100/50">
                 <div className="flex items-center gap-3">
@@ -236,11 +264,11 @@ export default function Dashboard() {
             </h3>
             <div className="flex flex-col gap-2.5">
               {[
-                { label: 'Overall Risk', value: aiAnalysis?.overallRisk, icon: ShieldCheck, color: aiAnalysis?.overallRisk === 'LOW' ? 'emerald' : 'amber' },
-                { label: 'Drug Interaction', value: aiAnalysis?.drugInteraction, icon: Zap, color: aiAnalysis?.drugInteraction === 'None' ? 'emerald' : 'red' },
-                { label: 'Food Interaction', value: aiAnalysis?.foodInteraction, icon: Zap, color: aiAnalysis?.foodInteraction === 'None' ? 'emerald' : 'amber' },
-                { label: 'Kidney Warning', value: aiAnalysis?.kidneyWarning, icon: AlertTriangle, color: aiAnalysis?.kidneyWarning === 'None' ? 'emerald' : 'red' },
-                { label: 'Liver Safety', value: aiAnalysis?.liverSafety, icon: ShieldCheck, color: aiAnalysis?.liverSafety === 'Excellent' ? 'emerald' : 'amber' },
+                { label: 'Overall Risk', value: aiAnalysis?.overallRisk, icon: ShieldCheck, color: aiAnalysis?.overallRisk === 'LOW' ? 'emerald' : aiAnalysis?.overallRisk === 'No Data' ? 'gray' : 'amber' },
+                { label: 'Drug Interaction', value: aiAnalysis?.drugInteraction, icon: Zap, color: aiAnalysis?.drugInteraction === 'None' ? 'emerald' : aiAnalysis?.drugInteraction === 'No Data' ? 'gray' : 'red' },
+                { label: 'Food Interaction', value: aiAnalysis?.foodInteraction, icon: Zap, color: aiAnalysis?.foodInteraction === 'None' ? 'emerald' : aiAnalysis?.foodInteraction === 'No Data' ? 'gray' : 'amber' },
+                { label: 'Kidney Warning', value: aiAnalysis?.kidneyWarning, icon: AlertTriangle, color: aiAnalysis?.kidneyWarning === 'None' ? 'emerald' : aiAnalysis?.kidneyWarning === 'No Data' ? 'gray' : 'red' },
+                { label: 'Liver Safety', value: aiAnalysis?.liverSafety, icon: ShieldCheck, color: aiAnalysis?.liverSafety === 'Excellent' ? 'emerald' : aiAnalysis?.liverSafety === 'No Data' ? 'gray' : 'amber' },
               ].map((item, i) => (
                 <div key={i} className="flex items-center justify-between py-2 border-b border-gray-50 last:border-0">
                   <span className="text-xs font-medium text-gray-500">{item.label}</span>
@@ -282,7 +310,7 @@ export default function Dashboard() {
             <h3 className="text-sm font-extrabold text-white/80 uppercase mb-4">Quick Actions</h3>
             <div className="flex flex-col gap-2">
               <Link to="/dashboard/upload" className="flex items-center justify-between p-3 rounded-xl bg-white/10 hover:bg-white/15 transition-colors">
-                <span className="text-sm font-bold text-white">Upload Prescription</span>
+                <span className="text-sm font-bold text-white">Upload Document</span>
                 <ArrowUpRight className="w-4 h-4 text-white/60" />
               </Link>
               <Link to="/dashboard/chat" className="flex items-center justify-between p-3 rounded-xl bg-white/10 hover:bg-white/15 transition-colors">
@@ -293,6 +321,81 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
+
+      {/* Log Vitals Modal */}
+      {isLogModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/40 backdrop-blur-sm animate-fade-in">
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm overflow-hidden" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+              <h3 className="text-lg font-extrabold text-gray-900">Log Vitals</h3>
+              <button onClick={() => setIsLogModalOpen(false)} className="text-gray-400 hover:text-gray-600">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="p-6 flex flex-col gap-4">
+              <div>
+                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Hydration (e.g. 2L)</label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <Droplets className="w-4 h-4 text-blue-400" />
+                  </div>
+                  <input
+                    type="text"
+                    value={hydrationInput}
+                    onChange={(e) => setHydrationInput(e.target.value)}
+                    placeholder="e.g. 2 Liters"
+                    className="block w-full pl-9 pr-3 py-2 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                  />
+                </div>
+              </div>
+              
+              <div>
+                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Sleep (e.g. 8 hrs)</label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <Moon className="w-4 h-4 text-purple-400" />
+                  </div>
+                  <input
+                    type="text"
+                    value={sleepInput}
+                    onChange={(e) => setSleepInput(e.target.value)}
+                    placeholder="e.g. 7.5 hrs"
+                    className="block w-full pl-9 pr-3 py-2 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition-all"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Blood Pressure</label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <Heart className="w-4 h-4 text-red-400" />
+                  </div>
+                  <input
+                    type="text"
+                    value={bpInput}
+                    onChange={(e) => setBpInput(e.target.value)}
+                    placeholder="e.g. 120/80"
+                    className="block w-full pl-9 pr-3 py-2 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition-all"
+                  />
+                </div>
+              </div>
+
+              <button
+                onClick={submitHealthLog}
+                disabled={isLogging}
+                className="w-full mt-2 bg-gray-900 text-white rounded-xl py-2.5 text-sm font-bold shadow-sm hover:bg-gray-800 transition-colors flex items-center justify-center gap-2"
+              >
+                {isLogging ? (
+                  <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                ) : (
+                  "Save Vitals"
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

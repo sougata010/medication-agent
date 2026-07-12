@@ -22,7 +22,7 @@ export default function DashboardLayout() {
     { to: '/dashboard/medications', label: 'Medications', icon: Pill },
     { to: '/dashboard/reports', label: 'Lab Reports', icon: FlaskConical },
     { to: '/dashboard/reminders', label: 'Reminders', icon: Bell },
-    { to: '/dashboard/upload', label: 'Upload Rx', icon: Upload },
+    { to: '/dashboard/upload', label: 'Upload Document', icon: Upload },
     { to: '/dashboard/chat', label: 'AI Chat', icon: MessageSquare },
     { to: '/dashboard/pharmacies', label: 'Pharmacy Finder', icon: MapPin },
   ];

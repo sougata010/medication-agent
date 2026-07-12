@@ -11,7 +11,7 @@ import LoginPage from './pages/LoginPage';
 import DashboardLayout from './layouts/DashboardLayout';
 import Dashboard from './pages/Dashboard';
 import ChatCompanion from './pages/ChatCompanion';
-import UploadRx from './pages/UploadRx';
+import DocumentUpload from './pages/DocumentUpload';
 import HealthProfile from './pages/HealthProfile';
 import MyMedications from './pages/MyMedications';
 import RemindersHub from './pages/RemindersHub';
@@ -47,7 +47,7 @@ const AppRoutes = () => {
         <Route path="reports" element={<LabReports />} />
         <Route path="reminders" element={<RemindersHub />} />
         <Route path="pharmacies" element={<PharmacyFinder />} />
-        <Route path="upload" element={<UploadRx />} />
+        <Route path="upload" element={<DocumentUpload />} />
         <Route path="chat" element={<ChatCompanion />} />
         <Route path="profile" element={<HealthProfile />} />
       </Route>

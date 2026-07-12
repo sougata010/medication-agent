@@ -246,7 +246,9 @@ export default function RemindersHub() {
                               )}
                             </div>
                             <span className="text-xs text-gray-400 font-medium">
-                              {r.medicine?.genericName || r.medicine?.category || 'Medication'} · {r.channel}
+                              {r.medicine?.genericName || r.medicine?.category || 'Medication'}
+                              {r.dosage ? ` · ${r.dosage}` : ''}
+                              {r.channel ? ` · ${r.channel}` : ''}
                             </span>
                           </div>
 
