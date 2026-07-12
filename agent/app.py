@@ -204,7 +204,13 @@ Extract the information into a strict JSON format with the following structure:
   ]
 }
 
-CRITICAL RULE: If the document is a Prescription, you MUST analyze each prescribed medicine and extract its active chemical ingredients into the labParameters array. Set the 'category' field to the name of the parent medicine, and provide a full safety and banned status audit for each chemical (e.g. check for WADA banned substances, high risk side effects).
+CRITICAL RULE: For EVERY medicine found in the document, you MUST deconstruct it into MULTIPLE constituent chemicals (both active ingredients and major excipients/binders, e.g., Magnesium Stearate). For EACH chemical:
+- Set 'name' to the chemical name.
+- Estimate its 'value' and 'unit' (its weight or percentage in the medicine).
+- Detail exactly what specific risks this chemical poses (in 'risk' and 'recommendation.cautions').
+- State if and where it is banned (WADA, FDA, EU, etc) and WHY (in 'recommendation.bannedIn').
+- Group all chemicals belonging to the same medicine under the same 'category' (the medicine's name).
+Do not just list the medicine name as a single chemical; break it down into its core compounds.
 
 Return ONLY the raw JSON object, without any markdown formatting like ```json."""
 

@@ -79,6 +79,60 @@ async function startServer() {
     },
   }));
 
+  // Image Proxy to hide 404s/503s and try multiple free providers
+  app.get('/api/chemical-image', async (req, res) => {
+    try {
+      const name = req.query.name;
+      if (!name) return res.status(400).send('Name required');
+      
+      let imageBuffer = null;
+      let contentType = 'image/png';
+      let sourceName = 'Generic Icon';
+      
+      // Provider 1: PubChem
+      try {
+        const pubChemRes = await fetch(`https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/${encodeURIComponent(name)}/PNG?record_type=2d&image_size=small`);
+        if (pubChemRes.ok) {
+          imageBuffer = await pubChemRes.arrayBuffer();
+          sourceName = 'PubChem';
+        }
+      } catch (e) {
+        console.error('PubChem fetch failed', e.message);
+      }
+      
+      // Provider 2: NCI Cactus (Chemical Identifier Resolver)
+      if (!imageBuffer) {
+        try {
+          const cactusRes = await fetch(`https://cactus.nci.nih.gov/chemical/structure/${encodeURIComponent(name)}/image`);
+          if (cactusRes.ok) {
+            imageBuffer = await cactusRes.arrayBuffer();
+            contentType = 'image/gif';
+            sourceName = 'NCI Cactus';
+          }
+        } catch (e) {
+          console.error('NCI Cactus fetch failed', e.message);
+        }
+      }
+      
+      res.setHeader('Access-Control-Expose-Headers', 'X-Image-Source');
+      res.setHeader('X-Image-Source', sourceName);
+
+      if (imageBuffer) {
+        res.setHeader('Content-Type', contentType);
+        return res.send(Buffer.from(imageBuffer));
+      }
+      
+      // Fallback: Generic SVG Hexagon
+      res.setHeader('Content-Type', 'image/svg+xml');
+      return res.send('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>');
+    } catch (err) {
+      res.setHeader('Access-Control-Expose-Headers', 'X-Image-Source');
+      res.setHeader('X-Image-Source', 'Generic Icon');
+      res.setHeader('Content-Type', 'image/svg+xml');
+      res.send('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>');
+    }
+  });
+
   // Health check endpoint
   app.get('/health', async (req, res) => {
     try {

@@ -38,10 +38,10 @@ const AppRoutes = () => {
   return (
     <Routes>
       <Route path="/" element={<LandingPage />} />
-      <Route path="/login" element={<LoginPage />} />
+      <Route path="/login" element={<div className="internal-theme"><LoginPage /></div>} />
       
       {/* Protected Dashboard Routes - Un-nested to avoid double layout */}
-      <Route path="/dashboard" element={<ProtectedRoute><DashboardLayout /></ProtectedRoute>}>
+      <Route path="/dashboard" element={<div className="internal-theme"><ProtectedRoute><DashboardLayout /></ProtectedRoute></div>}>
         <Route index element={<Dashboard />} />
         <Route path="medications" element={<MyMedications />} />
         <Route path="reports" element={<LabReports />} />

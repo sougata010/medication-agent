@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useGlobalContext } from '../context/GlobalContext';
 import {
-  Sparkles, ShieldCheck, X, Clock, FlaskConical, Trash2
+  Sparkles, ShieldCheck, X, Clock, FlaskConical, Trash2, FileText, Upload
 } from 'lucide-react';
 import Modal from '../components/Modal';
 

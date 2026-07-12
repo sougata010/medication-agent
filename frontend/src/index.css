@@ -24,3 +24,22 @@
 ::-webkit-scrollbar-thumb:hover {
   background: #9ca3af;
 }
+
+/* ponytail: CSS theme override instead of component rewrite. Add full redesign if CSS filters fall short */
+.internal-theme {
+  font-family: 'Space Grotesk', system-ui, sans-serif !important;
+}
+.internal-theme .bg-white {
+  background-color: rgba(255, 255, 255, 0.6) !important;
+  backdrop-filter: blur(12px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.5) !important;
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07) !important;
+  border-radius: 1.5rem !important;
+}
+.internal-theme .bg-blue-600, .internal-theme .bg-gray-900 {
+  background-color: #4f46e5 !important;
+  border-radius: 9999px !important;
+}
+.internal-theme .text-blue-600 {
+  color: #4f46e5 !important;
+}
