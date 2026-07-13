@@ -36,6 +36,17 @@ class AgentState(TypedDict):
     emergency_warning: str
     final_response: str
 
+def extract_text(content: Any) -> str:
+    if isinstance(content, list):
+        parts = []
+        for c in content:
+            if isinstance(c, dict) and "text" in c:
+                parts.append(str(c["text"]))
+            else:
+                parts.append(str(c))
+        return " ".join(parts).strip()
+    return str(content).strip()
+
 # 1. Classification Node
 def route_input(state: AgentState) -> Dict[str, Any]:
     classifier = InputClassifier()
@@ -57,7 +68,8 @@ def handle_general_query(state: AgentState) -> Dict[str, Any]:
         HumanMessage(content=query_text)
     ]
     try:
-        drug_name = llm.invoke(msg).content.strip()
+        response_content = llm.invoke(msg).content
+        drug_name = extract_text(response_content)
     except Exception:
         drug_name = "None"
         
@@ -144,7 +156,8 @@ Is Pregnant: {pregnancy}
     ]
     
     try:
-        synth_res = llm.invoke(messages).content.strip()
+        response_content = llm.invoke(messages).content
+        synth_res = extract_text(response_content)
     except Exception as e:
         synth_res = f"MedGraph AI failed to synthesize an answer. Error details: {str(e)}."
         
@@ -185,7 +198,8 @@ def handle_lab_report(state: AgentState) -> Dict[str, Any]:
         HumanMessage(content=f"Normalize and extract parameters from this lab text:\n{ocr_text}")
     ]
     try:
-        ans = llm.invoke(msg).content.strip()
+        response_content = llm.invoke(msg).content
+        ans = extract_text(response_content)
     except Exception as e:
         ans = f"Failed to extract lab report: {str(e)}"
         

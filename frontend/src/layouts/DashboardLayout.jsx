@@ -8,9 +8,31 @@ import {
 } from 'lucide-react';
 
 export default function DashboardLayout() {
-  const { user, logout } = useGlobalContext();
+  const { user, logout, reminders, insights } = useGlobalContext();
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
+
+  const pendingReminders = reminders?.filter(r => r.status === 'pending') || [];
+  const notifications = [
+    ...(insights || []).map(ins => ({
+      id: `ins-${ins.id}`,
+      title: 'Health Insight',
+      message: ins.text,
+      type: ins.type || 'info',
+      time: 'Just now'
+    })),
+    ...pendingReminders.map(r => {
+      const timeStr = new Date(r.scheduledAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      return {
+        id: `rem-${r.id}`,
+        title: 'Medication Reminder',
+        message: `Time to take ${r.medicine?.name || 'your medication'}`,
+        type: 'warning',
+        time: timeStr
+      };
+    })
+  ];
 
   const handleLogout = () => {
     logout();
@@ -69,10 +91,6 @@ export default function DashboardLayout() {
             </div>
             <div className="flex-1 min-w-0">
               <div className="text-sm font-semibold text-gray-900 truncate">{user?.name || 'Patient'}</div>
-              <div className="flex items-center gap-1.5 mt-0.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                <span className="text-[11px] text-gray-400 font-medium">Online</span>
-              </div>
             </div>
           </div>
         </div>
@@ -141,11 +159,66 @@ export default function DashboardLayout() {
           </div>
 
           {/* Right side */}
-          <div className="flex items-center gap-3">
-            <button className="relative p-2 text-gray-400 hover:text-gray-900 transition-colors">
+          <div className="flex items-center gap-3 relative">
+            <button 
+              onClick={() => setNotificationsOpen(!notificationsOpen)}
+              className="relative p-2 text-gray-400 hover:text-gray-900 transition-colors"
+            >
               <Bell className="w-5 h-5" />
-              <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white" />
+              {notifications.length > 0 && (
+                <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white" />
+              )}
             </button>
+
+            {notificationsOpen && (
+              <div className="absolute top-full right-0 mt-2 w-80 bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden z-50">
+                <div className="p-4 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
+                  <h3 className="font-extrabold text-gray-900">Notifications</h3>
+                  <span className="text-xs font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded-full">
+                    {notifications.length} New
+                  </span>
+                </div>
+                <div className="max-h-[300px] overflow-y-auto">
+                  {notifications.length === 0 ? (
+                    <div className="p-6 text-center text-sm font-medium text-gray-500">
+                      You're all caught up!
+                    </div>
+                  ) : (
+                    <div className="flex flex-col">
+                      {notifications.map((notif, i) => (
+                        <div key={notif.id || i} className="p-4 border-b border-gray-50 last:border-0 hover:bg-gray-50 transition-colors">
+                          <div className="flex items-start gap-3">
+                            <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${
+                              notif.type === 'warning' ? 'bg-amber-100 text-amber-600' :
+                              notif.type === 'success' ? 'bg-emerald-100 text-emerald-600' :
+                              'bg-blue-100 text-blue-600'
+                            }`}>
+                              <Bell className="w-4 h-4" />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-bold text-gray-900">{notif.title}</p>
+                              <p className="text-xs font-medium text-gray-500 mt-0.5">{notif.message}</p>
+                              <p className="text-[10px] font-bold text-gray-400 mt-1.5">{notif.time}</p>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                {notifications.length > 0 && (
+                  <div className="p-3 border-t border-gray-100 bg-gray-50/50 text-center">
+                    <button 
+                      onClick={() => setNotificationsOpen(false)}
+                      className="text-xs font-bold text-gray-500 hover:text-gray-900 transition-colors"
+                    >
+                      Mark all as read
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
+            
             <div className="hidden lg:flex w-8 h-8 rounded-full bg-gray-900 text-white items-center justify-center text-xs font-bold cursor-pointer">
               {user?.name?.substring(0, 2).toUpperCase() || 'VL'}
             </div>

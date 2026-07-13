@@ -79,11 +79,25 @@ async function startServer() {
     },
   }));
 
+  // Basic memory cache to prevent spamming PubChem
+  const serverImageCache = new Map();
+
   // Image Proxy to hide 404s/503s and try multiple free providers
   app.get('/api/chemical-image', async (req, res) => {
     try {
       const name = req.query.name;
       if (!name) return res.status(400).send('Name required');
+      
+      const cleanName = name.toLowerCase().trim();
+      
+      // Check cache first
+      if (serverImageCache.has(cleanName)) {
+        const cached = serverImageCache.get(cleanName);
+        res.setHeader('Access-Control-Expose-Headers', 'X-Image-Source');
+        res.setHeader('X-Image-Source', cached.sourceName);
+        res.setHeader('Content-Type', cached.contentType);
+        return res.send(cached.buffer);
+      }
       
       let imageBuffer = null;
       let contentType = 'image/png';
@@ -93,7 +107,7 @@ async function startServer() {
       try {
         const pubChemRes = await fetch(`https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/${encodeURIComponent(name)}/PNG?record_type=2d&image_size=small`);
         if (pubChemRes.ok) {
-          imageBuffer = await pubChemRes.arrayBuffer();
+          imageBuffer = Buffer.from(await pubChemRes.arrayBuffer());
           sourceName = 'PubChem';
         }
       } catch (e) {
@@ -105,7 +119,7 @@ async function startServer() {
         try {
           const cactusRes = await fetch(`https://cactus.nci.nih.gov/chemical/structure/${encodeURIComponent(name)}/image`);
           if (cactusRes.ok) {
-            imageBuffer = await cactusRes.arrayBuffer();
+            imageBuffer = Buffer.from(await cactusRes.arrayBuffer());
             contentType = 'image/gif';
             sourceName = 'NCI Cactus';
           }
@@ -114,17 +128,21 @@ async function startServer() {
         }
       }
       
-      res.setHeader('Access-Control-Expose-Headers', 'X-Image-Source');
-      res.setHeader('X-Image-Source', sourceName);
-
-      if (imageBuffer) {
-        res.setHeader('Content-Type', contentType);
-        return res.send(Buffer.from(imageBuffer));
+      // Fallback
+      if (!imageBuffer) {
+        contentType = 'image/svg+xml';
+        sourceName = 'Generic Icon';
+        imageBuffer = Buffer.from('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>');
       }
       
-      // Fallback: Generic SVG Hexagon
-      res.setHeader('Content-Type', 'image/svg+xml');
-      return res.send('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>');
+      // Cache the result
+      serverImageCache.set(cleanName, { buffer: imageBuffer, contentType, sourceName });
+      
+      res.setHeader('Access-Control-Expose-Headers', 'X-Image-Source');
+      res.setHeader('X-Image-Source', sourceName);
+      res.setHeader('Content-Type', contentType);
+      return res.send(imageBuffer);
+      
     } catch (err) {
       res.setHeader('Access-Control-Expose-Headers', 'X-Image-Source');
       res.setHeader('X-Image-Source', 'Generic Icon');

@@ -315,20 +315,6 @@ export default function Dashboard() {
             </div>
           )}
 
-          {/* Quick Links */}
-          <div className="bg-gray-900 rounded-2xl p-6 shadow-sm">
-            <h3 className="text-sm font-extrabold text-white/80 uppercase mb-4">Quick Actions</h3>
-            <div className="flex flex-col gap-2">
-              <Link to="/dashboard/upload" className="flex items-center justify-between p-3 rounded-xl bg-white/10 hover:bg-white/15 transition-colors">
-                <span className="text-sm font-bold text-white">Upload Document</span>
-                <ArrowUpRight className="w-4 h-4 text-white/60" />
-              </Link>
-              <button onClick={() => setIsQuickAskOpen(true)} className="flex items-center justify-between w-full p-3 rounded-xl bg-white/10 hover:bg-white/15 transition-colors">
-                <span className="text-sm font-bold text-white">Ask AI Assistant</span>
-                <ArrowUpRight className="w-4 h-4 text-white/60" />
-              </button>
-            </div>
-          </div>
         </div>
       </div>
 
