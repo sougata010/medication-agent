@@ -172,21 +172,21 @@ export default function LandingPage() {
                   }}
                   className="absolute p-3 rounded-xl bg-white shadow-xl border border-gray-100 flex items-center gap-3 relative overflow-hidden"
                 >
-                  <div className="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center border border-emerald-100">
-                    <LineChart className="w-4 h-4 text-emerald-600" />
+                  <div className="w-8 h-8 rounded-lg bg-sky-50 flex items-center justify-center border border-sky-100">
+                    <LineChart className="w-4 h-4 text-sky-600" />
                   </div>
                   <div className="text-left pr-6">
                     <div className="text-[10px] font-bold text-gray-400 uppercase tracking-wider flex items-center gap-1.5">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                      <span className="w-1.5 h-1.5 rounded-full bg-sky-500 animate-pulse"></span>
                       Adherence
                     </div>
                     <div className="text-sm font-extrabold text-gray-900">98.4%</div>
                   </div>
                   {/* Live Bars */}
                   <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-end gap-[2px] h-3 opacity-50">
-                    <motion.div animate={{ height: ['40%', '100%', '40%'] }} transition={{ duration: 0.8, repeat: Infinity }} className="w-1 rounded-sm bg-emerald-400" />
-                    <motion.div animate={{ height: ['70%', '30%', '70%'] }} transition={{ duration: 0.6, repeat: Infinity, delay: 0.2 }} className="w-1 rounded-sm bg-emerald-400" />
-                    <motion.div animate={{ height: ['50%', '90%', '50%'] }} transition={{ duration: 0.9, repeat: Infinity, delay: 0.1 }} className="w-1 rounded-sm bg-emerald-400" />
+                    <motion.div animate={{ height: ['40%', '100%', '40%'] }} transition={{ duration: 0.8, repeat: Infinity }} className="w-1 rounded-sm bg-sky-400" />
+                    <motion.div animate={{ height: ['70%', '30%', '70%'] }} transition={{ duration: 0.6, repeat: Infinity, delay: 0.2 }} className="w-1 rounded-sm bg-sky-400" />
+                    <motion.div animate={{ height: ['50%', '90%', '50%'] }} transition={{ duration: 0.9, repeat: Infinity, delay: 0.1 }} className="w-1 rounded-sm bg-sky-400" />
                   </div>
                 </motion.div>
 
@@ -246,10 +246,10 @@ export default function LandingPage() {
                     y: 130, 
                     opacity: useTransform(medicineScrollProgress, [0.1, 0.4], [0, 1]) 
                   }}
-                  className="absolute p-3 rounded-xl bg-emerald-50 shadow-xl border border-emerald-100 flex items-center gap-2 pr-4 relative overflow-hidden"
+                  className="absolute p-3 rounded-xl bg-sky-50 shadow-xl border border-sky-100 flex items-center gap-2 pr-4 relative overflow-hidden"
                 >
-                  <ShieldCheck className="w-5 h-5 text-emerald-600" />
-                  <span className="text-sm font-bold text-emerald-700">Safe Payload</span>
+                  <ShieldCheck className="w-5 h-5 text-sky-600" />
+                  <span className="text-sm font-bold text-sky-700">Safe Payload</span>
                   <motion.div 
                     className="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-transparent via-white/60 to-transparent"
                     animate={{ x: ['-100%', '200%'] }}
@@ -282,8 +282,8 @@ export default function LandingPage() {
               </p>
               <ul className="space-y-6">
                 <li className="flex items-start gap-4">
-                  <div className="w-8 h-8 rounded-full bg-emerald-50 flex items-center justify-center shrink-0 mt-0.5 border border-emerald-100">
-                    <Check className="w-4 h-4 text-emerald-600" />
+                  <div className="w-8 h-8 rounded-full bg-sky-50 flex items-center justify-center shrink-0 mt-0.5 border border-sky-100">
+                    <Check className="w-4 h-4 text-sky-600" />
                   </div>
                   <div>
                     <h4 className="font-bold text-gray-900 text-lg mb-1">End-to-End Encryption</h4>
@@ -291,8 +291,8 @@ export default function LandingPage() {
                   </div>
                 </li>
                 <li className="flex items-start gap-4">
-                  <div className="w-8 h-8 rounded-full bg-emerald-50 flex items-center justify-center shrink-0 mt-0.5 border border-emerald-100">
-                    <Check className="w-4 h-4 text-emerald-600" />
+                  <div className="w-8 h-8 rounded-full bg-sky-50 flex items-center justify-center shrink-0 mt-0.5 border border-sky-100">
+                    <Check className="w-4 h-4 text-sky-600" />
                   </div>
                   <div>
                     <h4 className="font-bold text-gray-900 text-lg mb-1">Zero-Trust Architecture</h4>
@@ -300,8 +300,8 @@ export default function LandingPage() {
                   </div>
                 </li>
                 <li className="flex items-start gap-4">
-                  <div className="w-8 h-8 rounded-full bg-emerald-50 flex items-center justify-center shrink-0 mt-0.5 border border-emerald-100">
-                    <Check className="w-4 h-4 text-emerald-600" />
+                  <div className="w-8 h-8 rounded-full bg-sky-50 flex items-center justify-center shrink-0 mt-0.5 border border-sky-100">
+                    <Check className="w-4 h-4 text-sky-600" />
                   </div>
                   <div>
                     <h4 className="font-bold text-gray-900 text-lg mb-1">Automated Audit Trails</h4>
@@ -326,21 +326,21 @@ export default function LandingPage() {
               <div className="absolute bottom-6 right-6 w-72 bg-white/90 backdrop-blur-md rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] border border-white/50 p-6 transform transition-transform group-hover:-translate-y-2 duration-500">
                 <div className="flex justify-between items-center mb-6 pb-4 border-b border-gray-100">
                   <div className="flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span className="w-2 h-2 rounded-full bg-sky-500 animate-pulse"></span>
                     <div className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">System Live</div>
                   </div>
-                  <ShieldCheck className="w-5 h-5 text-emerald-500" />
+                  <ShieldCheck className="w-5 h-5 text-sky-500" />
                 </div>
                 
                 <div className="flex justify-between items-end">
                   <div>
-                    <div className="text-3xl font-extrabold text-emerald-600 mb-1">100%</div>
+                    <div className="text-3xl font-extrabold text-sky-600 mb-1">100%</div>
                     <div className="text-xs font-bold text-gray-500 uppercase tracking-wider">Compliance</div>
                   </div>
                   <div className="flex items-end gap-1 h-8 opacity-70">
-                    <motion.div animate={{ height: ['40%', '100%', '40%'] }} transition={{ duration: 0.8, repeat: Infinity, delay: 0.4 }} className="w-1.5 rounded-sm bg-emerald-400" />
-                    <motion.div animate={{ height: ['70%', '30%', '70%'] }} transition={{ duration: 0.6, repeat: Infinity, delay: 0.1 }} className="w-1.5 rounded-sm bg-emerald-400" />
-                    <motion.div animate={{ height: ['50%', '90%', '50%'] }} transition={{ duration: 0.9, repeat: Infinity, delay: 0.3 }} className="w-1.5 rounded-sm bg-emerald-400" />
+                    <motion.div animate={{ height: ['40%', '100%', '40%'] }} transition={{ duration: 0.8, repeat: Infinity, delay: 0.4 }} className="w-1.5 rounded-sm bg-sky-400" />
+                    <motion.div animate={{ height: ['70%', '30%', '70%'] }} transition={{ duration: 0.6, repeat: Infinity, delay: 0.1 }} className="w-1.5 rounded-sm bg-sky-400" />
+                    <motion.div animate={{ height: ['50%', '90%', '50%'] }} transition={{ duration: 0.9, repeat: Infinity, delay: 0.3 }} className="w-1.5 rounded-sm bg-sky-400" />
                   </div>
                 </div>
               </div>

@@ -2,44 +2,95 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --border: 214 32% 91%;
+  --background: 0 0% 100%;
+  --foreground: 222 47% 11%;
+}
+
 @layer base {
   body {
-    @apply bg-white text-gray-900 antialiased;
-    font-family: 'Inter', system-ui, sans-serif;
+    @apply text-slate-800 antialiased bg-slate-50;
   }
 }
 
-/* Custom Scrollbar */
-::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
-}
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-::-webkit-scrollbar-thumb {
-  background: #d1d5db;
-  border-radius: 9999px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #9ca3af;
+@layer components {
+  /* Medical Design System Components */
+  
+  .rx-card {
+    @apply bg-white rounded-[2rem] border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] relative overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1;
+  }
+  
+  .rx-card::before {
+    display: none;
+  }
+
+  .rx-divider {
+    @apply w-full h-px bg-gray-100 my-4;
+  }
+
+  /* Remove Giant watermark for minimalist look */
+  .rx-watermark::after {
+    display: none;
+  }
+
+  .clinical-table {
+    @apply w-full text-left border-collapse;
+  }
+  
+  .clinical-table th {
+    @apply px-4 py-3 text-xs font-bold text-gray-500 uppercase tracking-widest bg-gray-50/50 border-y border-gray-100;
+  }
+  
+  .clinical-table td {
+    @apply px-4 py-4 border-b border-gray-100 align-middle;
+  }
+
+  .clinical-input {
+    @apply w-full px-5 py-3.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-medium text-gray-900 placeholder:text-gray-400 focus:bg-white focus:ring-4 focus:ring-gray-900/5 focus:border-gray-400 outline-none transition-all;
+  }
+
+  .clinical-badge {
+    @apply inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider border;
+  }
+  
+  .clinical-badge-success {
+    @apply bg-emerald-50 text-emerald-700 border-emerald-200;
+  }
+  
+  .clinical-badge-warning {
+    @apply bg-amber-50 text-amber-700 border-amber-200;
+  }
+  
+  .clinical-badge-danger {
+    @apply bg-rose-50 text-rose-700 border-rose-200;
+  }
+
+  .clinical-badge-info {
+    @apply bg-purple-50 text-purple-700 border-purple-200;
+  }
+
+  .med-btn-primary {
+    @apply px-6 py-3 rounded-full bg-black text-white font-bold text-sm hover:bg-gray-800 hover:shadow-xl hover:shadow-black/10 transition-all flex items-center justify-center gap-2;
+  }
+
+  .med-btn-outline {
+    @apply px-6 py-3 rounded-full bg-white border border-gray-200 text-gray-900 font-bold text-sm hover:bg-gray-50 transition-all flex items-center justify-center gap-2 shadow-sm;
+  }
+
+  .med-heading {
+    @apply font-heading font-extrabold tracking-tight text-gray-900;
+  }
+
+  .med-mono {
+    @apply font-mono font-medium tracking-wide;
+  }
 }
 
-/* ponytail: CSS theme override instead of component rewrite. Add full redesign if CSS filters fall short */
-.internal-theme {
-  font-family: 'Space Grotesk', system-ui, sans-serif !important;
+.mask-fade-bottom {
+  mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
 }
-.internal-theme .bg-white {
-  background-color: rgba(255, 255, 255, 0.6) !important;
-  backdrop-filter: blur(12px) !important;
-  border: 1px solid rgba(255, 255, 255, 0.5) !important;
-  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07) !important;
-  border-radius: 1.5rem !important;
-}
-.internal-theme .bg-blue-600, .internal-theme .bg-gray-900 {
-  background-color: #4f46e5 !important;
-  border-radius: 9999px !important;
-}
-.internal-theme .text-blue-600 {
-  color: #4f46e5 !important;
+
+.med-heartbeat {
+  animation: heartbeat 1.5s ease-in-out infinite;
 }

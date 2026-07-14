@@ -21,7 +21,7 @@ class UnifiedMediaFetcher:
     def __init__(self):
         self.pubchem_base = "https://pubchem.ncbi.nlm.nih.gov/rest/pug"
         self.nih_rximage_base = "https://rximage.nlm.nih.gov/api/rximage/1/modules.json"
-        self.model = "gemini-3.5-flash"
+        self.model = "gemini-3.0-flash"
         self.internet_tool = TavilySearcher()
     def _get_active_compounds_via_llm(self, drug_name: str) -> List[str]:
         llm = ChatGoogleGenerativeAI(

@@ -19,7 +19,7 @@ export default function Careers() {
         className="text-center mb-16"
       >
         <h1 className="text-4xl md:text-5xl font-heading font-extrabold text-gray-900 tracking-tight mb-4">
-          Join the <span className="text-emerald-500">Mission</span>
+          Join the <span className="text-sky-500">Mission</span>
         </h1>
         <p className="text-lg text-gray-500 font-medium max-w-2xl mx-auto">
           We are building the intelligence layer for healthcare. Come do the best work of your life with a team that values precision, design, and impact.
@@ -39,7 +39,7 @@ export default function Careers() {
           {openRoles.map((role, idx) => (
             <div key={idx} className="p-8 hover:bg-gray-50 transition-colors cursor-pointer group flex items-center justify-between">
               <div>
-                <h3 className="text-lg font-bold text-gray-900 group-hover:text-blue-600 transition-colors">{role.title}</h3>
+                <h3 className="text-lg font-bold text-gray-900 group-hover:text-gray-900 transition-colors">{role.title}</h3>
                 <div className="flex gap-4 mt-2 text-sm font-medium text-gray-500">
                   <span>{role.department}</span>
                   <span>&bull;</span>

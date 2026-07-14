@@ -11,7 +11,7 @@ export default function AboutUs() {
         className="text-center mb-16"
       >
         <h1 className="text-4xl md:text-5xl font-heading font-extrabold text-gray-900 tracking-tight mb-4">
-          About <span className="text-blue-600">VitaLeaf</span>
+          About <span className="text-gray-900">VitaLeaf</span>
         </h1>
         <p className="text-lg text-gray-500 font-medium max-w-2xl mx-auto">
           We are on a mission to orchestrate the world's healthcare data using advanced artificial intelligence and semantic knowledge graphs.
@@ -46,11 +46,11 @@ export default function AboutUs() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.4 }}
-        className="bg-blue-50 rounded-3xl p-10 text-center"
+        className="bg-gray-50 rounded-3xl p-10 text-center"
       >
         <h3 className="text-xl font-bold text-gray-900 mb-2">Join the revolution.</h3>
         <p className="text-gray-500 mb-6">We are constantly looking for talented engineers and medical professionals.</p>
-        <a href="/careers" className="inline-block bg-blue-600 text-white font-bold px-8 py-3 rounded-full hover:bg-blue-700 transition-colors shadow-lg shadow-blue-200">
+        <a href="/careers" className="inline-block bg-blue-600 text-white font-bold px-8 py-3 rounded-full hover:bg-black transition-colors shadow-lg shadow-blue-200">
           View Open Roles
         </a>
       </motion.div>

@@ -11,7 +11,7 @@ if not api_key:
 
 class PrescriptionReader:
     def __init__(self):
-        self.model = "gemini-3.5-flash"
+        self.model = "gemini-3.0-flash"
         self.config = {
             "temperature": 0.2,
             "max_retries": 2,

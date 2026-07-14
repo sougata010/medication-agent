@@ -8,7 +8,7 @@ api_key = os.getenv("GOOGLE_API_KEY")
 
 class InputClassifier:
     def __init__(self):
-        self.model = "gemini-3.5-flash"
+        self.model = "gemini-3.0-flash"
         self.system_prompt = (
             "You are the central triage router for MedGraph AI. Your sole job is to classify raw user inputs "
             "and determine which downstream specialist agent node should handle the request. Analyze the input carefully."

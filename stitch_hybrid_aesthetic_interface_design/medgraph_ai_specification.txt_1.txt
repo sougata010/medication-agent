@@ -1,341 +1,0 @@
-
-
-
-
-MedGraph AI
-Medication Intelligence & Adherence Platform
-
-
-Your intelligent medication companion - understand prescriptions, stay on schedule, and manage medicines safely.
-
-
-PRODUCT SPECIFICATION & TECHNICAL BLUEPRINT
-Version 1.0  |  June 2025
-
-
-Table of Contents
-Table of Contents	2
-1. Executive Summary	4
-2. System Architecture Overview	5
-2.1  Layer Breakdown	5
-2.2  Core Design Principles	5
-3. LangGraph Node Flow	7
-3.1  Node 1 - Input Classifier	7
-3.2  Node 2 - Memory Retrieval	8
-3.3  Branch A - General Query Agent	8
-3.4  Branch B - Prescription Upload Agent	8
-3.5  Branch C - Lab Report Agent	8
-3.6  Fan-out - Parallel Drug Analysis	9
-3.7  Aggregator & Report Generator	9
-4. Memory Architecture	10
-4.1  Short-Term Memory  (Redis)	10
-4.2  Long-Term Memory  (PostgreSQL)	10
-4.3  Vector Memory  (pgvector)	11
-5. Agent Catalogue	12
-5.1  Reminder & Adherence Agent	12
-5.2  Refill Agent	12
-5.3  Safety Layer  (Pre-Response Interceptor)	12
-6. Tool Catalogue	14
-7. Technology Stack	15
-7.1  Backend	15
-7.2  AI / LLM Layer	15
-7.3  Frontend	16
-8. Data Model (High-Level)	17
-8.1  Core Entities	17
-9. MVP Scope & Phased Roadmap	18
-Phase 1 - MVP (Months 1-3)	18
-Phase 2 - Core Platform (Months 4-6)	18
-Phase 3 - Mobile & Advanced (Months 7-12)	18
-Phase 4 - Enterprise & API (Month 12+)	18
-10. Safety & Compliance Considerations	19
-10.1  Medical Disclaimers	19
-10.2  Data Privacy	19
-10.3  Drug Database Accuracy	19
-11. Competitive Differentiation	20
-Appendix A - Glossary	21
-Appendix B - External API Categories	21
-
-
-
-1. Executive Summary
-MedGraph AI is a production-grade, multi-agent medication intelligence platform built on LangGraph. It is designed to help patients understand their prescriptions, check for drug interactions, receive timely medication reminders, and manage their medication history - all in one place.
-
-The platform deliberately avoids diagnosing diseases or recommending treatments. It is a medication companion, not a medical practitioner. Every answer is grounded in pharmacological data, medical guidelines, and the user's personal medication history - never in speculation.
-
-What MedGraph AI IS
-✅  Explains prescriptions and medicine purpose in plain language
-✅  Checks drug-drug, drug-food, and drug-alcohol interactions
-✅  Schedules and tracks medication reminders across channels
-✅  Reads prescriptions and lab reports via OCR
-✅  Generates detailed, structured medicine reports
-✅  Finds nearby pharmacies and assists with refill reminders
-✅  Maintains a personal medication history and adherence record
-What MedGraph AI is NOT
-❌  Not a disease diagnosis engine
-❌  Does not prescribe medications or recommend dosage changes
-❌  Does not replace the advice of a licensed clinician
-❌  Does not guarantee completeness of drug interaction databases
-
-2. System Architecture Overview
-The platform is organized into four logical layers that separate concerns cleanly and allow each layer to scale independently.
-
-
-Figure 1 - High-level system architecture of MedGraph AI
-
-2.1  Layer Breakdown
-LayerResponsibilityInput LayerAccepts text, voice, images, PDFs, barcodes. Routes to orchestrator.Orchestration LayerLangGraph manages state, memory, and agent routing. Central decision hub.Agent LayerSpecialized agents (OCR, interaction checking, reminders, pharmacy, Q&A) run in parallel where possible.Output LayerProduces medicine reports, alerts, reminders, adherence dashboards, and pharmacy orders.
-2.2  Core Design Principles
-• Modularity: each agent is an isolated, replaceable node in the graph.
-• Parallelism: independent subtasks (medicine API, interaction check, image search) run concurrently via LangGraph fan-out.
-• Explainability: every response traces back to a specific data source or API call - no opaque black-box answers.
-• Safety-first: a dedicated Safety Layer intercepts all outputs before delivery and short-circuits to emergency guidance when needed.
-• Human-in-the-loop: OCR extractions and high-stakes decisions always request user confirmation before proceeding.
-
-
-3. LangGraph Node Flow
-The graph below shows the end-to-end processing pipeline. All nodes are stateful and share access to the memory store. Branches execute in parallel wherever the tasks are independent.
-
-
-Figure 2 - LangGraph node-level processing flow
-
-3.1  Node 1 - Input Classifier
-The first node receives raw user input and classifies it into one of the following categories:
-• Text question  (e.g., 'Can I take ibuprofen with milk?')
-• Prescription image or PDF upload
-• Lab report upload
-• Medicine strip / barcode scan
-• Voice input (converted via Speech-to-Text before classification)
-
-3.2  Node 2 - Memory Retrieval
-Before any agent is invoked, the Memory Retrieval node loads all relevant context:
-• Current medicines and active prescriptions
-• Known allergies and medical conditions
-• Previous conversation turns (short-term memory)
-• Relevant past prescriptions and Q&A (vector similarity search)
-• Active reminder schedules and adherence history
-
-3.3  Branch A - General Query Agent
-Handles free-form medication questions. Execution sequence:
-1. Load user memory and current medicine list
-2. Query Medicine Database API for pharmacological data
-3. Query Chemical Database API for compound information
-4. Run Drug Interaction Checker against user's current medicines
-5. Optional: Internet Search for recent safety advisories
-6. LLM synthesizes a structured, cited answer
-
-Example Interaction
-User: 'Why am I taking Pantoprazole?'
-System: Retrieves prescription → Medicine API → LLM → Explains it is a proton pump inhibitor for acid reflux, typically prescribed to protect the stomach lining, especially when taking NSAIDs.
-
-User: 'Can I stop taking it?'
-System: Medical Guidelines → LLM → Advises consulting the prescribing clinician before stopping, as abrupt discontinuation may cause rebound acid hypersecretion.
-3.4  Branch B - Prescription Upload Agent
-Processes uploaded prescription images or PDFs through a multi-step pipeline:
-7. OCR engine extracts raw text from the image or PDF
-8. Medicine Extractor identifies drug names, dosages, frequencies, and duration
-9. Confidence Checker flags low-confidence extractions for manual review
-10. User Confirmation step presents extracted data and asks the user to verify before storage
-11. Verified data is stored in the prescription history and triggers the Fan-out Agent
-
-Important: OCR is Never Silent
-The system will never silently assume OCR output is correct. Every extraction presents a confirmation dialog to the user before any reminders are set or data is stored. Low-confidence fields are highlighted explicitly.
-3.5  Branch C - Lab Report Agent
-Processes uploaded laboratory reports:
-12. OCR extracts parameter names, values, and units
-13. Units Normalizer converts all values to SI units for consistent comparison
-14. Parameters are stored against the user profile
-15. Parameters are passed to the medication context so the Q&A agent can answer questions like 'Is my kidney function affected by this medicine?'
-
-3.6  Fan-out - Parallel Drug Analysis
-After medicines are identified (from prescription, barcode, or direct query), the following checks run concurrently:
-CheckData SourceDrug-Drug InteractionsDrug Interaction API + Medical GuidelinesDrug-Food InteractionsMedicine Database APIDrug-Alcohol InteractionsMedicine Database APIPregnancy SafetyRegulatory DatabaseKidney & Liver SafetyClinical GuidelinesDriving SafetyRegulatory DatabaseCommon & Serious Side EffectsMedicine Leaflet DatabaseAvailability & PricePharmacy APIsAlternative MedicinesMedicine Database APIRegulatory Status (country)Country-specific regulatory feed
-3.7  Aggregator & Report Generator
-The Aggregator collects all fan-out results and assembles a structured Medicine Report. The Report Generator formats this into a professional, readable document containing:
-• Medicine name, generic name, and chemical class
-• Mechanism of action (plain-language explanation)
-• Dosage and timing instructions
-• Food, alcohol, pregnancy, kidney, liver, and driving guidance
-• Interactions with user's current medicines
-• Common and serious side effects
-• Alternative medicines and price comparison
-• Nearby pharmacies and availability
-• Citations for all data points
-
-
-4. Memory Architecture
-MedGraph AI uses a three-tier memory model that balances speed, persistence, and semantic retrieval.
-
-
-Figure 3 - Three-tier memory architecture
-
-4.1  Short-Term Memory  (Redis)
-Ephemeral session state scoped to the current conversation:
-• Active conversation messages
-• Currently uploaded prescription or report
-• Pending confirmation dialogs
-• In-flight API call results
-
-4.2  Long-Term Memory  (PostgreSQL)
-Persistent user data that survives across sessions:
-FieldDescriptionUser ProfileAge, gender, preferred language, reminder channelAllergiesKnown drug and food allergiesMedical ConditionsUser-declared conditions (optional, privacy-gated)Pregnancy StatusFlags pregnancy-safety checks across all queriesActive MedicinesCurrent prescription list with dosage and timingPast MedicinesHistorical prescription archiveLab ReportsStructured parameter values from all uploaded reportsReminder HistoryLog of all reminders sent and acknowledgedAdherence StatisticsTaken / Skipped / Missed per medicine per dayNearby PharmaciesSaved pharmacy locations for refill suggestions
-4.3  Vector Memory  (pgvector)
-Enables semantic retrieval across historical data:
-• Previous Q&A pairs - enables 'did I ask this before?' recall
-• Summarized prescriptions - retrieve similar past prescriptions by symptom/drug similarity
-• Lab report summaries - trend analysis across multiple reports
-• Indexed medical guideline chunks - fast, citation-ready retrieval
-• Conversation summaries - long-term context compression
-
-
-5. Agent Catalogue
-Each agent is a self-contained LangGraph node with its own tools, memory access pattern, and output schema.
-
-5.1  Reminder & Adherence Agent
-After a prescription is parsed and confirmed, this agent:
-16. Reads the prescribed schedule (morning / before food / night / after food / SOS)
-17. Asks the user which notification channels they prefer
-18. Creates reminder events in the chosen channels (Telegram, Discord, Email, Calendar, Push)
-19. Marks each reminder as Sent and waits for acknowledgement
-20. On acknowledgement, records Taken; on timeout, asks for reason and records Skipped
-21. Computes weekly and monthly adherence statistics
-
-Notification Channels Supported
-• Telegram Bot - instant message with inline keyboard (Taken / Skipped)
-• Email - daily digest or individual reminders
-• Calendar Event - Google Calendar / iCal integration
-• Mobile Push - via FCM (Android) or APNs (iOS) in Flutter app
-• Discord Bot - for users who prefer Discord
-5.2  Refill Agent
-Monitors medicine stock levels and triggers refill workflows:
-• Calculates estimated days of medicine remaining based on dosage and prescription start date
-• Sends a refill notification when stock drops below a configurable threshold (default: 5 days)
-• Presents nearby pharmacy options with availability and price
-• Optionally initiates an order via integrated pharmacy APIs
-
-5.3  Safety Layer  (Pre-Response Interceptor)
-Every response passes through the Safety Layer before delivery. This is not optional - it runs on every single output.
-
-Emergency Detection Triggers
-The following symptoms trigger an immediate halt of the normal workflow. The system stops all processing and delivers emergency guidance only:
-
-• Chest pain or tightness
-• Stroke symptoms (sudden numbness, confusion, vision loss, severe headache)
-• Signs of anaphylaxis (throat swelling, hives, difficulty breathing)
-• Suicidal thoughts or expressions of self-harm
-• Overdose symptoms
-
-In all cases, the system provides emergency contact information appropriate to the user's country and instructs them to seek immediate medical care. No medication advice is given.
-For non-emergency outputs, the Safety Layer enforces these rules:
-• Never recommend starting, stopping, or changing a prescribed medication
-• Never diagnose a condition based on symptoms
-• Always include a disclaimer when discussing dosage or interactions
-• Flag if a suggested alternative requires a prescription in the user's country
-
-
-6. Tool Catalogue
-Tools are external integrations available to agents. Each tool is registered in the LangGraph tool registry and accessed by agents as needed.
-
-ToolPurposeMedicine Database APICore pharmacological data: dosage, mechanism, side effects, contraindicationsDrug Interaction APIChecks pairwise and multi-drug interaction severityChemical Database APICompound-level data: molecular structure, solubility, metabolic pathwayMedical Guideline SearchRetrieves relevant clinical guidelines by drug or conditionInternet SearchFetches recent safety advisories, news, and drug recallsOCR EngineExtracts text from prescription images and lab report PDFsLab Report ReaderParses structured lab parameters from OCR outputBarcode / QR ScannerIdentifies medicine from packaging barcodeMedicine Image IdentifierVisual recognition of medicine strips and tabletsReminder ToolCreates and manages reminder schedules in the databaseTelegram BotSends and receives messages via TelegramDiscord BotSends and receives messages via DiscordEmail ToolSends reminder emails via SMTP / SendGridCalendar ToolCreates calendar events via Google Calendar API / iCalPush Notification ToolSends mobile push via FCM / APNsNearby Pharmacy SearchFinds pharmacies by location using Maps APIMedicine Ordering APIInitiates orders from integrated pharmacy partnersVoice-to-TextTranscribes voice input before classificationText-to-SpeechConverts responses to audio for accessibilityPDF GeneratorProduces downloadable medicine reportsEmergency ContactsReturns country-appropriate emergency numbersWeather API (optional)Context for medicine storage conditions or outdoor activity warnings
-
-7. Technology Stack
-
-
-Figure 4 - Technology stack by layer
-
-7.1  Backend
-TechnologyRolePython 3.11+Primary language for all backend and AI codeFastAPIREST API layer - async, type-safe, auto-documented via OpenAPILangGraphAgent orchestration - stateful graph execution with branching and fan-outLangChain (optional)Tool wrappers and LLM integrationsCelery + RedisBackground job queue for reminders, report generation, and refill checksDocker / Docker ComposeContainerized local and production deploymentPostgreSQLPrimary relational data storepgvectorVector extension for semantic memory retrievalRedisSession cache and Celery brokerAWS S3 / MinIOObject storage for prescription images, lab reports, and generated PDFs
-7.2  AI / LLM Layer
-TechnologyRoleOpenAI GPT-4o / Gemini 1.5 ProPrimary LLM for Q&A, summarization, and report generationLocal LLM (optional)Privacy-preserving option for sensitive user dataEmbedding ModelProduces vector embeddings for semantic memory (e.g., text-embedding-3-small)OCR APIGoogle Vision API or Tesseract for prescription and lab report extraction
-7.3  Frontend
-TechnologyRoleReact / Next.jsWeb interface - prescription upload, Q&A chat, dashboardFlutterCross-platform mobile app - push reminders, barcode scan, voice inputTailwindCSSUtility-first styling for web frontendRechartsAdherence analytics and adherence trend charts
-
-8. Data Model (High-Level)
-The following describes the primary entities and their relationships. Implementation will use SQLAlchemy 2.0 with Alembic for migrations.
-
-8.1  Core Entities
-EntityKey AttributesUserid, name, age, gender, language, reminder_channel, created_atMedicalProfileuser_id, allergies[], conditions[], pregnancy_status, emergency_contactsPrescriptionid, user_id, uploaded_at, ocr_raw, verified, medicines[]Medicineid, name, generic_name, chemical_name, category, mechanismPrescriptionItemprescription_id, medicine_id, dosage, frequency, duration, timing[]LabReportid, user_id, uploaded_at, ocr_raw, parameters[]LabParameterreport_id, name, value, unit, si_value, reference_rangeReminderid, user_id, medicine_id, scheduled_at, channel, statusAdherenceLogid, reminder_id, action (taken/skipped/missed), reason, logged_atConversationSessionid, user_id, started_at, summary, messages[]VectorEmbeddingid, entity_type, entity_id, embedding, created_at
-
-9. MVP Scope & Phased Roadmap
-The full system is ambitious. The MVP is scoped to validate core value before building advanced features. Each phase delivers a complete, usable product.
-
-Phase 1 - MVP (Months 1-3)
-MVP Deliverables
-1. Prescription OCR - upload a photo, get a verified medicine list
-2. Medicine Explanation - plain-language explanation of each prescribed medicine
-3. Drug Interaction Check - flag interactions between medicines in the list
-4. Reminder Scheduling - set Telegram or email reminders for each medicine
-5. General Medication Q&A - conversational interface for medication questions
-Phase 2 - Core Platform (Months 4-6)
-• Lab report upload and parameter extraction
-• Adherence tracking (Taken / Skipped logging)
-• Refill alerts and nearby pharmacy finder
-• Medicine report PDF generation
-• User profile and medical history management
-• Web dashboard (Next.js)
-
-Phase 3 - Mobile & Advanced (Months 7-12)
-• Flutter mobile app with push notifications and barcode scanning
-• Family/caregiver mode - manage medicines for dependents
-• Adherence analytics and trend charts
-• Multi-language support
-• Wearable integration (step-count correlation with medicine timing)
-• Smart pillbox integration via BLE
-• Pharmacy comparison and insurance support (where applicable)
-
-Phase 4 - Enterprise & API (Month 12+)
-• Hospital/clinic integration via HL7 FHIR API
-• White-label API for pharmacy chains
-• Anonymized population-level adherence analytics
-• Clinician dashboard for patient adherence monitoring
-
-
-10. Safety & Compliance Considerations
-Healthcare applications carry significant ethical and legal responsibilities. The following considerations must be addressed before any public launch.
-
-10.1  Medical Disclaimers
-• Every response must include a standard disclaimer that the platform is not a substitute for professional medical advice.
-• Medicine reports must cite their sources explicitly.
-• The system must never state a diagnosis, even implicitly.
-
-10.2  Data Privacy
-• Medical data is among the most sensitive categories under every major privacy framework (HIPAA in the US, GDPR in Europe, India's DPDP Act).
-• All data must be encrypted at rest (AES-256) and in transit (TLS 1.3).
-• Medical conditions and lab reports must be explicitly opt-in for storage.
-• Users must be able to export and delete all their data.
-• AI model providers (OpenAI, Google) must be evaluated for their healthcare data policies before production use.
-
-10.3  Drug Database Accuracy
-• No drug database is complete. Interaction databases may miss rare combinations.
-• The system must communicate its data source and last update date for every interaction check.
-• Users must be advised to verify critical decisions with a pharmacist or clinician.
-
-Regulatory Note
-Depending on the jurisdiction and the specific features offered, MedGraph AI may be classified as a Software as a Medical Device (SaMD) under FDA, CE marking, or CDSCO regulations. Legal review is strongly recommended before any commercial launch. This document does not constitute legal or regulatory advice.
-
-11. Competitive Differentiation
-Most 'medical AI' applications are LLM chatbots with a medical-themed system prompt. MedGraph AI is architecturally different:
-
-DimensionMedGraph AI vs. Generic Medical ChatbotArchitectureLangGraph multi-agent graph vs. single-prompt LLMData SourcesDedicated drug APIs, chemical databases, regulatory feeds vs. LLM training data onlyMemoryThree-tier persistent memory vs. single conversation contextParallelismConcurrent fan-out across 10+ checks vs. sequential reasoningExplainabilityEvery claim cites a specific API or guideline vs. opaque generationSafetyDedicated Safety Layer intercepts every output vs. prompt-level guardrailsPersonalizationLong-term user profile, allergy checks, and interaction-against-current-meds vs. stateless responsesChannelsTelegram, Discord, Email, Calendar, Push vs. web interface only
-The LangGraph architecture also makes the system genuinely extensible. Adding a new agent (e.g., a wearable data agent or a clinician-facing summary agent) requires adding a new node to the graph - not refactoring the entire application.
-
-
-Appendix A - Glossary
-TermDefinitionLangGraphA library for building stateful, multi-actor applications with LLMs as graph nodespgvectorA PostgreSQL extension that stores and queries vector embeddingsOCROptical Character Recognition - converting images of text to machine-readable textFan-outExecuting multiple independent tasks in parallel from a single nodeRBACRole-Based Access Control - authorization based on user rolesSaMDSoftware as a Medical Device - software intended to be used for medical purposesFHIRFast Healthcare Interoperability Resources - standard for health data exchangeSI UnitsInternational System of Units - standardized measurement units used in lab reportsAdherenceThe degree to which a patient correctly follows their prescribed medication schedule
-
-Appendix B - External API Categories
-The following categories of APIs are required. Specific vendor selection should be made based on pricing, coverage, and data quality at implementation time:
-• Drug Information: e.g., RxNorm (NIH), OpenFDA, DrugBank
-• Drug Interactions: e.g., DrugBank Interactions, RxNav Drug Interaction API
-• Chemical Data: e.g., PubChem API
-• Medical Guidelines: e.g., UpToDate API (licensed), PubMed API
-• OCR: Google Cloud Vision API, AWS Textract, or Tesseract (open-source)
-• Mapping & Pharmacy: Google Maps Platform, Here Maps
-• Notifications: Twilio (SMS), SendGrid (email), Firebase Cloud Messaging (push)
-• Speech: Google Speech-to-Text, OpenAI Whisper
-
-
-- End of Document -
-MedGraph AI - Medication Intelligence & Adherence Platform	PRODUCT SPECIFICATION
-
-Confidential - MedGraph AI v1.0	Page 1
-

@@ -4,7 +4,8 @@ import { useGlobalContext } from '../context/GlobalContext';
 import {
   LayoutDashboard, Pill, FlaskConical, Bell, MapPin,
   Upload, MessageSquare, Settings, LogOut, Search,
-  AlertTriangle, ChevronRight, User, Menu, X
+  AlertTriangle, ChevronRight, User, Menu, X,
+  HeartPulse, Stethoscope
 } from 'lucide-react';
 
 export default function DashboardLayout() {
@@ -44,9 +45,9 @@ export default function DashboardLayout() {
     { to: '/dashboard/medications', label: 'Medications', icon: Pill },
     { to: '/dashboard/reports', label: 'Lab Reports', icon: FlaskConical },
     { to: '/dashboard/reminders', label: 'Reminders', icon: Bell },
-    { to: '/dashboard/upload', label: 'Upload Document', icon: Upload },
-    { to: '/dashboard/chat', label: 'AI Chat', icon: MessageSquare },
-    { to: '/dashboard/pharmacies', label: 'Pharmacy Finder', icon: MapPin },
+    { to: '/dashboard/upload', label: 'Upload Rx', icon: Upload },
+    { to: '/dashboard/chat', label: 'AI Consult', icon: MessageSquare },
+    { to: '/dashboard/pharmacies', label: 'Pharmacies', icon: MapPin },
   ];
 
   const NavItem = ({ item }) => (
@@ -55,16 +56,16 @@ export default function DashboardLayout() {
       end={item.end}
       onClick={() => setMobileMenuOpen(false)}
       className={({ isActive }) =>
-        `flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${
+        `flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${
           isActive
-            ? 'bg-gray-900 text-white shadow-sm'
-            : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50'
+            ? 'bg-blue-50 text-blue-700 shadow-sm border-l-[3px] border-blue-600'
+            : 'text-slate-600 hover:text-blue-700 hover:bg-blue-50/50'
         }`
       }
     >
       {({ isActive }) => (
         <>
-          <item.icon className={`w-[18px] h-[18px] ${isActive ? 'text-white' : 'text-gray-400'}`} />
+          <item.icon className={`w-[18px] h-[18px] ${isActive ? 'text-blue-600' : 'text-slate-400'}`} />
           <span>{item.label}</span>
         </>
       )}
@@ -73,42 +74,64 @@ export default function DashboardLayout() {
 
   return (
     <div className="h-screen flex bg-white">
-      {/* Desktop Sidebar */}
-      <nav className="hidden lg:flex flex-col w-64 border-r border-gray-100 bg-white shrink-0">
+      {/* Desktop Sidebar — Minimalist White/Gray */}
+      <nav className="hidden lg:flex flex-col w-64 bg-gray-50/50 border-r border-gray-100 shrink-0 relative overflow-hidden">
+        
         {/* Logo */}
         <div className="h-16 flex items-center px-6 border-b border-gray-100 shrink-0">
-          <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
+          <div className="flex items-center gap-2.5 cursor-pointer" onClick={() => navigate('/')}>
             <img src="/logo.png" alt="VitaLeaf" className="w-7 h-7 object-contain" />
-            <span className="font-extrabold text-lg tracking-tight text-gray-900">VitaLeaf</span>
+            <span className="font-heading font-extrabold text-lg tracking-tight text-gray-900">VitaLeaf</span>
           </div>
         </div>
 
         {/* User Card */}
         <div className="px-4 py-4 border-b border-gray-100">
-          <div className="flex items-center gap-3 p-3 rounded-xl bg-gray-50 border border-gray-100">
-            <div className="w-9 h-9 rounded-full bg-gray-900 text-white flex items-center justify-center text-xs font-bold">
+          <div className="flex items-center gap-3 p-3 rounded-xl bg-white border border-gray-200 shadow-sm">
+            <div className="w-9 h-9 rounded-full bg-black text-white flex items-center justify-center text-xs font-bold">
               {user?.name?.substring(0, 2).toUpperCase() || 'VL'}
             </div>
             <div className="flex-1 min-w-0">
               <div className="text-sm font-semibold text-gray-900 truncate">{user?.name || 'Patient'}</div>
+              <div className="text-[10px] text-gray-500 font-mono tracking-wide">PATIENT ID</div>
             </div>
           </div>
         </div>
 
         {/* Nav Links */}
-        <div className="flex-1 overflow-y-auto px-3 py-4 flex flex-col gap-1">
+        <div className="flex-1 overflow-y-auto px-3 py-4 flex flex-col gap-1 relative z-10">
+          <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest px-4 mb-2">Clinical Menu</div>
           {navItems.map(item => (
-            <NavItem key={item.to} item={item} />
+            <NavLink
+              key={item.to}
+              to={item.to}
+              end={item.end}
+              onClick={() => setMobileMenuOpen(false)}
+              className={({ isActive }) =>
+                `flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${
+                  isActive
+                    ? 'bg-white text-black shadow-sm border border-gray-200'
+                    : 'text-gray-500 hover:text-gray-900 hover:bg-gray-100/50'
+                }`
+              }
+            >
+              {({ isActive }) => (
+                <>
+                  <item.icon className={`w-[18px] h-[18px] ${isActive ? 'text-black' : 'text-gray-400'}`} />
+                  <span>{item.label}</span>
+                </>
+              )}
+            </NavLink>
           ))}
         </div>
 
         {/* Bottom */}
-        <div className="px-3 pb-4 border-t border-gray-100 pt-3 flex flex-col gap-1">
+        <div className="px-3 pb-4 border-t border-gray-100 pt-3 flex flex-col gap-1 relative z-10">
           <NavLink
             to="/dashboard/profile"
             className={({ isActive }) =>
-              `flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                isActive ? 'bg-gray-900 text-white' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50'
+              `flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-colors ${
+                isActive ? 'bg-black text-white' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-100/50'
               }`
             }
           >
@@ -121,7 +144,7 @@ export default function DashboardLayout() {
           </NavLink>
           <button
             onClick={handleLogout}
-            className="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-gray-500 hover:text-red-600 hover:bg-red-50 transition-colors w-full text-left"
+            className="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium text-gray-500 hover:text-gray-900 hover:bg-gray-100/50 transition-colors w-full text-left"
           >
             <LogOut className="w-[18px] h-[18px]" />
             <span>Sign Out</span>
@@ -131,12 +154,12 @@ export default function DashboardLayout() {
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
-        {/* Top Bar */}
+        {/* Top Bar — Clinical */}
         <header className="h-16 bg-white/80 backdrop-blur-md border-b border-gray-100 flex items-center justify-between px-6 shrink-0 z-30">
           {/* Mobile Menu Button */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="lg:hidden p-2 text-gray-500 hover:text-gray-900 transition-colors"
+            className="lg:hidden p-2 text-gray-700 hover:text-gray-900 transition-colors"
           >
             {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
@@ -144,11 +167,11 @@ export default function DashboardLayout() {
           {/* Mobile Logo */}
           <div className="lg:hidden flex items-center gap-2">
             <img src="/logo.png" alt="VitaLeaf" className="w-6 h-6 object-contain" />
-            <span className="font-extrabold text-base tracking-tight text-gray-900">VitaLeaf</span>
+            <span className="font-heading font-extrabold text-base tracking-tight text-gray-900">VitaLeaf</span>
           </div>
 
           {/* Desktop Search */}
-          <div className="hidden lg:flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-full px-4 py-2 w-80 group focus-within:border-gray-300 focus-within:bg-white transition-all">
+          <div className="hidden lg:flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 w-80 group focus-within:border-gray-400 focus-within:bg-white transition-all shadow-sm">
             <Search className="w-4 h-4 text-gray-400" />
             <input
               type="text"
@@ -162,19 +185,19 @@ export default function DashboardLayout() {
           <div className="flex items-center gap-3 relative">
             <button 
               onClick={() => setNotificationsOpen(!notificationsOpen)}
-              className="relative p-2 text-gray-400 hover:text-gray-900 transition-colors"
+              className="relative p-2 text-gray-500 hover:text-gray-900 transition-colors"
             >
               <Bell className="w-5 h-5" />
               {notifications.length > 0 && (
-                <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white" />
+                <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-black rounded-full border-2 border-white animate-pulse" />
               )}
             </button>
 
             {notificationsOpen && (
-              <div className="absolute top-full right-0 mt-2 w-80 bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden z-50">
+              <div className="absolute top-full right-0 mt-2 w-80 bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden z-50">
                 <div className="p-4 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
-                  <h3 className="font-extrabold text-gray-900">Notifications</h3>
-                  <span className="text-xs font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded-full">
+                  <h3 className="font-heading font-extrabold text-gray-900">Notifications</h3>
+                  <span className="text-xs font-bold text-gray-700 bg-gray-200 px-2 py-1 rounded-full">
                     {notifications.length} New
                   </span>
                 </div>
@@ -189,16 +212,16 @@ export default function DashboardLayout() {
                         <div key={notif.id || i} className="p-4 border-b border-gray-50 last:border-0 hover:bg-gray-50 transition-colors">
                           <div className="flex items-start gap-3">
                             <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${
-                              notif.type === 'warning' ? 'bg-amber-100 text-amber-600' :
-                              notif.type === 'success' ? 'bg-emerald-100 text-emerald-600' :
-                              'bg-blue-100 text-blue-600'
+                              notif.type === 'warning' ? 'bg-amber-50 text-amber-600' :
+                              notif.type === 'success' ? 'bg-emerald-50 text-emerald-600' :
+                              'bg-gray-100 text-gray-600'
                             }`}>
-                              <Bell className="w-4 h-4" />
+                              <HeartPulse className="w-4 h-4" />
                             </div>
                             <div className="flex-1 min-w-0">
                               <p className="text-sm font-bold text-gray-900">{notif.title}</p>
                               <p className="text-xs font-medium text-gray-500 mt-0.5">{notif.message}</p>
-                              <p className="text-[10px] font-bold text-gray-400 mt-1.5">{notif.time}</p>
+                              <p className="text-[10px] font-bold text-gray-500 mt-1.5 font-mono">{notif.time}</p>
                             </div>
                           </div>
                         </div>
@@ -210,7 +233,7 @@ export default function DashboardLayout() {
                   <div className="p-3 border-t border-gray-100 bg-gray-50/50 text-center">
                     <button 
                       onClick={() => setNotificationsOpen(false)}
-                      className="text-xs font-bold text-gray-500 hover:text-gray-900 transition-colors"
+                      className="text-xs font-bold text-gray-900 hover:text-black transition-colors"
                     >
                       Mark all as read
                     </button>
@@ -219,7 +242,7 @@ export default function DashboardLayout() {
               </div>
             )}
             
-            <div className="hidden lg:flex w-8 h-8 rounded-full bg-gray-900 text-white items-center justify-center text-xs font-bold cursor-pointer">
+            <div className="hidden lg:flex w-8 h-8 rounded-full bg-black text-white items-center justify-center text-xs font-bold cursor-pointer">
               {user?.name?.substring(0, 2).toUpperCase() || 'VL'}
             </div>
           </div>
@@ -230,20 +253,39 @@ export default function DashboardLayout() {
           <div className="lg:hidden fixed inset-0 top-16 z-40 bg-white border-t border-gray-100 overflow-y-auto">
             <div className="px-4 py-4 flex flex-col gap-1">
               {navItems.map(item => (
-                <NavItem key={item.to} item={item} />
+                <NavLink
+                  key={item.to}
+                  to={item.to}
+                  end={item.end}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={({ isActive }) =>
+                    `flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${
+                      isActive
+                        ? 'bg-gray-100 text-black shadow-sm'
+                        : 'text-gray-500 hover:text-gray-900'
+                    }`
+                  }
+                >
+                  {({ isActive }) => (
+                    <>
+                      <item.icon className={`w-[18px] h-[18px] ${isActive ? 'text-black' : 'text-gray-400'}`} />
+                      <span>{item.label}</span>
+                    </>
+                  )}
+                </NavLink>
               ))}
               <div className="border-t border-gray-100 mt-3 pt-3">
                 <NavLink
                   to="/dashboard/profile"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-gray-500 hover:text-gray-900 hover:bg-gray-50"
+                  className="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium text-gray-500 hover:text-gray-900 hover:bg-gray-50"
                 >
                   <Settings className="w-[18px] h-[18px] text-gray-400" />
                   <span>Settings</span>
                 </NavLink>
                 <button
                   onClick={handleLogout}
-                  className="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-gray-500 hover:text-red-600 hover:bg-red-50 w-full text-left"
+                  className="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium text-gray-500 hover:text-gray-900 hover:bg-gray-50 w-full text-left"
                 >
                   <LogOut className="w-[18px] h-[18px]" />
                   <span>Sign Out</span>
@@ -254,7 +296,7 @@ export default function DashboardLayout() {
         )}
 
         {/* Page Content */}
-        <main className="flex-1 overflow-y-auto bg-gray-50/50">
+        <main className="flex-1 overflow-y-auto bg-gray-50/30">
           <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-8">
             <Outlet />
           </div>

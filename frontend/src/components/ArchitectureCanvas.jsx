@@ -287,20 +287,20 @@ export default function ArchitectureCanvas() {
                   setClickedNode(isActive ? null : node.id);
                 }}
               >
-                <div className={`relative bg-white/95 backdrop-blur-md rounded-2xl shadow-xl border p-4 w-60 transition-all duration-300 ${isOverdrive ? 'border-purple-400 shadow-purple-500/20 scale-105' : isActive ? 'border-blue-500 ring-4 ring-blue-500/20 shadow-blue-500/10 scale-105' : isDownstream ? 'border-emerald-400 shadow-emerald-500/10' : 'border-gray-200 hover:border-gray-300'}`}>
+                <div className={`relative bg-white/95 backdrop-blur-md rounded-2xl shadow-xl border p-4 w-60 transition-all duration-300 ${isOverdrive ? 'border-purple-400 shadow-purple-500/20 scale-105' : isActive ? 'border-blue-500 ring-4 ring-blue-500/20 shadow-blue-500/10 scale-105' : isDownstream ? 'border-sky-400 shadow-sky-500/10' : 'border-gray-200 hover:border-gray-300'}`}>
                 
                 <div className="flex items-center gap-4">
-                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center transition-colors duration-300 ${isOverdrive ? 'bg-purple-600 text-white shadow-inner' : isActive ? 'bg-blue-600 text-white shadow-inner' : isDownstream ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' : 'bg-gray-50 text-gray-600 border border-gray-100'}`}>
+                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center transition-colors duration-300 ${isOverdrive ? 'bg-purple-600 text-white shadow-inner' : isActive ? 'bg-blue-600 text-white shadow-inner' : isDownstream ? 'bg-sky-50 text-sky-600 border border-sky-100' : 'bg-gray-50 text-gray-600 border border-gray-100'}`}>
                     <node.icon className="w-6 h-6" />
                   </div>
                   <div className="flex-1 text-left">
                     <h3 className="font-bold text-gray-900 text-[15px] leading-tight">{node.title}</h3>
                     <div className="flex items-center gap-2 mt-1.5">
                       {/* Status Dot */}
-                      <span className={`w-2 h-2 rounded-full ${isOverdrive ? 'bg-purple-400 animate-ping' : isActive ? 'bg-blue-500 animate-pulse' : isDownstream ? 'bg-emerald-500 animate-pulse' : `bg-${node.color}-500 ${node.status !== 'Idle' && node.status !== 'Standby' ? 'animate-pulse' : ''}`}`}></span>
+                      <span className={`w-2 h-2 rounded-full ${isOverdrive ? 'bg-purple-400 animate-ping' : isActive ? 'bg-blue-500 animate-pulse' : isDownstream ? 'bg-sky-500 animate-pulse' : `bg-${node.color}-500 ${node.status !== 'Idle' && node.status !== 'Standby' ? 'animate-pulse' : ''}`}`}></span>
                       
                       {/* Status Text */}
-                      <span className={`text-[10px] font-bold tracking-wider uppercase ${isOverdrive ? 'text-purple-600' : isActive ? 'text-blue-600' : isDownstream ? 'text-emerald-600' : `text-${node.color}-600`}`}>
+                      <span className={`text-[10px] font-bold tracking-wider uppercase ${isOverdrive ? 'text-purple-600' : isActive ? 'text-blue-600' : isDownstream ? 'text-sky-600' : `text-${node.color}-600`}`}>
                         {isOverdrive ? 'Syncing' : isActive ? 'Processing' : isDownstream ? 'Receiving' : node.status}
                       </span>
                       
@@ -334,8 +334,8 @@ export default function ArchitectureCanvas() {
                       <div className="space-y-3">
                         <div className="flex justify-between items-center">
                           <span className="text-gray-500 text-xs font-medium">Status</span>
-                          <span className="flex items-center gap-1.5 text-xs font-bold text-emerald-600">
-                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> {node.status}
+                          <span className="flex items-center gap-1.5 text-xs font-bold text-sky-600">
+                            <span className="w-1.5 h-1.5 rounded-full bg-sky-500 animate-pulse"></span> {node.status}
                           </span>
                         </div>
                         <div className="flex justify-between items-center">

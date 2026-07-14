@@ -1,5 +1,7 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import { jwtDecode } from 'jwt-decode';
+import Modal from '../components/Modal';
+import { Bell } from 'lucide-react';
 
 const GlobalContext = createContext();
 
@@ -47,6 +49,7 @@ export const GlobalProvider = ({ children }) => {
   const [safetyAlert, setSafetyAlert] = useState({ isEmergency: false, warningDetails: '' });
 
   // OCR Wizard States
+  const [globalAlert, setGlobalAlert] = useState({ isOpen: false, title: '', message: '' });
   const [ocrLoading, setOcrLoading] = useState(false);
   const [ocrData, setOcrData] = useState(null); // { ocrRaw: '', medications: [] }
   const [ocrFileName, setOcrFileName] = useState('');
@@ -445,7 +448,7 @@ export const GlobalProvider = ({ children }) => {
           ...data.updateMedicalProfile
         }
       }));
-      alert('Medical profile saved successfully!');
+      setGlobalAlert({ isOpen: true, title: 'Success', message: 'Medical profile saved successfully!' });
     }
   };
 
@@ -535,7 +538,7 @@ export const GlobalProvider = ({ children }) => {
 
       setLabUploadLoading(false);
       if (data && data.uploadLabReport) {
-        alert('Lab Report successfully analyzed and parameters extracted!');
+        setGlobalAlert({ isOpen: true, title: 'Analysis Complete', message: 'Lab Report successfully analyzed and parameters extracted!' });
         fetchLabReports(userId);
       }
     };
@@ -589,7 +592,7 @@ export const GlobalProvider = ({ children }) => {
         if (result.medications && result.medications.length > 0) {
           setOcrData({ ocrRaw: result.ocrRaw, medications: result.medications });
         } else {
-          if (msgs.length > 0) alert(msgs.join(" "));
+          if (msgs.length > 0) setGlobalAlert({ isOpen: true, title: 'Notification', message: msgs.join(" ") });
           if (setUIState) setUIState(null); // Reset UI or navigate if no meds to verify
         }
       }
@@ -656,7 +659,7 @@ export const GlobalProvider = ({ children }) => {
     
     const data = await gqlFetch(mutation, { userId, items: itemsInput });
     if (data && data.confirmPrescription) {
-      alert('Prescription successfully confirmed! Reminder schedules created.');
+      setGlobalAlert({ isOpen: true, title: 'Success', message: 'Prescription successfully confirmed! Reminder schedules created.' });
       setOcrData(null);
       setOcrPreviewImage(null);
       setOcrFileName('');
@@ -686,7 +689,7 @@ export const GlobalProvider = ({ children }) => {
     
     const data = await gqlFetch(mutation, { userId, items: itemsInput });
     if (data && data.confirmPrescription) {
-      alert('Medication added successfully!');
+      setGlobalAlert({ isOpen: true, title: 'Success', message: 'Medication added successfully!' });
       fetchReminders(userId);
       fetchPrescriptions(userId);
       if (onSuccess) onSuccess();
@@ -769,6 +772,22 @@ export const GlobalProvider = ({ children }) => {
   return (
     <GlobalContext.Provider value={value}>
       {children}
+      <Modal 
+        isOpen={globalAlert.isOpen} 
+        onClose={() => setGlobalAlert(prev => ({ ...prev, isOpen: false }))} 
+        title={globalAlert.title}
+        icon={Bell}
+      >
+        <div className="flex flex-col gap-4">
+          <p className="text-sm font-medium text-slate-700">{globalAlert.message}</p>
+          <button 
+            onClick={() => setGlobalAlert(prev => ({ ...prev, isOpen: false }))} 
+            className="med-btn-primary w-full mt-2"
+          >
+            Acknowledge
+          </button>
+        </div>
+      </Modal>
     </GlobalContext.Provider>
   );
 };

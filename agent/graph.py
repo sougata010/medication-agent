@@ -62,7 +62,7 @@ def handle_general_query(state: AgentState) -> Dict[str, Any]:
     pregnancy = context.get("pregnancy_status", False)
     
     # Identify target drug from query using LLM
-    llm = ChatGoogleGenerativeAI(model="gemini-3.5-flash", google_api_key=api_key, temperature=0.0)
+    llm = ChatGoogleGenerativeAI(model="gemini-3.0-flash", google_api_key=api_key, temperature=0.0)
     msg = [
         SystemMessage(content="You are a clinical pharmacologist helper. Identify the name of the main drug/medication being asked about in the query. Return ONLY the single drug name. If no specific drug is found, return 'None'."),
         HumanMessage(content=query_text)
@@ -131,12 +131,20 @@ def handle_general_query(state: AgentState) -> Dict[str, Any]:
         except Exception:
             pass
 
-    # Synthesize Final Answer
     system_prompt = (
         "You are the central MedGraph AI Agent. Synthesize a professional, plain-language summary answering the user's question.\n"
         "Integrate the retrieved FDA data, chemical properties, safety reports, and search results to construct a complete, structured answer.\n"
         "State the generic name, mechanism, dosage constraints, common warnings, and interaction safety flags clearly.\n"
-        "Cite the sources in brackets (e.g. [OpenFDA Drug Registry]). Do NOT write a diagnosis or tell the patient to change dosage."
+        "Cite the sources in brackets (e.g. [OpenFDA Drug Registry]). Do NOT write a diagnosis or tell the patient to change dosage.\n\n"
+        "RAG CAPABILITIES:\n"
+        "If the user asks general questions about their health data (e.g., 'what are my medications?', 'what are my allergies?'), "
+        "read the provided Patient Allergies and Active Medications lists below, and detail them fully in your response. "
+        "Do NOT brush them off. Answer fully and comprehensively based on the context provided.\n\n"
+        "UI CONTROL:\n"
+        "You have the power to control the user's application UI by outputting hidden commands in your text. The frontend will intercept these and display a clickable button for the user.\n"
+        "To suggest navigating to a specific page, include this exact string anywhere in your response: [ACTION: NAVIGATE:/path]\n"
+        "Available paths: /dashboard, /dashboard/medications, /dashboard/reports, /dashboard/reminders, /dashboard/pharmacies\n"
+        "IMPORTANT: ONLY output this command if you are strongly recommending they check a specific page (e.g., to view full lab reports or add a new medication). Provide the full answer FIRST, and add the command at the very end.\n"
     )
     
     human_prompt = f"""User Question: {query_text}
@@ -191,7 +199,7 @@ def handle_prescription_upload(state: AgentState) -> Dict[str, Any]:
 # 4. Lab Report Node
 def handle_lab_report(state: AgentState) -> Dict[str, Any]:
     ocr_text = state["ocr_raw"] or state["message"]
-    llm = ChatGoogleGenerativeAI(model="gemini-3.5-flash", google_api_key=api_key, temperature=0.0)
+    llm = ChatGoogleGenerativeAI(model="gemini-3.0-flash", google_api_key=api_key, temperature=0.0)
     
     msg = [
         SystemMessage(content="You are a clinical lab technician. Extract all lab parameters, their numerical values, reference ranges, and units. Format them as a clean, readable text list. Suggest if the parameters are normal or abnormal based on standard reference bounds."),
