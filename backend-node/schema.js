@@ -9,6 +9,8 @@ const typeDefs = gql`
     gender: String
     language: String
     reminderChannel: String
+    streakDays: Int
+    badges: [String!]
     createdAt: String!
     medicalProfile: MedicalProfile
     prescriptions: [Prescription!]!
@@ -53,12 +55,24 @@ const typeDefs = gql`
     medicine: Medicine
   }
 
+  type CarePlan {
+    autoAlerts: [String!]!
+    warningSigns: [String!]!
+    dietProtocol: [String!]!
+    followUpMonitoring: [String!]!
+    exerciseMovement: [String!]!
+    sleepRecovery: [String!]!
+    mentalEmotional: [String!]!
+    supplementOtc: [String!]!
+  }
+
   type LabReport {
     id: ID!
     userId: ID!
-    uploadedAt: String!
+    uploadedAt: String
     ocrRaw: String
     parameters: [LabParameter!]!
+    carePlan: CarePlan
   }
 
   type LabParameter {
@@ -84,6 +98,7 @@ const typeDefs = gql`
     hydration: String!
     sleep: String!
     bloodPressure: String!
+    mood: String
   }
 
   type Insight {
@@ -106,6 +121,7 @@ const typeDefs = gql`
     insights: [Insight!]!
     weeklyAdherence: [Int!]!
     aiAnalysis: AIAnalysis!
+    trendForecast: String
   }
 
   type Reminder {
@@ -155,6 +171,29 @@ const typeDefs = gql`
     citations: [String!]!
   }
 
+  type SymptomLog {
+    id: ID!
+    userId: ID!
+    symptoms: [String!]!
+    loggedAt: String!
+  }
+
+  type CommunityPost {
+    id: ID!
+    author: String!
+    content: String!
+    tags: [String!]!
+    likes: Int
+    comments: Int
+    createdAt: String!
+  }
+
+  type PharmacyPrice {
+    pharmacy: String!
+    price: Float!
+    distance: String
+  }
+
   type PrescriptionItemExtraction {
     drugName: String!
     dosage: String!
@@ -192,6 +231,9 @@ const typeDefs = gql`
     getChatMessages(sessionId: ID!): [ChatMessage!]!
     getDashboardMetrics(userId: ID!): DashboardMetrics!
     getLabReports(userId: ID!): [LabReport!]!
+    getCommunityPosts: [CommunityPost!]!
+    getPharmacyPrices(medicineName: String!): [PharmacyPrice!]!
+    getCarePlan(userId: ID!): CarePlan!
   }
 
   type AuthPayload {
@@ -234,7 +276,8 @@ const typeDefs = gql`
       pregnancyStatus: Boolean!
       emergencyContacts: String
     ): MedicalProfile!
-    
+    # Utilities
+    generateCarePlanForReport(reportId: ID!): CarePlan!
     uploadPrescription(
       userId: ID!
       filename: String!
@@ -275,7 +318,23 @@ const typeDefs = gql`
       hydration: String
       sleep: String
       bloodPressure: String
+      mood: String
     ): Boolean!
+
+    logSymptoms(
+      userId: ID!
+      symptoms: [String!]!
+    ): Boolean!
+
+    createCommunityPost(
+      content: String!
+      tags: [String!]!
+    ): CommunityPost!
+
+    checkFoodInteraction(
+      userId: ID!
+      foodItem: String!
+    ): String
   }
 `;
 

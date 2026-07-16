@@ -102,6 +102,7 @@ class LabReport(Base):
     user_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
     uploaded_at = Column(DateTime, default=datetime.datetime.utcnow)
     ocr_raw = Column(Text, nullable=True)
+    care_plan_json = Column(JSON, nullable=True)
     
     user = relationship("User", back_populates="lab_reports")
     parameters = relationship("LabParameter", back_populates="lab_report", cascade="all, delete-orphan")

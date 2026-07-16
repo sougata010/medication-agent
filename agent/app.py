@@ -54,6 +54,13 @@ class OCRRequest(BaseModel):
     filename: str
     file_content_base64: str
 
+class CarePlanRequest(BaseModel):
+    user_id: int
+    active_medications: List[str] = []
+    allergies: List[str] = []
+    conditions: List[str] = []
+    lab_results: str = ""
+
 # Endpoints
 @app.post("/api/chat")
 async def chat_endpoint(payload: ChatRequest):
@@ -276,6 +283,70 @@ Return ONLY the raw JSON object, without any markdown formatting like ```json.""
                   } 
                 }
             ]
+        }
+
+@app.post("/api/generate_care_plan")
+async def generate_care_plan_endpoint(payload: CarePlanRequest):
+    try:
+        api_key = os.getenv("GOOGLE_API_KEY")
+        if not api_key:
+            raise Exception("GOOGLE_API_KEY not found in environment variables.")
+            
+        from langchain_google_genai import ChatGoogleGenerativeAI
+        from langchain_core.messages import SystemMessage, HumanMessage
+        import json
+
+        llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash", google_api_key=api_key, temperature=0.2)
+        
+        system_prompt = """You are an advanced medical AI assistant. Generate a highly personalized holistic care plan based on the user's active medications, medical conditions, allergies, and recent lab results.
+Return ONLY a strict JSON object with this exact structure:
+{
+  "autoAlerts": ["tip 1", "tip 2"],
+  "warningSigns": ["warning 1"],
+  "dietProtocol": ["diet 1", "diet 2"],
+  "followUpMonitoring": ["follow up 1"],
+  "exerciseMovement": ["exercise 1"],
+  "sleepRecovery": ["sleep 1"],
+  "mentalEmotional": ["mental 1"],
+  "supplementOtc": ["supplement 1"]
+}
+If there are no specific items for a category, return an empty array for that category. Do not include markdown formatting like ```json."""
+
+        user_context = f"""
+Active Medications: {', '.join(payload.active_medications) if payload.active_medications else 'None'}
+Conditions: {', '.join(payload.conditions) if payload.conditions else 'None'}
+Allergies: {', '.join(payload.allergies) if payload.allergies else 'None'}
+Lab Results Context: {payload.lab_results if payload.lab_results else 'No recent labs.'}
+        """
+
+        msg = [
+            SystemMessage(content=system_prompt),
+            HumanMessage(content=f"Generate a care plan for this patient:\n{user_context}")
+        ]
+        
+        response = llm.invoke(msg)
+        
+        result_text = response.content.strip()
+        if result_text.startswith("```json"):
+            result_text = result_text[7:-3].strip()
+        elif result_text.startswith("```"):
+            result_text = result_text[3:-3].strip()
+            
+        parsed_json = json.loads(result_text)
+        return parsed_json
+        
+    except Exception as e:
+        print("FastAPI generate_care_plan Error:", e)
+        # Graceful fallback mock
+        return {
+            "autoAlerts": ["Stay hydrated."],
+            "warningSigns": ["If you experience severe pain, contact a doctor immediately."],
+            "dietProtocol": ["Eat a balanced diet."],
+            "followUpMonitoring": ["Regular checkups."],
+            "exerciseMovement": ["Stay active."],
+            "sleepRecovery": ["Get 8 hours of sleep."],
+            "mentalEmotional": ["Manage stress."],
+            "supplementOtc": ["Consult before taking new supplements."]
         }
 
 @app.get("/health")

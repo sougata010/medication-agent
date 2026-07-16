@@ -17,6 +17,8 @@ import MyMedications from './pages/MyMedications';
 import RemindersHub from './pages/RemindersHub';
 import LabReports from './pages/LabReports';
 import PharmacyFinder from './pages/PharmacyFinder';
+import Community from './pages/Community';
+import CarePlan from './pages/CarePlan';
 
 // Info/Legal Pages
 import UserGuide from './pages/UserGuide';
@@ -43,6 +45,7 @@ const AppRoutes = () => {
       {/* Protected Dashboard Routes - Un-nested to avoid double layout */}
       <Route path="/dashboard" element={<div className="internal-theme"><ProtectedRoute><DashboardLayout /></ProtectedRoute></div>}>
         <Route index element={<Dashboard />} />
+        <Route path="care-plan" element={<CarePlan />} />
         <Route path="medications" element={<MyMedications />} />
         <Route path="reports" element={<LabReports />} />
         <Route path="reminders" element={<RemindersHub />} />
@@ -50,6 +53,7 @@ const AppRoutes = () => {
         <Route path="upload" element={<DocumentUpload />} />
         <Route path="chat" element={<ChatCompanion />} />
         <Route path="profile" element={<HealthProfile />} />
+        <Route path="community" element={<Community />} />
       </Route>
       
       <Route element={<MainLayout />}>

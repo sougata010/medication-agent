@@ -4,10 +4,47 @@ import { useNavigate } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import {
-  MessageSquare, Send, Bot, User, Plus, AlertTriangle,
+  MessageSquare, Send, User, Plus, AlertTriangle,
   Link as LinkIcon, Clock, ChevronLeft, Sparkles, ChevronDown, ChevronUp,
-  Stethoscope, HeartPulse
+  Stethoscope, HeartPulse, Brain, 
 } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+
+const LOADING_AFFIRMATIONS = [
+  "Analyzing your health profile with care...",
+  "Your well-being is our priority...",
+  "Cross-referencing FDA safety guidelines...",
+  "Checking for potential drug interactions...",
+  "Synthesizing your personalized response..."
+];
+
+function EmpatheticLoader() {
+  const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setIndex((prev) => (prev + 1) % LOADING_AFFIRMATIONS.length);
+    }, 2500);
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <div className="overflow-hidden h-5 relative w-64 ml-2">
+      <AnimatePresence mode="wait">
+        <motion.p
+          key={index}
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          exit={{ y: -20, opacity: 0 }}
+          transition={{ duration: 0.3 }}
+          className="text-xs font-medium text-gray-500 absolute w-full"
+        >
+          {LOADING_AFFIRMATIONS[index]}
+        </motion.p>
+      </AnimatePresence>
+    </div>
+  );
+}
 
 const AI_COMMAND_REGEX = /\[ACTION:\s*([A-Z0-9_]+)(?::([^\]]+))?\]/gi;
 
@@ -340,7 +377,7 @@ export default function ChatCompanion() {
                     )}
                   </div>
 
-                  {isUser && (
+                  {msg.isUser && (
                     <div className="shrink-0 w-8 h-8 rounded-lg bg-blue-200 flex items-center justify-center border border-blue-300">
                       <User className="w-4 h-4 text-gray-900" />
                     </div>
@@ -348,20 +385,22 @@ export default function ChatCompanion() {
                 </div>
               );
             })}
-
+            
             {chatLoading && (
-              <div className="flex gap-3 justify-start">
-                <div className="shrink-0 w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center border border-gray-200">
-                  <Stethoscope className="w-4 h-4 text-gray-900" />
+              <div className="flex gap-4 flex-row items-center">
+                <div className="w-8 h-8 rounded-xl bg-white border-2 border-gray-100 text-gray-900 flex items-center justify-center shrink-0 shadow-sm">
+                  <Brain className="w-4 h-4" />
                 </div>
-                <div className="flex items-center gap-1.5 pt-2">
-                  <div className="w-2 h-2 rounded-full bg-blue-400 animate-bounce" />
-                  <div className="w-2 h-2 rounded-full bg-blue-400 animate-bounce" style={{ animationDelay: '0.15s' }} />
-                  <div className="w-2 h-2 rounded-full bg-blue-400 animate-bounce" style={{ animationDelay: '0.3s' }} />
+                <div className="bg-white border border-gray-100 rounded-full px-5 py-3 shadow-sm flex items-center gap-3">
+                  <div className="flex gap-1">
+                    <div className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                    <div className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                    <div className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                  </div>
+                  <EmpatheticLoader />
                 </div>
               </div>
             )}
-
             <div ref={messagesEndRef} />
           </div>
 

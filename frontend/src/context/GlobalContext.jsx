@@ -40,6 +40,7 @@ export const GlobalProvider = ({ children }) => {
   const [prescriptions, setPrescriptions] = useState([]);
   const [dashboardMetrics, setDashboardMetrics] = useState(null);
   const [labReports, setLabReports] = useState([]);
+  const [carePlan, setCarePlan] = useState(null);
   
   // Chat States
   const [chatSessionId, setChatSessionId] = useState(null);
@@ -113,6 +114,8 @@ export const GlobalProvider = ({ children }) => {
           gender
           language
           reminderChannel
+          streakDays
+          badges
           medicalProfile {
             id
             allergies
@@ -135,6 +138,8 @@ export const GlobalProvider = ({ children }) => {
             gender
             language
             reminderChannel
+            streakDays
+            badges
             medicalProfile {
               id
               allergies
@@ -173,6 +178,28 @@ export const GlobalProvider = ({ children }) => {
     fetchChatHistory(uid);
     fetchDashboardMetrics(uid);
     fetchLabReports(uid);
+    fetchCarePlan(uid);
+  };
+
+  const fetchCarePlan = async (uid) => {
+    const query = `
+      query GetCarePlan($userId: ID!) {
+        getCarePlan(userId: $userId) {
+          autoAlerts
+          warningSigns
+          dietProtocol
+          followUpMonitoring
+          exerciseMovement
+          sleepRecovery
+          mentalEmotional
+          supplementOtc
+        }
+      }
+    `;
+    const data = await gqlFetch(query, { userId: uid });
+    if (data && data.getCarePlan) {
+      setCarePlan(data.getCarePlan);
+    }
   };
 
   const fetchDashboardMetrics = async (uid) => {
@@ -183,6 +210,7 @@ export const GlobalProvider = ({ children }) => {
             hydration
             sleep
             bloodPressure
+            mood
           }
           insights {
             id
@@ -198,6 +226,7 @@ export const GlobalProvider = ({ children }) => {
             liverSafety
             confidence
           }
+          trendForecast
         }
       }
     `;
@@ -229,6 +258,16 @@ export const GlobalProvider = ({ children }) => {
             risk
             recommendation
           }
+          carePlan {
+            autoAlerts
+            warningSigns
+            dietProtocol
+            followUpMonitoring
+            exerciseMovement
+            sleepRecovery
+            mentalEmotional
+            supplementOtc
+          }
         }
       }
     `;
@@ -236,6 +275,33 @@ export const GlobalProvider = ({ children }) => {
     if (data && data.getLabReports) {
       setLabReports(data.getLabReports);
     }
+  };
+
+  const generateCarePlanForReport = async (reportId) => {
+    const mutation = `
+      mutation GenerateCarePlanForReport($reportId: ID!) {
+        generateCarePlanForReport(reportId: $reportId) {
+          autoAlerts
+          warningSigns
+          dietProtocol
+          followUpMonitoring
+          exerciseMovement
+          sleepRecovery
+          mentalEmotional
+          supplementOtc
+        }
+      }
+    `;
+    const data = await gqlFetch(mutation, { reportId });
+    if (data && data.generateCarePlanForReport) {
+      setLabReports(prev => prev.map(report => 
+        report.id === reportId 
+          ? { ...report, carePlan: data.generateCarePlanForReport } 
+          : report
+      ));
+      return data.generateCarePlanForReport;
+    }
+    return null;
   };
 
   const login = async (token, userData) => {
@@ -600,15 +666,20 @@ export const GlobalProvider = ({ children }) => {
     reader.readAsDataURL(file);
   };
 
-  const handleLogHealthMetrics = async (hydration, sleep, bloodPressure) => {
+  const handleLogHealthMetrics = async (hydration, sleep, bloodPressure, mood) => {
     const mutation = `
-      mutation LogHealthMetrics($userId: ID!, $hydration: String, $sleep: String, $bloodPressure: String) {
-        logHealthMetrics(userId: $userId, hydration: $hydration, sleep: $sleep, bloodPressure: $bloodPressure)
+      mutation LogHealthMetrics($userId: ID!, $hydration: String, $sleep: String, $bloodPressure: String, $mood: String) {
+        logHealthMetrics(userId: $userId, hydration: $hydration, sleep: $sleep, bloodPressure: $bloodPressure, mood: $mood)
       }
     `;
-    const data = await gqlFetch(mutation, { userId, hydration, sleep, bloodPressure });
+    const data = await gqlFetch(mutation, { userId, hydration, sleep, bloodPressure, mood });
     if (data && data.logHealthMetrics) {
       fetchDashboardMetrics(userId);
+      setDashboardMetrics(prev => ({
+        ...prev,
+        mood: mood || prev?.mood
+      }));
+      setGlobalAlert({ isOpen: true, title: 'Success', message: 'Vitals & Mood logged successfully.' });
       return true;
     }
     return false;
@@ -696,6 +767,74 @@ export const GlobalProvider = ({ children }) => {
     }
   };
 
+  const handleLogSymptoms = async (symptoms) => {
+    const mutation = `
+      mutation LogSymptoms($userId: ID!, $symptoms: [String!]!) {
+        logSymptoms(userId: $userId, symptoms: $symptoms)
+      }
+    `;
+    const data = await gqlFetch(mutation, { userId, symptoms });
+    if (data && data.logSymptoms) {
+      setGlobalAlert({ isOpen: true, title: 'Success', message: 'Symptoms logged successfully!' });
+      return true;
+    }
+    return false;
+  };
+
+  const fetchCommunityPosts = async () => {
+    const query = `
+      query GetCommunityPosts {
+        getCommunityPosts {
+          id
+          author
+          content
+          tags
+          likes
+          comments
+          createdAt
+        }
+      }
+    `;
+    const data = await gqlFetch(query);
+    return data?.getCommunityPosts || [];
+  };
+
+  const createCommunityPost = async (content, tags) => {
+    const mutation = `
+      mutation CreateCommunityPost($content: String!, $tags: [String!]!) {
+        createCommunityPost(content: $content, tags: $tags) {
+          id
+        }
+      }
+    `;
+    const data = await gqlFetch(mutation, { content, tags });
+    return !!data?.createCommunityPost;
+  };
+
+  const fetchPharmacyPrices = async (medicineName) => {
+    const query = `
+      query GetPharmacyPrices($medicineName: String!) {
+        getPharmacyPrices(medicineName: $medicineName) {
+          pharmacy
+          price
+          distance
+        }
+      }
+    `;
+    const data = await gqlFetch(query, { medicineName });
+    return data?.getPharmacyPrices || [];
+  };
+
+  const checkFoodInteraction = async (foodItem) => {
+    const mutation = `
+      mutation CheckFoodInteraction($userId: ID!, $foodItem: String!) {
+        checkFoodInteraction(userId: $userId, foodItem: $foodItem)
+      }
+    `;
+    const data = await gqlFetch(mutation, { userId, foodItem });
+    return data?.checkFoodInteraction || null;
+  };
+
   const totalReminders = reminders.length;
   const takenCount = reminders.filter(r => r.status === 'taken').length;
   const pendingCount = reminders.filter(r => r.status === 'pending').length;
@@ -727,6 +866,8 @@ export const GlobalProvider = ({ children }) => {
     chatInput, setChatInput,
     chatLoading, setChatLoading,
     safetyAlert, setSafetyAlert,
+    carePlan, setCarePlan,
+    fetchCarePlan,
     ocrLoading, setOcrLoading,
     ocrData, setOcrData,
     ocrFileName,
@@ -766,7 +907,15 @@ export const GlobalProvider = ({ children }) => {
     weeklyAdherence,
     aiAnalysis,
     labReports,
-    handleAddManualMedication
+    handleAddManualMedication,
+    handleLogSymptoms,
+    fetchCommunityPosts,
+    createCommunityPost,
+    fetchPharmacyPrices,
+    checkFoodInteraction,
+    trendForecast: dashboardMetrics?.trendForecast,
+    carePlan,
+    generateCarePlanForReport
   };
 
   return (

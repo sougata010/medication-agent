@@ -4,9 +4,10 @@ import { useGlobalContext } from '../context/GlobalContext';
 import {
   LayoutDashboard, Pill, FlaskConical, Bell, MapPin,
   Upload, MessageSquare, Settings, LogOut, Search,
-  AlertTriangle, ChevronRight, User, Menu, X,
-  HeartPulse, Stethoscope
+  AlertTriangle, ChevronRight, User, Users, Menu, X,
+  HeartPulse, Stethoscope, Flame, Sparkles
 } from 'lucide-react';
+import ZenWidget from '../components/ZenWidget';
 
 export default function DashboardLayout() {
   const { user, logout, reminders, insights } = useGlobalContext();
@@ -42,12 +43,14 @@ export default function DashboardLayout() {
 
   const navItems = [
     { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard, end: true },
+    { to: '/dashboard/care-plan', label: 'Care Plan', icon: Sparkles },
     { to: '/dashboard/medications', label: 'Medications', icon: Pill },
     { to: '/dashboard/reports', label: 'Lab Reports', icon: FlaskConical },
     { to: '/dashboard/reminders', label: 'Reminders', icon: Bell },
     { to: '/dashboard/upload', label: 'Upload Rx', icon: Upload },
     { to: '/dashboard/chat', label: 'AI Consult', icon: MessageSquare },
     { to: '/dashboard/pharmacies', label: 'Pharmacies', icon: MapPin },
+    { to: '/dashboard/community', label: 'Community', icon: Users },
   ];
 
   const NavItem = ({ item }) => (
@@ -87,13 +90,16 @@ export default function DashboardLayout() {
 
         {/* User Card */}
         <div className="px-4 py-4 border-b border-gray-100">
-          <div className="flex items-center gap-3 p-3 rounded-xl bg-white border border-gray-200 shadow-sm">
-            <div className="w-9 h-9 rounded-full bg-black text-white flex items-center justify-center text-xs font-bold">
+          <div className="flex items-center gap-3 p-3 rounded-xl bg-white border border-gray-200 shadow-sm relative overflow-hidden group">
+            <div className="w-9 h-9 rounded-full bg-black text-white flex items-center justify-center text-xs font-bold shrink-0">
               {user?.name?.substring(0, 2).toUpperCase() || 'VL'}
             </div>
             <div className="flex-1 min-w-0">
               <div className="text-sm font-semibold text-gray-900 truncate">{user?.name || 'Patient'}</div>
-              <div className="text-[10px] text-gray-500 font-mono tracking-wide">PATIENT ID</div>
+              <div className="flex items-center gap-1 mt-0.5">
+                <Flame className="w-3 h-3 text-orange-500 fill-orange-500" />
+                <span className="text-[10px] font-bold text-orange-600 uppercase tracking-wider">{user?.streakDays || 0} Day Streak</span>
+              </div>
             </div>
           </div>
         </div>
@@ -302,6 +308,9 @@ export default function DashboardLayout() {
           </div>
         </main>
       </div>
+
+      {/* Global Zen Breathing Widget */}
+      <ZenWidget />
     </div>
   );
 }

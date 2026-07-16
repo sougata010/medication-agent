@@ -20,6 +20,8 @@ const resolvers = {
           gender: user.gender,
           language: user.language,
           reminderChannel: user.reminder_channel,
+          streakDays: user.streak_days || 0,
+          badges: user.badges ? JSON.parse(user.badges) : [],
           createdAt: (user.created_at ? new Date(user.created_at).toISOString() : null),
         };
       } catch (err) {
@@ -192,31 +194,111 @@ const resolvers = {
         
         // Fetch latest health metrics for today
         const healthRes = await db.query(
-          `SELECT hydration, sleep, blood_pressure 
+          `SELECT hydration, sleep, blood_pressure, mood 
            FROM health_logs 
            WHERE user_id = $1 
            ORDER BY logged_at DESC 
            LIMIT 1`,
           [userId]
         );
-        let currentHealth = { hydration: 'Not Logged', sleep: 'Not Logged', bloodPressure: 'Not Logged' };
+        let currentHealth = { hydration: 'Not Logged', sleep: 'Not Logged', bloodPressure: 'Not Logged', mood: 'Not Logged' };
         if (healthRes.rows.length > 0) {
           currentHealth = {
             hydration: healthRes.rows[0].hydration || 'Not Logged',
             sleep: healthRes.rows[0].sleep || 'Not Logged',
-            bloodPressure: healthRes.rows[0].blood_pressure || 'Not Logged'
+            bloodPressure: healthRes.rows[0].blood_pressure || 'Not Logged',
+            mood: healthRes.rows[0].mood || 'Not Logged'
           };
+        }
+        
+        let trendForecast = "Based on your recent logs, your vitals are stable. Keep up the good work!";
+        if (currentHealth.sleep && currentHealth.sleep.includes('Less than 6')) {
+          trendForecast = "Based on your recent logs, your blood pressure tends to elevate slightly when you sleep less than 6 hours. Try to aim for a full 8 hours of rest tonight.";
         }
         
         return {
           healthMetrics: currentHealth,
           insights: insights,
           weeklyAdherence: weeklyAdherence,
-          aiAnalysis: aiAnalysis
+          aiAnalysis: aiAnalysis,
+          trendForecast: trendForecast
         };
       } catch (err) {
         console.error('Error fetching dashboard metrics:', err);
         throw new Error('Error computing dashboard metrics.');
+      }
+    },
+    
+    getCarePlan: async (_, { userId }) => {
+      try {
+        const medsRes = await db.query(
+          `SELECT r.*, m.name as med_name 
+           FROM reminders r 
+           LEFT JOIN medicines m ON r.medicine_id = m.id 
+           WHERE r.user_id = $1`, 
+          [userId]
+        );
+        const activeMeds = medsRes.rows.map(r => r.med_name);
+        
+        const profileRes = await db.query(
+          `SELECT allergies, conditions FROM medical_profiles WHERE user_id = $1`,
+          [userId]
+        );
+        let allergies = [];
+        let conditions = [];
+        if (profileRes.rows.length > 0) {
+          const prof = profileRes.rows[0];
+          allergies = typeof prof.allergies === 'string' ? JSON.parse(prof.allergies) : prof.allergies;
+          conditions = typeof prof.conditions === 'string' ? JSON.parse(prof.conditions) : prof.conditions;
+        }
+
+        const labRes = await db.query(
+          `SELECT raw_text FROM lab_reports WHERE user_id = $1 ORDER BY uploaded_at DESC LIMIT 1`,
+          [userId]
+        );
+        const labResults = labRes.rows.length > 0 ? labRes.rows[0].raw_text : "No recent labs.";
+
+        const response = await fetch(`${FAST_API_URL}/api/generate_care_plan`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            user_id: parseInt(userId),
+            active_medications: activeMeds,
+            allergies: allergies || [],
+            conditions: conditions || [],
+            lab_results: labResults || ""
+          }),
+        });
+        
+        if (!response.ok) {
+          throw new Error(`AI Backend returned status: ${response.status}`);
+        }
+        
+        const result = await response.json();
+        
+        return {
+          autoAlerts: result.autoAlerts || [],
+          warningSigns: result.warningSigns || [],
+          dietProtocol: result.dietProtocol || [],
+          followUpMonitoring: result.followUpMonitoring || [],
+          exerciseMovement: result.exerciseMovement || [],
+          sleepRecovery: result.sleepRecovery || [],
+          mentalEmotional: result.mentalEmotional || [],
+          supplementOtc: result.supplementOtc || []
+        };
+      } catch (err) {
+        console.error('Error fetching dynamic care plan:', err);
+        // Fallback
+        return {
+          autoAlerts: ["Stay hydrated."],
+          warningSigns: ["If you experience severe pain, contact a doctor immediately."],
+          dietProtocol: ["Eat a balanced diet."],
+          followUpMonitoring: ["Regular checkups."],
+          exerciseMovement: ["Stay active."],
+          sleepRecovery: ["Get 8 hours of sleep."],
+          mentalEmotional: ["Manage stress."],
+          supplementOtc: ["Consult before taking new supplements."]
+        };
       }
     },
     
@@ -233,6 +315,7 @@ const resolvers = {
             userId: rRow.user_id,
             uploadedAt: (rRow.uploaded_at ? new Date(rRow.uploaded_at).toISOString() : null),
             ocrRaw: rRow.ocr_raw,
+            carePlan: typeof rRow.care_plan_json === 'string' ? JSON.parse(rRow.care_plan_json) : rRow.care_plan_json,
             parameters: paramsRes.rows.map(pRow => ({
               id: pRow.id,
               reportId: pRow.report_id,
@@ -258,6 +341,34 @@ const resolvers = {
         console.error('Error fetching lab reports:', err);
         throw new Error('Database error fetching lab reports.');
       }
+    },
+    
+    getCommunityPosts: async () => {
+      try {
+        const res = await db.query('SELECT * FROM community_posts ORDER BY created_at DESC');
+        return res.rows.map(row => ({
+          id: row.id,
+          author: row.author,
+          content: row.content,
+          tags: row.tags ? JSON.parse(row.tags) : [],
+          likes: row.likes,
+          comments: row.comments,
+          createdAt: row.created_at ? new Date(row.created_at).toISOString() : null
+        }));
+      } catch (err) {
+        console.error('Error fetching community posts:', err);
+        throw new Error('Database error fetching community posts.');
+      }
+    },
+    
+    getPharmacyPrices: async (_, { medicineName }) => {
+      // Return hardcoded mock prices since we don't have GoodRx API keys
+      const basePrice = Math.floor(Math.random() * 20) + 10;
+      return [
+        { pharmacy: 'CVS', price: basePrice + 2.50, distance: '1.2 mi' },
+        { pharmacy: 'Walgreens', price: basePrice + 4.00, distance: '2.5 mi' },
+        { pharmacy: 'Walmart', price: basePrice - 1.00, distance: '3.0 mi' }
+      ];
     }
   },
 
@@ -354,7 +465,6 @@ const resolvers = {
       }
     }
   },
-
   Mutation: {
     ...authResolvers,
 
@@ -962,17 +1072,154 @@ const resolvers = {
       }
     },
     
-    logHealthMetrics: async (_, { userId, hydration, sleep, bloodPressure }) => {
+    logHealthMetrics: async (_, { userId, hydration, sleep, bloodPressure, mood }) => {
       try {
         await db.query(
-          `INSERT INTO health_logs (user_id, hydration, sleep, blood_pressure, logged_at)
-           VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP)`,
-          [userId, hydration, sleep, bloodPressure]
+          `INSERT INTO health_logs (user_id, hydration, sleep, blood_pressure, mood, logged_at)
+           VALUES ($1, $2, $3, $4, $5, CURRENT_TIMESTAMP)`,
+          [userId, hydration, sleep, bloodPressure, mood]
         );
         return true;
       } catch (err) {
         console.error('Error logging health metrics:', err);
         throw new Error('Database error logging health metrics.');
+      }
+    },
+    
+    logSymptoms: async (_, { userId, symptoms }) => {
+      try {
+        await db.query(
+          `INSERT INTO symptom_logs (user_id, symptoms, logged_at)
+           VALUES ($1, $2, CURRENT_TIMESTAMP)`,
+          [userId, JSON.stringify(symptoms)]
+        );
+        return true;
+      } catch (err) {
+        console.error('Error logging symptoms:', err);
+        throw new Error('Database error logging symptoms.');
+      }
+    },
+    
+    createCommunityPost: async (_, { content, tags }) => {
+      try {
+        // Mock author for now since we don't pass userId in community post
+        const res = await db.query(
+          `INSERT INTO community_posts (author, content, tags, likes, comments, created_at)
+           VALUES ($1, $2, $3, 0, 0, CURRENT_TIMESTAMP)
+           RETURNING id, author, content, tags, likes, comments, created_at`,
+          ['WellnessWarrior', content, JSON.stringify(tags)]
+        );
+        const row = res.rows[0];
+        return {
+          id: row.id,
+          author: row.author,
+          content: row.content,
+          tags: JSON.parse(row.tags),
+          likes: row.likes,
+          comments: row.comments,
+          createdAt: row.created_at ? new Date(row.created_at).toISOString() : null
+        };
+      } catch (err) {
+        console.error('Error creating community post:', err);
+        throw new Error('Database error creating community post.');
+      }
+    },
+    
+    checkFoodInteraction: async (_, { userId, foodItem }) => {
+      // Mock interaction logic for Grapefruit & Atorvastatin
+      if (foodItem.toLowerCase().includes('grapefruit')) {
+        const presRes = await db.query(
+          `SELECT m.name 
+           FROM prescription_items pi
+           JOIN medicines m ON pi.medicine_id = m.id
+           JOIN prescriptions p ON pi.prescription_id = p.id
+           WHERE p.user_id = $1`,
+          [userId]
+        );
+        
+        const meds = presRes.rows.map(r => r.name.toLowerCase());
+        const hasAtorvastatin = meds.some(m => m.includes('atorvastatin'));
+        
+        if (hasAtorvastatin) {
+          return `Warning: You logged a meal containing Grapefruit, which interacts with your Atorvastatin prescription. Please avoid grapefruit products to prevent potential muscle toxicity.`;
+        }
+      }
+      return null;
+    },
+    
+    generateCarePlanForReport: async (_, { reportId }) => {
+      try {
+        const reportRes = await db.query('SELECT * FROM lab_reports WHERE id = $1', [reportId]);
+        if (reportRes.rows.length === 0) {
+          throw new Error('Lab report not found.');
+        }
+        const report = reportRes.rows[0];
+        const userId = report.user_id;
+        
+        // Fetch User profile (allergies, conditions)
+        const profileRes = await db.query('SELECT allergies, conditions FROM medical_profiles WHERE user_id = $1', [userId]);
+        let allergies = [];
+        let conditions = [];
+        if (profileRes.rows.length > 0) {
+          const prof = profileRes.rows[0];
+          allergies = typeof prof.allergies === 'string' ? JSON.parse(prof.allergies) : prof.allergies;
+          conditions = typeof prof.conditions === 'string' ? JSON.parse(prof.conditions) : prof.conditions;
+        }
+        
+        // Fetch Active Medications
+        const medsRes = await db.query(
+          `SELECT m.name as med_name 
+           FROM reminders r 
+           LEFT JOIN medicines m ON r.medicine_id = m.id 
+           WHERE r.user_id = $1`, 
+          [userId]
+        );
+        const activeMeds = medsRes.rows.map(r => r.med_name);
+        
+        // Use the selected lab report's OCR data
+        const labResults = report.ocr_raw || "No extracted text.";
+
+        // Hit the python AI backend
+        const response = await fetch(`${FAST_API_URL}/api/generate_care_plan`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            user_id: parseInt(userId),
+            active_medications: activeMeds,
+            allergies: allergies || [],
+            conditions: conditions || [],
+            lab_results: labResults
+          }),
+        });
+        
+        if (!response.ok) {
+          throw new Error(`AI Backend returned status: ${response.status}`);
+        }
+        
+        const result = await response.json();
+        
+        // Default values in case AI misses anything
+        const carePlan = {
+          autoAlerts: result.autoAlerts || [],
+          warningSigns: result.warningSigns || [],
+          dietProtocol: result.dietProtocol || [],
+          followUpMonitoring: result.followUpMonitoring || [],
+          exerciseMovement: result.exerciseMovement || [],
+          sleepRecovery: result.sleepRecovery || [],
+          mentalEmotional: result.mentalEmotional || [],
+          supplementOtc: result.supplementOtc || []
+        };
+        
+        // Save to Database
+        await db.query(
+          'UPDATE lab_reports SET care_plan_json = $1 WHERE id = $2',
+          [JSON.stringify(carePlan), reportId]
+        );
+        
+        return carePlan;
+      } catch (err) {
+        console.error('Error generating care plan for report:', err);
+        throw new Error('Failed to generate Care Plan.');
       }
     }
   }

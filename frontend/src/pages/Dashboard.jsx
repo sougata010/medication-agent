@@ -5,38 +5,51 @@ import {
   Activity, Heart, Moon, Droplets, ShieldCheck, AlertTriangle,
   CheckCircle2, Clock, Pill, TrendingUp, ChevronRight, Brain,
   FlaskConical, Zap, ArrowUpRight, X, Plus, Activity as ActivityIcon,
-  HeartPulse, Stethoscope, Thermometer
+  HeartPulse, Stethoscope, Thermometer, Sparkles
 } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
+import confetti from 'canvas-confetti';
 import Modal from '../components/Modal';
 
 export default function Dashboard() {
   const navigate = useNavigate();
   const {
-    reminders, healthMetrics, insights, weeklyAdherence, aiAnalysis,
+    user, reminders, healthMetrics, insights, weeklyAdherence, aiAnalysis,
     prescriptions, labReports, handleLogAdherence, handleLogHealthMetrics,
-    handleSendMessage
+    handleSendMessage, setGlobalAlert, handleLogSymptoms, fetchPharmacyPrices, checkFoodInteraction, trendForecast, carePlan
   } = useGlobalContext();
 
   const [isLogModalOpen, setIsLogModalOpen] = useState(false);
   const [hydrationInput, setHydrationInput] = useState('');
   const [sleepInput, setSleepInput] = useState('');
   const [bpInput, setBpInput] = useState('');
+  const [moodInput, setMoodInput] = useState('');
+  const [selectedSymptoms, setSelectedSymptoms] = useState([]);
   const [isLogging, setIsLogging] = useState(false);
 
   const [isQuickAskOpen, setIsQuickAskOpen] = useState(false);
   const [quickAskInput, setQuickAskInput] = useState('');
   const [quickAskResponse, setQuickAskResponse] = useState('');
   const [isAsking, setIsAsking] = useState(false);
+  const [showNudge, setShowNudge] = useState(true);
+  const [foodAlert, setFoodAlert] = useState(null);
+
+  const NUDGES = [
+    "💧 Did you know? Taking medication with a full glass of water improves absorption by up to 15%.",
+    "🏃 A 10-minute walk after taking your morning meds can help boost your metabolism.",
+    "🌙 Consistent sleep schedules make your body more responsive to daily treatments."
+  ];
+  const activeNudge = useMemo(() => NUDGES[Math.floor(Math.random() * NUDGES.length)], []);
 
   const submitHealthLog = async () => {
     setIsLogging(true);
-    await handleLogHealthMetrics(hydrationInput, sleepInput, bpInput);
+    await handleLogHealthMetrics(hydrationInput, sleepInput, bpInput, moodInput);
     setIsLogging(false);
     setIsLogModalOpen(false);
     setHydrationInput('');
     setSleepInput('');
     setBpInput('');
+    setMoodInput('');
   };
 
   const today = new Date();
@@ -71,13 +84,63 @@ export default function Dashboard() {
 
   return (
     <div className="flex flex-col gap-6 animate-fade-in">
-      {/* Header */}
-      <div>
-        <h1 className="text-2xl md:text-3xl font-heading font-extrabold tracking-tight text-gray-900">Clinical Dashboard</h1>
-        <p className="text-gray-900/70 font-medium mt-1">
-          {today.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}
-        </p>
+      {/* Header with Gamification Streak */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl md:text-3xl font-heading font-extrabold tracking-tight text-gray-900">Clinical Dashboard</h1>
+          <p className="text-gray-900/70 font-medium mt-1">
+            {today.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}
+          </p>
+        </div>
+        
+        {/* Streak Badge */}
+        <div className="flex items-center gap-2 bg-orange-50 border border-orange-100 px-4 py-2 rounded-full shadow-sm">
+          <span className="text-xl">🔥</span>
+          <div>
+            <div className="text-xs font-bold text-orange-500 uppercase tracking-wider">Perfect Adherence</div>
+            <div className="text-sm font-extrabold text-orange-700">{user?.streakDays || 0} Day Streak</div>
+          </div>
+        </div>
       </div>
+
+      {/* Behavioral Nudge Banner */}
+      <AnimatePresence>
+        {showNudge && (
+          <motion.div
+            initial={{ opacity: 0, y: 10, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.98, height: 0, marginBottom: 0 }}
+            className="flex items-center gap-2"
+          >
+            <p className="text-gray-600 font-medium text-base">{activeNudge}</p>
+          </motion.div>
+        )}
+      </AnimatePresence>
+      <AnimatePresence>
+        {foodAlert && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, height: 0 }}
+            className="bg-rose-50 border border-rose-200 rounded-2xl p-4 flex gap-4 items-start shadow-sm mb-4 relative"
+          >
+            <button onClick={() => setFoodAlert(null)} className="absolute top-4 right-4 text-rose-400 hover:text-rose-600">
+              <X className="w-4 h-4" />
+            </button>
+            <div className="w-10 h-10 rounded-full bg-rose-100 flex items-center justify-center shrink-0">
+              <AlertTriangle className="w-5 h-5 text-rose-600" />
+            </div>
+            <div>
+              <h3 className="text-sm font-bold text-rose-900">Food-Medication Interaction Detected</h3>
+              <p className="text-sm text-rose-700 mt-1 leading-relaxed">
+                {foodAlert}
+              </p>
+            </div>
+          </motion.div>
+        )}
+        
+
+      </AnimatePresence>
 
       {/* Quick Stats Row — Prescription Card Style */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
@@ -130,6 +193,8 @@ export default function Dashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left: Today's Schedule + Weekly Chart */}
         <div className="lg:col-span-2 flex flex-col gap-6">
+
+
           {/* Today's Schedule */}
           <div className="rx-card overflow-hidden">
             <div className="px-6 py-4 border-b border-gray-100/60 flex items-center justify-between">
@@ -143,9 +208,19 @@ export default function Dashboard() {
             </div>
             <div className="p-4">
               {todaysReminders.length === 0 ? (
-                <div className="py-12 text-center rx-watermark overflow-hidden">
-                  <CheckCircle2 className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-                  <p className="text-gray-400 font-medium relative z-10">No medications scheduled for today</p>
+                <div className="py-12 text-center overflow-hidden flex flex-col items-center">
+                  <motion.div 
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ type: "spring", bounce: 0.5 }}
+                    className="w-20 h-20 rounded-full bg-gradient-to-tr from-emerald-100 to-teal-50 flex items-center justify-center mb-4 border-4 border-white shadow-lg"
+                  >
+                    <CheckCircle2 className="w-10 h-10 text-emerald-500" />
+                  </motion.div>
+                  <h3 className="text-xl font-heading font-extrabold text-gray-900 mb-1">Inbox Zero!</h3>
+                  <p className="text-sm text-gray-500 font-medium max-w-xs mx-auto">
+                    You've completed all your health tasks for today. Take a moment to relax and breathe.
+                  </p>
                 </div>
               ) : (
                 <div className="flex flex-col gap-2">
@@ -163,10 +238,26 @@ export default function Dashboard() {
                           <h4 className={`text-sm font-semibold truncate ${isTaken ? 'text-emerald-700 line-through' : 'text-gray-900'}`}>
                             {r.medicine?.name || 'Unknown'}
                           </h4>
-                          <span className="text-xs text-gray-400">
-                            {r.medicine?.category || 'Medication'}
-                            {r.dosage ? <span className="font-mono"> · {r.dosage}</span> : ''}
-                          </span>
+                          <div className="flex items-center gap-2 mt-1">
+                            <span className="text-xs text-gray-400">
+                              {r.medicine?.category || 'Medication'}
+                              {r.dosage ? <span className="font-mono"> · {r.dosage}</span> : ''}
+                            </span>
+                            <button 
+                              onClick={async () => {
+                                const prices = await fetchPharmacyPrices(r.medicine?.name || 'Unknown');
+                                const msg = prices.map(p => `${p.pharmacy}: $${p.price.toFixed(2)} (${p.distance})`).join('\n');
+                                setGlobalAlert({
+                                  isOpen: true,
+                                  title: `💰 Lowest Prices for ${r.medicine?.name || 'Unknown'}`,
+                                  message: `${msg}\n\nShow your VitaLeaf digital coupon to save up to 40%.`
+                                });
+                              }}
+                              className="text-[10px] font-bold bg-green-50 text-green-700 border border-green-200 px-2 py-0.5 rounded-full hover:bg-green-100 transition-colors whitespace-nowrap"
+                            >
+                              Check Prices
+                            </button>
+                          </div>
                         </div>
                         <div className="flex items-center gap-2">
                           {isTaken ? (
@@ -179,12 +270,25 @@ export default function Dashboard() {
                             </span>
                           ) : (
                             <>
-                              <button onClick={() => handleLogAdherence(r.id, 'taken')} className="med-btn-primary !px-3 !py-1.5 !text-xs !rounded-full">
+                              <motion.button 
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                                onClick={() => {
+                                  confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 }, colors: ['#10b981', '#34d399', '#6ee7b7'] });
+                                  handleLogAdherence(r.id, 'taken');
+                                }} 
+                                className="med-btn-primary !px-3 !py-1.5 !text-xs !rounded-full"
+                              >
                                 Take
-                              </button>
-                              <button onClick={() => handleLogAdherence(r.id, 'missed')} className="med-btn-outline !px-3 !py-1.5 !text-xs !rounded-full">
+                              </motion.button>
+                              <motion.button 
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                                onClick={() => handleLogAdherence(r.id, 'missed')} 
+                                className="med-btn-outline !px-3 !py-1.5 !text-xs !rounded-full"
+                              >
                                 Skip
-                              </button>
+                              </motion.button>
                             </>
                           )}
                         </div>
@@ -345,6 +449,47 @@ export default function Dashboard() {
             </div>
           </div>
 
+          {/* Symptom Tracker */}
+          <div className="rx-card p-6">
+            <h3 className="text-sm font-heading font-extrabold tracking-tight text-gray-900 uppercase mb-4 flex items-center gap-2">
+              <ActivityIcon className="w-4 h-4 text-rose-500" />
+              Symptom Log
+            </h3>
+            <div className="flex flex-wrap gap-2">
+              {['Headache', 'Nausea', 'Fatigue', 'Dizziness', 'Muscle Pain'].map(s => (
+                <button
+                  key={s}
+                  onClick={() => {
+                    setSelectedSymptoms(prev => prev.includes(s) ? prev.filter(x => x !== s) : [...prev, s]);
+                  }}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-colors border ${
+                    selectedSymptoms.includes(s) 
+                      ? 'bg-rose-50 border-rose-200 text-rose-700' 
+                      : 'bg-white border-gray-200 text-gray-500 hover:bg-gray-50'
+                  }`}
+                >
+                  {s}
+                </button>
+              ))}
+            </div>
+            {selectedSymptoms.length > 0 && (
+              <div className="mt-4">
+                <button 
+                  onClick={async () => {
+                    await handleLogSymptoms(selectedSymptoms);
+                    setSelectedSymptoms([]);
+                  }}
+                  className="w-full bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs py-2 rounded-xl transition-colors"
+                >
+                  Save Symptoms
+                </button>
+                <p className="mt-2 text-[10px] text-gray-400 font-medium text-center">
+                  The Correlation Engine is monitoring your logs.
+                </p>
+              </div>
+            )}
+          </div>
+
           {/* AI Analysis Panel */}
           <div className="rx-card p-6">
             <h3 className="text-sm font-heading font-extrabold tracking-tight text-gray-900 uppercase mb-4 flex items-center gap-2">
@@ -370,14 +515,48 @@ export default function Dashboard() {
                 <span className="text-xs font-medium text-gray-500">Confidence</span>
                 <span className="text-sm font-heading font-extrabold text-gray-900">{aiAnalysis?.confidence || '—'}</span>
               </div>
-              <button 
-                onClick={() => setIsQuickAskOpen(true)}
-                className="mt-3 w-full bg-gray-50 hover:bg-gray-100 border border-gray-200 text-gray-900 font-bold text-xs py-2 rounded-xl transition-colors flex items-center justify-center gap-2"
-              >
-                <Brain className="w-3.5 h-3.5" />
-                Quick Ask AI
-              </button>
+              <div className="mt-3 flex gap-2">
+                <input 
+                  type="text"
+                  placeholder="e.g. Grapefruit, Dairy..."
+                  className="clinical-input flex-1 !text-xs !py-1.5"
+                  onKeyDown={async (e) => {
+                    if (e.key === 'Enter' && e.target.value) {
+                      const res = await checkFoodInteraction(e.target.value);
+                      if (res) {
+                        setFoodAlert(res);
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                      } else {
+                        setFoodAlert(null);
+                        setGlobalAlert({ isOpen: true, title: 'Food Interaction Check', message: 'No interactions found.' });
+                      }
+                      e.target.value = '';
+                    }
+                  }}
+                />
+                <button 
+                  onClick={() => setIsQuickAskOpen(true)}
+                  className="bg-gray-50 hover:bg-gray-100 border border-gray-200 text-gray-900 font-bold text-xs px-3 py-1.5 rounded-lg transition-colors flex items-center justify-center gap-1 whitespace-nowrap"
+                >
+                  <Brain className="w-3.5 h-3.5" />
+                  Ask AI
+                </button>
+              </div>
             </div>
+          </div>
+
+          {/* Predictive Health AI (Trend Forecasting) */}
+          <div className="bg-gradient-to-br from-indigo-900 to-indigo-800 rounded-2xl p-6 text-white shadow-md relative overflow-hidden">
+            <div className="absolute top-0 right-0 p-4 opacity-20 pointer-events-none">
+              <TrendingUp className="w-24 h-24" />
+            </div>
+            <h3 className="text-sm font-heading font-extrabold tracking-tight uppercase mb-3 flex items-center gap-2 relative z-10 text-indigo-100">
+              <Sparkles className="w-4 h-4 text-indigo-300" />
+              AI Trend Forecast
+            </h3>
+            <p className="text-sm text-indigo-50 leading-relaxed font-medium relative z-10">
+              "{trendForecast || 'Fetching trend forecast...'}"
+            </p>
           </div>
 
           {/* AI Insights */}
@@ -457,6 +636,24 @@ export default function Dashboard() {
                 placeholder="e.g. 120/80"
                 className="clinical-input pl-9"
               />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-xs font-bold text-gray-900 uppercase tracking-wider mb-1.5">Mood</label>
+            <div className="flex gap-2">
+              {['😢', '😐', '🙂', '😄', '🤩'].map(emoji => (
+                <button
+                  key={emoji}
+                  type="button"
+                  onClick={() => setMoodInput(emoji)}
+                  className={`w-10 h-10 rounded-full text-xl flex items-center justify-center transition-all ${
+                    moodInput === emoji ? 'bg-blue-100 scale-110 shadow-sm' : 'bg-gray-50 hover:bg-gray-100 grayscale hover:grayscale-0'
+                  }`}
+                >
+                  {emoji}
+                </button>
+              ))}
             </div>
           </div>
 

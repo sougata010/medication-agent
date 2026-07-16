@@ -10,22 +10,28 @@ import Modal from '../components/Modal';
 
 // Activity Heatmap Component
 const ActivityHeatmap = ({ prescriptions }) => {
+  const getLocalDateStr = (dateObj) => {
+    return `${dateObj.getFullYear()}-${String(dateObj.getMonth() + 1).padStart(2, '0')}-${String(dateObj.getDate()).padStart(2, '0')}`;
+  };
+
   const dataMap = useMemo(() => {
     const map = new Map();
     prescriptions.forEach(p => {
-      const d = new Date(p.uploadedAt).toISOString().split('T')[0];
-      map.set(d, (map.get(d) || 0) + (p.items?.length || 1));
+      // p.uploadedAt is ISO string. Convert it to a local Date object, then format manually
+      const d = new Date(p.uploadedAt);
+      const dateStr = getLocalDateStr(d);
+      map.set(dateStr, (map.get(dateStr) || 0) + (p.items?.length || 1));
     });
     return map;
   }, [prescriptions]);
 
-  // Generate last 100 days
+  // Generate last 98 days (14 cols * 7 rows)
   const today = new Date();
   const days = [];
-  for (let i = 99; i >= 0; i--) {
+  for (let i = 97; i >= 0; i--) {
     const d = new Date(today);
     d.setDate(today.getDate() - i);
-    days.push(d.toISOString().split('T')[0]);
+    days.push(getLocalDateStr(d));
   }
 
   const getColor = (count) => {
