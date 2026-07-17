@@ -15,8 +15,10 @@ export default function DashboardLayout() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
 
+  const [readNotifIds, setReadNotifIds] = useState([]);
+
   const pendingReminders = reminders?.filter(r => r.status === 'pending') || [];
-  const notifications = [
+  const rawNotifications = [
     ...(insights || []).map(ins => ({
       id: `ins-${ins.id}`,
       title: 'Health Insight',
@@ -35,6 +37,17 @@ export default function DashboardLayout() {
       };
     })
   ];
+
+  const notifications = rawNotifications.filter(n => !readNotifIds.includes(n.id));
+
+  const handleMarkAllRead = () => {
+    setReadNotifIds(prev => [...prev, ...notifications.map(n => n.id)]);
+    setNotificationsOpen(false);
+  };
+
+  const handleMarkRead = (id) => {
+    setReadNotifIds(prev => [...prev, id]);
+  };
 
   const handleLogout = () => {
     logout();
@@ -200,7 +213,7 @@ export default function DashboardLayout() {
             </button>
 
             {notificationsOpen && (
-              <div className="absolute top-full right-0 mt-2 w-80 bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden z-50">
+              <div className="absolute top-full right-0 mt-2 w-[calc(100vw-2rem)] sm:w-80 max-w-[320px] sm:max-w-none bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden z-50">
                 <div className="p-4 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
                   <h3 className="font-heading font-extrabold text-gray-900">Notifications</h3>
                   <span className="text-xs font-bold text-gray-700 bg-gray-200 px-2 py-1 rounded-full">
@@ -224,10 +237,17 @@ export default function DashboardLayout() {
                             }`}>
                               <HeartPulse className="w-4 h-4" />
                             </div>
-                            <div className="flex-1 min-w-0">
+                            <div className="flex-1 min-w-0 pr-6 relative group/item">
                               <p className="text-sm font-bold text-gray-900">{notif.title}</p>
                               <p className="text-xs font-medium text-gray-500 mt-0.5">{notif.message}</p>
                               <p className="text-[10px] font-bold text-gray-500 mt-1.5 font-mono">{notif.time}</p>
+                              <button 
+                                onClick={() => handleMarkRead(notif.id)}
+                                className="absolute right-0 top-1/2 -translate-y-1/2 p-1.5 text-gray-400 hover:text-gray-900 hover:bg-gray-200 rounded-full opacity-0 group-hover/item:opacity-100 transition-all"
+                                title="Mark as read"
+                              >
+                                <X className="w-3.5 h-3.5" />
+                              </button>
                             </div>
                           </div>
                         </div>
@@ -238,7 +258,7 @@ export default function DashboardLayout() {
                 {notifications.length > 0 && (
                   <div className="p-3 border-t border-gray-100 bg-gray-50/50 text-center">
                     <button 
-                      onClick={() => setNotificationsOpen(false)}
+                      onClick={handleMarkAllRead}
                       className="text-xs font-bold text-gray-900 hover:text-black transition-colors"
                     >
                       Mark all as read

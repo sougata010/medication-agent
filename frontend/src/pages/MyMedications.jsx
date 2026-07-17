@@ -8,94 +8,118 @@ import {
 import { motion } from 'framer-motion';
 import Modal from '../components/Modal';
 
-// Activity Heatmap Component
-const ActivityHeatmap = ({ prescriptions }) => {
-  const getLocalDateStr = (dateObj) => {
-    return `${dateObj.getFullYear()}-${String(dateObj.getMonth() + 1).padStart(2, '0')}-${String(dateObj.getDate()).padStart(2, '0')}`;
-  };
-
-  const dataMap = useMemo(() => {
-    const map = new Map();
-    prescriptions.forEach(p => {
-      // p.uploadedAt is ISO string. Convert it to a local Date object, then format manually
-      const d = new Date(p.uploadedAt);
-      const dateStr = getLocalDateStr(d);
-      map.set(dateStr, (map.get(dateStr) || 0) + (p.items?.length || 1));
-    });
-    return map;
-  }, [prescriptions]);
-
-  // Generate last 98 days (14 cols * 7 rows)
-  const today = new Date();
-  const days = [];
-  for (let i = 97; i >= 0; i--) {
-    const d = new Date(today);
-    d.setDate(today.getDate() - i);
-    days.push(getLocalDateStr(d));
-  }
-
-  const getColor = (count) => {
-    if (count === 0) return '#f1f5f9';
-    if (count <= 2) return '#bae6fd';
-    if (count <= 5) return '#38bdf8';
-    return '#0284c7';
-  };
+// Medication Insights Component
+const MedicationInsights = ({ prescriptions, reminders }) => {
+  const [limit, setLimit] = useState(5);
+  
+  const totalMeds = prescriptions.reduce((acc, p) => acc + (p.items?.length || 0), 0);
+  const verifiedMeds = prescriptions.reduce((acc, p) => acc + (p.verified ? (p.items?.length || 0) : 0), 0);
+  
+  // Combine uploads and adherence logs
+  const activities = [
+    ...prescriptions.map(p => ({
+      id: `rx-${p.id}`,
+      type: 'upload',
+      title: 'Prescription Uploaded',
+      date: p.uploadedAt,
+      desc: `Added ${p.items?.length || 0} medication${(p.items?.length || 0) !== 1 ? 's' : ''} to your profile.`,
+      icon: FileText,
+      color: 'text-indigo-500',
+      bg: 'bg-indigo-50 border-indigo-100'
+    })),
+    ...(reminders || []).filter(r => r.status === 'taken' || r.status === 'missed').map(r => ({
+      id: `rem-${r.id}`,
+      type: 'adherence',
+      title: r.status === 'taken' ? 'Medication Taken' : 'Medication Missed',
+      date: r.scheduledAt,
+      desc: `${r.medicine?.name || 'Medication'}${r.dosage ? ` - ${r.dosage}` : ''}`,
+      icon: r.status === 'taken' ? CheckCircle2 : AlertTriangle,
+      color: r.status === 'taken' ? 'text-emerald-500' : 'text-rose-500',
+      bg: r.status === 'taken' ? 'bg-emerald-50 border-emerald-100' : 'bg-rose-50 border-rose-100'
+    }))
+  ].sort((a, b) => new Date(b.date) - new Date(a.date));
 
   return (
-    <div className="rx-card p-6 flex flex-col md:flex-row items-center gap-8">
-      <div className="md:w-64 shrink-0">
-        <h2 className="text-xl font-heading font-extrabold tracking-tight text-gray-900 flex items-center gap-2 mb-2">
-          <Activity className="w-5 h-5 text-gray-500" />
-          Medication Activity
-        </h2>
-        <p className="text-sm text-gray-500 font-medium">
-          Heatmap tracking prescription uploads and updates over the past 100 days.
-        </p>
-      </div>
-      
-      <div className="flex-1 overflow-x-auto pb-2">
-        <div className="inline-flex gap-1" style={{ minWidth: 'min-content' }}>
-          {Array.from({ length: 14 }).map((_, colIndex) => (
-            <div key={colIndex} className="flex flex-col gap-1">
-              {Array.from({ length: 7 }).map((_, rowIndex) => {
-                const dayIndex = colIndex * 7 + rowIndex;
-                if (dayIndex >= 100) return null;
-                const dateStr = days[dayIndex];
-                const count = dataMap.get(dateStr) || 0;
-                return (
-                  <motion.div
-                    key={rowIndex}
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    transition={{ delay: dayIndex * 0.005 }}
-                    className="w-3 h-3 rounded-sm relative group cursor-pointer"
-                    style={{ backgroundColor: getColor(count) }}
-                  >
-                    {/* Tooltip */}
-                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-gray-900 text-white text-[10px] font-bold rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-10">
-                      {dateStr}: {count} action(s)
-                    </div>
-                  </motion.div>
-                );
-              })}
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="lg:col-span-1 rx-card p-6 flex flex-col justify-between bg-gradient-to-br from-indigo-900 to-indigo-800 text-white relative overflow-hidden">
+        <div className="absolute -right-6 -top-6 opacity-10 pointer-events-none">
+          <Activity className="w-32 h-32" />
+        </div>
+        <div className="relative z-10">
+          <h2 className="text-sm font-heading font-extrabold tracking-widest text-indigo-200 uppercase mb-4 flex items-center gap-2">
+            <Stethoscope className="w-4 h-4" />
+            Profile Summary
+          </h2>
+          <div className="space-y-6">
+            <div>
+              <p className="text-4xl font-black font-heading tracking-tight">{totalMeds}</p>
+              <p className="text-sm font-medium text-indigo-200 mt-1">Total Active Medications</p>
             </div>
-          ))}
+            <div className="flex items-center gap-4 border-t border-indigo-700/50 pt-4">
+              <div className="flex-1">
+                <p className="text-xl font-bold">{verifiedMeds}</p>
+                <p className="text-xs text-indigo-300 font-medium">Verified by AI</p>
+              </div>
+              <div className="flex-1">
+                <p className="text-xl font-bold">{prescriptions.length}</p>
+                <p className="text-xs text-indigo-300 font-medium">Rx Uploads</p>
+              </div>
+            </div>
+          </div>
         </div>
-        <div className="flex items-center justify-end gap-2 mt-4 text-[10px] font-bold text-gray-400 uppercase tracking-wider">
-          <span>Less</span>
-          <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: '#f1f5f9' }} />
-          <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: '#bae6fd' }} />
-          <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: '#38bdf8' }} />
-          <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: '#0284c7' }} />
-          <span>More</span>
-        </div>
+      </div>
+
+      <div className="lg:col-span-2 rx-card p-6 flex flex-col max-h-[450px]">
+        <h2 className="text-sm font-heading font-extrabold tracking-widest text-gray-500 uppercase mb-4 flex items-center gap-2 shrink-0">
+          <Clock className="w-4 h-4" />
+          Recent Activity
+        </h2>
+        
+        {activities.length > 0 ? (
+          <div className="flex-1 overflow-y-auto pr-2 space-y-4">
+            {activities.slice(0, limit).map((act) => {
+              const Icon = act.icon;
+              return (
+                <div key={act.id} className="flex items-start gap-4 p-4 rounded-xl bg-gray-50 border border-gray-100/50">
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 border ${act.bg}`}>
+                    <Icon className={`w-5 h-5 ${act.color}`} />
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex items-center justify-between mb-1">
+                      <h4 className="font-bold text-gray-900 text-sm">{act.title}</h4>
+                      <span className="text-xs font-mono font-bold text-gray-400">
+                        {new Date(act.date).toLocaleDateString()}
+                      </span>
+                    </div>
+                    <p className="text-sm text-gray-500">
+                      {act.desc}
+                    </p>
+                  </div>
+                </div>
+              );
+            })}
+            
+            {limit < activities.length && (
+              <button 
+                onClick={() => setLimit(l => l + 5)}
+                className="w-full py-3 mt-4 text-sm font-bold text-gray-500 hover:bg-gray-50 border border-dashed border-gray-200 rounded-xl transition-colors"
+              >
+                Show More
+              </button>
+            )}
+          </div>
+        ) : (
+          <div className="py-8 text-center border-2 border-dashed border-gray-100 rounded-xl">
+            <p className="text-sm text-gray-400 font-medium">No recent activity.</p>
+          </div>
+        )}
       </div>
     </div>
   );
 };
 
 export default function MyMedications() {
-  const { prescriptions = [], handleAddManualMedication } = useGlobalContext();
+  const { prescriptions = [], handleAddManualMedication, reminders = [] } = useGlobalContext();
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [manualMed, setManualMed] = useState({
     drugName: '',
@@ -301,10 +325,8 @@ export default function MyMedications() {
         </div>
       )}
 
-      {/* Activity Heatmap */}
-      {prescriptionsByDate.length > 0 && (
-        <ActivityHeatmap prescriptions={prescriptionsByDate} />
-      )}
+      {/* Medication Insights instead of Heatmap */}
+      <MedicationInsights prescriptions={prescriptions} reminders={reminders} />
 
       {/* Prescription History */}
       {prescriptionsByDate.length > 0 && (

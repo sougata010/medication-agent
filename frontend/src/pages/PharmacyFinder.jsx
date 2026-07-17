@@ -3,6 +3,21 @@ import {
   MapPin, Phone, Navigation, Star, Search, ChevronDown, Map, Loader2, AlertTriangle,
   HeartPulse
 } from 'lucide-react';
+import { MapContainer, TileLayer, Marker, Popup, Polyline } from 'react-leaflet';
+import 'leaflet/dist/leaflet.css';
+import L from 'leaflet';
+
+// Fix Leaflet's default icon issue in React
+import iconUrl from 'leaflet/dist/images/marker-icon.png';
+import iconRetinaUrl from 'leaflet/dist/images/marker-icon-2x.png';
+import shadowUrl from 'leaflet/dist/images/marker-shadow.png';
+
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl,
+  iconUrl,
+  shadowUrl,
+});
 
 export default function PharmacyFinder() {
   const [pharmacies, setPharmacies] = useState([]);
@@ -47,20 +62,7 @@ export default function PharmacyFinder() {
           const data = await response.json();
 
           const mappedPharmacies = data.elements.map(el => {
-            // Generate pseudo-random pricing and stock for the UI based on ID to remain consistent
             const pseudoRandom = (el.id % 100) / 100;
-            const price = (15 + pseudoRandom * 40).toFixed(2);
-            
-            let stock = 'In Stock';
-            let stockColor = 'emerald';
-            if (pseudoRandom > 0.8) {
-              stock = 'Low Stock';
-              stockColor = 'amber';
-            } else if (pseudoRandom < 0.1) {
-              stock = 'Out of Stock';
-              stockColor = 'red';
-            }
-
             const rating = (3.5 + pseudoRandom * 1.5).toFixed(1);
             const dist = calculateDistance(latitude, longitude, el.lat, el.lon);
 
@@ -70,9 +72,6 @@ export default function PharmacyFinder() {
               brand: el.tags.brand || '',
               distance: `${dist} mi`,
               rawDistance: parseFloat(dist),
-              price: `$${price}`,
-              stock: stock,
-              stockColor: stockColor,
               rating: parseFloat(rating),
               address: `${el.tags['addr:housenumber'] || ''} ${el.tags['addr:street'] || ''}`.trim() || 'Address not listed',
               phone: el.tags.phone || null,
@@ -94,9 +93,6 @@ export default function PharmacyFinder() {
               brand: "CVS",
               distance: "1.2 mi",
               rawDistance: 1.2,
-              price: "$22.50",
-              stock: "In Stock",
-              stockColor: "emerald",
               rating: 4.2,
               address: "123 Main St",
               phone: "+1 555-0192",
@@ -109,9 +105,6 @@ export default function PharmacyFinder() {
               brand: "Walgreens",
               distance: "2.4 mi",
               rawDistance: 2.4,
-              price: "$18.99",
-              stock: "Low Stock",
-              stockColor: "amber",
               rating: 3.8,
               address: "456 Oak Ave",
               phone: "+1 555-8472",
@@ -124,9 +117,6 @@ export default function PharmacyFinder() {
               brand: "",
               distance: "3.1 mi",
               rawDistance: 3.1,
-              price: "$15.00",
-              stock: "Out of Stock",
-              stockColor: "red",
               rating: 4.8,
               address: "789 Pine Blvd",
               phone: "+1 555-1102",
@@ -147,16 +137,7 @@ export default function PharmacyFinder() {
     );
   }, []);
 
-  const getMapIframeUrl = () => {
-    if (!userLocation) return '';
-    // Create a bounding box roughly ~2 miles around the user
-    const offset = 0.02;
-    const minLon = userLocation.lon - offset;
-    const minLat = userLocation.lat - offset;
-    const maxLon = userLocation.lon + offset;
-    const maxLat = userLocation.lat + offset;
-    return `https://www.openstreetmap.org/export/embed.html?bbox=${minLon}%2C${minLat}%2C${maxLon}%2C${maxLat}&layer=mapnik&marker=${userLocation.lat}%2C${userLocation.lon}`;
-  };
+
 
   return (
     <div className="flex flex-col gap-6 animate-fade-in">
@@ -187,17 +168,44 @@ export default function PharmacyFinder() {
           {/* Map */}
           <div className="lg:col-span-7">
             <div className="rx-card overflow-hidden h-[600px] relative !border-l-4 !border-l-blue-500">
-              <iframe 
-                width="100%" 
-                height="100%" 
-                frameBorder="0" 
-                scrolling="no" 
-                marginHeight="0" 
-                marginWidth="0" 
-                src={getMapIframeUrl()} 
-                title="OpenStreetMap"
-                className="w-full h-full"
-              />
+              <MapContainer 
+                center={[userLocation.lat, userLocation.lon]} 
+                zoom={14} 
+                scrollWheelZoom={false}
+                className="w-full h-full z-0"
+              >
+                <TileLayer
+                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                />
+                
+                {/* User Location Marker */}
+                <Marker position={[userLocation.lat, userLocation.lon]}>
+                  <Popup>
+                    <strong>You are here</strong>
+                  </Popup>
+                </Marker>
+
+                {/* Pharmacy Markers & Nodes */}
+                {pharmacies.map(pharm => (
+                  <React.Fragment key={pharm.id}>
+                    <Marker position={[pharm.lat, pharm.lon]}>
+                      <Popup>
+                        <strong>{pharm.name}</strong><br/>
+                        {pharm.address}<br/>
+                        {pharm.distance} away
+                      </Popup>
+                    </Marker>
+                    <Polyline 
+                      positions={[
+                        [userLocation.lat, userLocation.lon],
+                        [pharm.lat, pharm.lon]
+                      ]}
+                      pathOptions={{ color: '#3b82f6', weight: 2, dashArray: '5, 5', opacity: 0.6 }}
+                    />
+                  </React.Fragment>
+                ))}
+              </MapContainer>
               <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-1.5 rounded-full border border-gray-200 shadow-sm flex items-center gap-2">
                 <Map className="w-4 h-4 text-gray-500" />
                 <span className="text-xs font-bold text-gray-900">Live Map Data</span>
@@ -246,10 +254,9 @@ export default function PharmacyFinder() {
                       </p>
                     </div>
                     <div className="text-right shrink-0">
-                      <div className="text-lg font-heading font-extrabold text-gray-900">{pharm.price}</div>
-                      <div className="flex items-center gap-1 justify-end mt-0.5">
-                        <span className={`w-1.5 h-1.5 rounded-full bg-${pharm.stockColor}-500`} />
-                        <span className={`text-[11px] font-bold text-${pharm.stockColor}-600 whitespace-nowrap`}>{pharm.stock}</span>
+                      <div className="flex items-center gap-1 text-yellow-500 justify-end">
+                        <Star className="w-4 h-4 fill-current" />
+                        <span className="text-sm font-bold text-gray-900">{pharm.rating}</span>
                       </div>
                     </div>
                   </div>

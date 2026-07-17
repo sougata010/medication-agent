@@ -241,11 +241,11 @@ export default function ChatCompanion() {
   };
 
   return (
-    <div className="flex flex-col h-[calc(100vh-140px)] max-h-[850px] animate-fade-in">
+    <div className="flex flex-col h-[calc(100dvh-140px)] lg:h-[calc(100vh-140px)] max-h-[850px] animate-fade-in relative">
       <div className="flex h-full gap-0 bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
 
         {/* Sessions Sidebar — Medical themed */}
-        <div className={`${showSessions ? 'flex' : 'hidden'} lg:flex flex-col w-72 border-r border-gray-100 shrink-0 bg-black`}>
+        <div className={`${showSessions ? 'flex absolute inset-0 z-20' : 'hidden'} lg:static lg:flex flex-col w-full lg:w-72 border-r border-gray-100 shrink-0 bg-black`}>
           <div className="p-4 border-b border-blue-800/50 flex items-center justify-between">
             <h3 className="text-sm font-heading font-extrabold text-white">Consultations</h3>
             <button

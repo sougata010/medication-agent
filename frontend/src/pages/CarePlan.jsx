@@ -135,9 +135,9 @@ const CarePlan = () => {
     }
 
     return (
-      <div className="relative pl-4 md:pl-8">
+      <div className="relative pl-2 md:pl-8">
         {/* Minimal Timeline Line */}
-        <div className="absolute left-[27px] md:left-[43px] top-8 bottom-8 w-px bg-gray-200"></div>
+        <div className="absolute left-[21px] md:left-[43px] top-8 bottom-8 w-px bg-gray-200"></div>
         
         <div className="flex flex-col gap-8 relative z-10">
           {activeCategories.map((cat, idx) => {
@@ -146,11 +146,11 @@ const CarePlan = () => {
             const isActive = activeCategory === cat;
 
             return (
-              <div key={cat} className="relative flex items-start gap-6 group">
+              <div key={cat} className="relative flex items-start gap-3 md:gap-6 group">
                 {/* Minimal Node */}
                 <div 
                   onClick={() => setActiveCategory(cat)}
-                  className={`relative w-14 h-14 rounded-full flex items-center justify-center shrink-0 cursor-pointer transition-all duration-300 z-10 ${isActive ? `bg-white shadow-md border-2 border-indigo-500 scale-110` : 'bg-gray-50 border border-gray-200 hover:border-indigo-300 hover:bg-white'}`}
+                  className={`relative w-10 h-10 md:w-14 md:h-14 rounded-full flex items-center justify-center shrink-0 cursor-pointer transition-all duration-300 z-10 ${isActive ? `bg-white shadow-md border-2 border-indigo-500 scale-110` : 'bg-gray-50 border border-gray-200 hover:border-indigo-300 hover:bg-white'}`}
                 >
                   <Icon className={`w-5 h-5 transition-colors duration-300 ${isActive ? config.color : 'text-gray-400 group-hover:text-indigo-500'}`} />
                 </div>
@@ -161,7 +161,7 @@ const CarePlan = () => {
                   onClick={() => setActiveCategory(cat)}
                   className={`flex-1 transition-all duration-500 cursor-pointer overflow-hidden ${isActive ? `bg-white shadow-lg shadow-gray-200/50 border border-gray-100 rounded-tl-[2.5rem] rounded-br-[2.5rem] rounded-tr-xl rounded-bl-xl` : 'bg-transparent border border-transparent hover:bg-gray-50 rounded-2xl'}`}
                 >
-                  <div className={`p-6 md:p-8 transition-all duration-500 ${isActive ? config.lightBg : 'bg-transparent'}`}>
+                  <div className={`p-4 md:p-8 transition-all duration-500 ${isActive ? config.lightBg : 'bg-transparent'}`}>
                     <div className="flex justify-between items-center mb-1">
                       <h3 className={`font-heading font-extrabold text-lg md:text-xl transition-colors ${isActive ? 'text-gray-900' : 'text-gray-500 group-hover:text-gray-900'}`}>
                         {config.title}
@@ -193,7 +193,7 @@ const CarePlan = () => {
                                   transition={{ delay: 0.1 * i }}
                                   key={i} 
                                   onClick={(e) => toggleTask(e, item)}
-                                  className={`flex items-start gap-4 p-4 rounded-2xl cursor-pointer transition-all duration-300 ${isDone ? 'bg-gray-50 opacity-70' : 'bg-white shadow-sm hover:shadow-md border border-gray-100 hover:border-gray-200'}`}
+                                  className={`flex items-start gap-3 md:gap-4 p-3 md:p-4 rounded-2xl cursor-pointer transition-all duration-300 ${isDone ? 'bg-gray-50 opacity-70' : 'bg-white shadow-sm hover:shadow-md border border-gray-100 hover:border-gray-200'}`}
                                 >
                                   <button className="mt-0.5 shrink-0 transition-colors duration-300 focus:outline-none">
                                     {isDone ? (
@@ -424,8 +424,8 @@ const CarePlan = () => {
                   
                   {/* Left: Today's Protocol (Span 8) */}
                   <div className="lg:col-span-8 flex flex-col gap-6">
-                    <div className="bg-white rounded-[2rem] p-6 md:p-10 shadow-sm border border-gray-100">
-                      <div className="flex items-center justify-between mb-10 ml-2">
+                    <div className="bg-white rounded-[2rem] p-4 md:p-10 shadow-sm border border-gray-100">
+                      <div className="flex items-center justify-between mb-6 md:mb-10 ml-2">
                         <h3 className="text-2xl font-heading font-extrabold text-gray-900">Today's Protocol</h3>
                         <div className="bg-indigo-50 text-indigo-600 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest">
                           {new Date().toLocaleDateString()}
@@ -503,49 +503,49 @@ const CarePlan = () => {
                 <div className="flex flex-col gap-8">
                   
                   {/* Top Stats Row: Bento Grid */}
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="grid grid-cols-3 gap-2 md:gap-6">
                     
                     {/* Stat Card 1: Total Logs */}
-                    <div className="bg-white border border-gray-100 rounded-3xl p-6 shadow-sm flex items-center justify-between group hover:shadow-md transition-all">
+                    <div className="bg-white border border-gray-100 rounded-2xl md:rounded-3xl p-3 md:p-6 shadow-sm flex items-center justify-between group hover:shadow-md transition-all">
                       <div>
-                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Total Logs</p>
-                        <h4 className="text-3xl font-heading font-black text-gray-900 group-hover:text-indigo-600 transition-colors">
+                        <p className="text-[9px] md:text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-0.5 md:mb-1">Total Logs</p>
+                        <h4 className="text-xl md:text-3xl font-heading font-black text-gray-900 group-hover:text-indigo-600 transition-colors">
                           {historyLogs.reduce((acc, log) => acc + log.tasks.length, 0) + completedTasks.length}
                         </h4>
                       </div>
-                      <div className="w-12 h-12 rounded-full bg-indigo-50 flex items-center justify-center">
+                      <div className="hidden sm:flex w-12 h-12 rounded-full bg-indigo-50 items-center justify-center">
                         <CheckCircle2 className="w-6 h-6 text-indigo-500" />
                       </div>
                     </div>
 
                     {/* Stat Card 2: Active Days */}
-                    <div className="bg-white border border-gray-100 rounded-3xl p-6 shadow-sm flex items-center justify-between group hover:shadow-md transition-all">
+                    <div className="bg-white border border-gray-100 rounded-2xl md:rounded-3xl p-3 md:p-6 shadow-sm flex items-center justify-between group hover:shadow-md transition-all">
                       <div>
-                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Active Days</p>
-                        <h4 className="text-3xl font-heading font-black text-gray-900 group-hover:text-emerald-600 transition-colors">
+                        <p className="text-[9px] md:text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-0.5 md:mb-1">Active Days</p>
+                        <h4 className="text-xl md:text-3xl font-heading font-black text-gray-900 group-hover:text-emerald-600 transition-colors">
                           {historyLogs.length + (completedTasks.length > 0 ? 1 : 0)}
                         </h4>
                       </div>
-                      <div className="w-12 h-12 rounded-full bg-emerald-50 flex items-center justify-center">
+                      <div className="hidden sm:flex w-12 h-12 rounded-full bg-emerald-50 items-center justify-center">
                         <Activity className="w-6 h-6 text-emerald-500" />
                       </div>
                     </div>
 
                     {/* Stat Card 3: Integrity Score */}
-                    <div className="bg-white border border-gray-100 rounded-3xl p-6 shadow-sm flex items-center justify-between group hover:shadow-md transition-all relative overflow-hidden">
+                    <div className="bg-white border border-gray-100 rounded-2xl md:rounded-3xl p-3 md:p-6 shadow-sm flex items-center justify-between group hover:shadow-md transition-all relative overflow-hidden">
                       <div className="absolute right-0 bottom-0 opacity-5 w-24 h-24 translate-x-4 translate-y-4">
                          <Sparkles className="w-full h-full text-indigo-900" />
                       </div>
                       <div className="relative z-10">
-                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Integrity Score</p>
+                        <p className="text-[9px] md:text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-0.5 md:mb-1">Integrity Score</p>
                         <div className="flex items-baseline gap-1">
-                          <h4 className="text-3xl font-heading font-black text-gray-900 group-hover:text-indigo-600 transition-colors">
+                          <h4 className="text-xl md:text-3xl font-heading font-black text-gray-900 group-hover:text-indigo-600 transition-colors">
                             {healthScore}
                           </h4>
-                          <span className="text-sm font-bold text-gray-400">/ 100</span>
+                          <span className="text-xs md:text-sm font-bold text-gray-400">/ 100</span>
                         </div>
                       </div>
-                      <div className="relative z-10 w-12 h-12 rounded-full border-[3px] border-indigo-100 flex items-center justify-center">
+                      <div className="hidden sm:flex relative z-10 w-12 h-12 rounded-full border-[3px] border-indigo-100 items-center justify-center">
                         <svg className="absolute inset-0 w-full h-full transform -rotate-90" viewBox="0 0 36 36">
                           <path strokeDasharray={`${healthScore}, 100`} d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#6366F1" strokeWidth="3" strokeLinecap="round" />
                         </svg>
@@ -560,46 +560,46 @@ const CarePlan = () => {
                     {/* Left: Completion History (Span 8) */}
                     <div className="lg:col-span-8 flex flex-col gap-6">
                       
-                      {/* Compact Activity Chart */}
+                      {/* Activity Streak Tiles */}
                       <div className="bg-white border border-gray-100 rounded-[2rem] p-6 shadow-sm">
-                        <div className="flex items-center justify-between mb-6">
-                          <h3 className="text-sm font-bold text-gray-900 uppercase tracking-widest">7-Day Activity Activity</h3>
+                        <div className="flex items-center justify-between mb-5">
+                          <h3 className="text-sm font-bold text-gray-900 uppercase tracking-widest">7-Day Activity Streak</h3>
                         </div>
-                        <div className="flex items-end justify-between h-28 gap-2">
+                        <div className="flex items-center justify-between gap-2 sm:gap-4">
                           {Array.from({length: 7}, (_, i) => {
                             const d = new Date();
                             d.setDate(d.getDate() - (6 - i));
-                            return d.toISOString().split('T')[0];
-                          }).map((dateStr, i, arr) => {
+                            const dateStr = d.toISOString().split('T')[0];
                             const isToday = dateStr === new Date().toISOString().split('T')[0];
                             const count = isToday 
                               ? completedTasks.length 
                               : (historyLogs.find(l => l.date === dateStr)?.tasks.length || 0);
-                            const allCounts = arr.map(ds => 
-                              ds === new Date().toISOString().split('T')[0] 
-                                ? completedTasks.length 
-                                : (historyLogs.find(l => l.date === ds)?.tasks.length || 0)
-                            );
-                            const maxCount = Math.max(...allCounts, 3);
-                            const heightPercent = count > 0 ? (count / maxCount) * 100 : 0;
                             
                             return (
-                              <div key={i} className="flex flex-col items-center flex-1 group">
-                                <div className="w-full relative flex justify-center h-20 items-end">
-                                  <motion.div 
-                                    initial={{ height: 0 }}
-                                    animate={{ height: `${heightPercent}%` }}
-                                    transition={{ duration: 1, delay: i * 0.1 }}
-                                    className={`w-full max-w-[40px] rounded-t-lg transition-all duration-300 relative ${isToday ? 'bg-indigo-500 shadow-md shadow-indigo-500/20' : 'bg-gray-100 group-hover:bg-indigo-200'}`}
-                                  >
-                                    {count > 0 && (
-                                      <span className={`absolute -top-5 left-1/2 -translate-x-1/2 text-[10px] font-bold ${isToday ? 'text-indigo-600' : 'text-gray-400 group-hover:text-indigo-600'}`}>
-                                        {count}
-                                      </span>
-                                    )}
-                                  </motion.div>
-                                </div>
-                                <span className={`text-[9px] font-bold uppercase tracking-widest mt-2 ${isToday ? 'text-indigo-600' : 'text-gray-400'}`}>
+                              <div key={i} className="flex flex-col items-center gap-3 flex-1 group">
+                                <motion.div 
+                                  initial={{ scale: 0.8, opacity: 0 }}
+                                  animate={{ scale: 1, opacity: 1 }}
+                                  transition={{ duration: 0.4, delay: i * 0.05 }}
+                                  className={`w-full max-w-[56px] aspect-square rounded-2xl flex items-center justify-center transition-all duration-300 border-2 ${
+                                    count === 0 
+                                      ? 'bg-gray-50 border-gray-100/50 group-hover:border-gray-200' 
+                                      : isToday 
+                                        ? 'bg-indigo-500 border-indigo-500 shadow-md shadow-indigo-500/30' 
+                                        : 'bg-indigo-50 border-indigo-100 hover:bg-indigo-100'
+                                  }`}
+                                >
+                                  <span className={`text-base sm:text-xl font-heading font-black ${
+                                    count === 0 
+                                      ? 'text-gray-300' 
+                                      : isToday 
+                                        ? 'text-white' 
+                                        : 'text-indigo-500'
+                                  }`}>
+                                    {count}
+                                  </span>
+                                </motion.div>
+                                <span className={`text-[9px] sm:text-[10px] font-bold uppercase tracking-widest ${isToday ? 'text-indigo-600' : 'text-gray-400'}`}>
                                   {isToday ? 'Today' : new Date(dateStr).toLocaleDateString(undefined, { weekday: 'short' })}
                                 </span>
                               </div>

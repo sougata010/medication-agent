@@ -253,10 +253,10 @@ const resolvers = {
         }
 
         const labRes = await db.query(
-          `SELECT raw_text FROM lab_reports WHERE user_id = $1 ORDER BY uploaded_at DESC LIMIT 1`,
+          `SELECT ocr_raw FROM lab_reports WHERE user_id = $1 ORDER BY uploaded_at DESC LIMIT 1`,
           [userId]
         );
-        const labResults = labRes.rows.length > 0 ? labRes.rows[0].raw_text : "No recent labs.";
+        const labResults = labRes.rows.length > 0 ? labRes.rows[0].ocr_raw : "No recent labs.";
 
         const response = await fetch(`${FAST_API_URL}/api/generate_care_plan`, {
           method: 'POST',

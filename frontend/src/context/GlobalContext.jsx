@@ -861,6 +861,7 @@ export const GlobalProvider = ({ children }) => {
     reminders, setReminders,
     prescriptions, setPrescriptions,
     fetchPrescriptions,
+    globalAlert, setGlobalAlert,
     chatSessionId, setChatSessionId,
     chatMessages, setChatMessages,
     chatInput, setChatInput,

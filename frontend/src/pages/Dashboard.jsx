@@ -229,7 +229,7 @@ export default function Dashboard() {
                     const isTaken = r.status === 'taken';
                     const isMissed = r.status === 'missed';
                     return (
-                      <div key={r.id} className={`flex items-center gap-4 p-3 rounded-xl transition-colors ${isTaken ? 'bg-emerald-50/50 border border-emerald-100' : isMissed ? 'bg-rose-50/50 border border-rose-100' : 'bg-gray-50/50 hover:bg-gray-50 border border-gray-100/50'}`}>
+                      <div key={r.id} className={`flex flex-wrap sm:flex-nowrap items-center gap-2 sm:gap-4 p-3 rounded-xl transition-colors ${isTaken ? 'bg-emerald-50/50 border border-emerald-100' : isMissed ? 'bg-rose-50/50 border border-rose-100' : 'bg-gray-50/50 hover:bg-gray-50 border border-gray-100/50'}`}>
                         <div className="w-16 text-right shrink-0">
                           <span className={`text-sm font-mono font-bold ${isTaken ? 'text-emerald-600' : isMissed ? 'text-rose-500' : 'text-gray-900'}`}>{time}</span>
                         </div>
@@ -238,7 +238,7 @@ export default function Dashboard() {
                           <h4 className={`text-sm font-semibold truncate ${isTaken ? 'text-emerald-700 line-through' : 'text-gray-900'}`}>
                             {r.medicine?.name || 'Unknown'}
                           </h4>
-                          <div className="flex items-center gap-2 mt-1">
+                          <div className="flex flex-wrap items-center gap-2 mt-1">
                             <span className="text-xs text-gray-400">
                               {r.medicine?.category || 'Medication'}
                               {r.dosage ? <span className="font-mono"> · {r.dosage}</span> : ''}
@@ -259,7 +259,7 @@ export default function Dashboard() {
                             </button>
                           </div>
                         </div>
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 w-full sm:w-auto justify-end sm:justify-start mt-2 sm:mt-0">
                           {isTaken ? (
                             <span className="clinical-badge clinical-badge-success">
                               <CheckCircle2 className="w-3 h-3" /> Taken
@@ -405,6 +405,47 @@ export default function Dashboard() {
               <span className="text-xs font-medium text-slate-500">Adherence Percentage (%)</span>
             </div>
           </div>
+
+          {/* Moved AI Components */}
+          <div className="flex flex-col gap-6">
+            {/* Predictive Health AI (Trend Forecasting) */}
+            <div className="bg-gradient-to-br from-indigo-900 to-indigo-800 rounded-2xl p-4 md:p-6 text-white shadow-md relative overflow-hidden">
+              <div className="absolute top-0 right-0 p-4 opacity-20 pointer-events-none">
+                <TrendingUp className="w-24 h-24" />
+              </div>
+              <h3 className="text-sm font-heading font-extrabold tracking-tight uppercase mb-3 flex items-center gap-2 relative z-10 text-indigo-100">
+                <Sparkles className="w-4 h-4 text-indigo-300" />
+                AI Trend Forecast
+              </h3>
+              <p className="text-sm text-indigo-50 leading-relaxed font-medium relative z-10">
+                "{trendForecast || 'Fetching trend forecast...'}"
+              </p>
+            </div>
+
+            {/* AI Insights */}
+            {insights && insights.length > 0 && (
+              <div className="rx-card p-4 md:p-6">
+                <h3 className="text-sm font-heading font-extrabold tracking-tight text-gray-900 uppercase mb-4 flex items-center gap-2">
+                  <Zap className="w-4 h-4 text-amber-500" />
+                  Clinical Insights
+                </h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {insights.map(ins => (
+                    <div key={ins.id} className={`p-4 rounded-xl text-sm font-medium flex items-start gap-3 ${
+                      ins.type === 'success' ? 'bg-emerald-50 text-emerald-700 border border-emerald-100' :
+                      ins.type === 'warning' ? 'bg-amber-50 text-indigo-700 border border-amber-100' :
+                      'bg-gray-50 text-gray-900 border border-gray-100'
+                    }`}>
+                      {ins.type === 'success' ? <CheckCircle2 className="w-5 h-5 shrink-0 mt-0.5 opacity-80" /> : 
+                       ins.type === 'warning' ? <AlertTriangle className="w-5 h-5 shrink-0 mt-0.5 opacity-80" /> : 
+                       <Sparkles className="w-5 h-5 shrink-0 mt-0.5 opacity-80" />}
+                      <span className="leading-relaxed">{ins.text}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Right Column */}
@@ -545,40 +586,7 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* Predictive Health AI (Trend Forecasting) */}
-          <div className="bg-gradient-to-br from-indigo-900 to-indigo-800 rounded-2xl p-6 text-white shadow-md relative overflow-hidden">
-            <div className="absolute top-0 right-0 p-4 opacity-20 pointer-events-none">
-              <TrendingUp className="w-24 h-24" />
-            </div>
-            <h3 className="text-sm font-heading font-extrabold tracking-tight uppercase mb-3 flex items-center gap-2 relative z-10 text-indigo-100">
-              <Sparkles className="w-4 h-4 text-indigo-300" />
-              AI Trend Forecast
-            </h3>
-            <p className="text-sm text-indigo-50 leading-relaxed font-medium relative z-10">
-              "{trendForecast || 'Fetching trend forecast...'}"
-            </p>
-          </div>
 
-          {/* AI Insights */}
-          {insights && insights.length > 0 && (
-            <div className="rx-card p-6">
-              <h3 className="text-sm font-heading font-extrabold tracking-tight text-gray-900 uppercase mb-3 flex items-center gap-2">
-                <Zap className="w-4 h-4 text-amber-500" />
-                Clinical Insights
-              </h3>
-              <div className="flex flex-col gap-2">
-                {insights.map(ins => (
-                  <div key={ins.id} className={`p-3 rounded-xl text-sm font-medium ${
-                    ins.type === 'success' ? 'bg-emerald-50 text-emerald-700 border border-emerald-100' :
-                    ins.type === 'warning' ? 'bg-amber-50 text-indigo-700 border border-amber-100' :
-                    'bg-gray-50 text-gray-900 border border-gray-100'
-                  }`}>
-                    {ins.text}
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
 
         </div>
       </div>

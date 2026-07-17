@@ -147,7 +147,7 @@ export default function LandingPage() {
             </motion.div>
             
             {/* Exploding WebGL 3D Medicine Visual */}
-            <div className="relative w-full max-w-4xl h-[600px] flex items-center justify-center">
+            <div className="relative w-full max-w-4xl h-[400px] md:h-[600px] flex items-center justify-center">
               
               <MedicineModel scrollProgress={medicineScrollProgress} />
 
@@ -170,7 +170,7 @@ export default function LandingPage() {
                     y: -120, 
                     opacity: useTransform(medicineScrollProgress, [0.1, 0.4], [0, 1]) 
                   }}
-                  className="absolute p-3 rounded-xl bg-white shadow-xl border border-gray-100 flex items-center gap-3 relative overflow-hidden"
+                  className="absolute p-3 rounded-xl bg-white shadow-xl border border-gray-100 hidden md:flex items-center gap-3 overflow-hidden"
                 >
                   <div className="w-8 h-8 rounded-lg bg-sky-50 flex items-center justify-center border border-sky-100">
                     <LineChart className="w-4 h-4 text-sky-600" />
@@ -197,7 +197,7 @@ export default function LandingPage() {
                     y: -80, 
                     opacity: useTransform(medicineScrollProgress, [0.1, 0.4], [0, 1]) 
                   }}
-                  className="absolute p-3 rounded-xl bg-white shadow-xl border border-gray-100 flex items-center gap-3 relative overflow-hidden"
+                  className="absolute p-3 rounded-xl bg-white shadow-xl border border-gray-100 hidden md:flex items-center gap-3 overflow-hidden"
                 >
                   <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center border border-blue-100 relative">
                     <Hexagon className="w-4 h-4 text-blue-600" />
@@ -219,7 +219,7 @@ export default function LandingPage() {
                     y: 150, 
                     opacity: useTransform(medicineScrollProgress, [0.1, 0.4], [0, 1]) 
                   }}
-                  className="absolute p-3 rounded-xl bg-white shadow-xl border border-purple-100/50 flex items-center gap-3 relative overflow-hidden"
+                  className="absolute p-3 rounded-xl bg-white shadow-xl border border-purple-100/50 hidden md:flex items-center gap-3 overflow-hidden"
                 >
                   <div className="w-8 h-8 rounded-lg bg-purple-50 flex items-center justify-center border border-purple-100">
                     <Network className="w-4 h-4 text-purple-600" />
@@ -246,7 +246,7 @@ export default function LandingPage() {
                     y: 130, 
                     opacity: useTransform(medicineScrollProgress, [0.1, 0.4], [0, 1]) 
                   }}
-                  className="absolute p-3 rounded-xl bg-sky-50 shadow-xl border border-sky-100 flex items-center gap-2 pr-4 relative overflow-hidden"
+                  className="absolute p-3 rounded-xl bg-sky-50 shadow-xl border border-sky-100 hidden md:flex items-center gap-2 pr-4 overflow-hidden"
                 >
                   <ShieldCheck className="w-5 h-5 text-sky-600" />
                   <span className="text-sm font-bold text-sky-700">Safe Payload</span>
