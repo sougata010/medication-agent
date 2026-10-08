@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { useGlobalContext } from '../context/GlobalContext';
 import { createPortal } from 'react-dom';
+import BiomarkerTrends from '../components/BiomarkerTrends';
 import {
   FlaskConical, CheckCircle2, AlertTriangle, AlertOctagon,
   Search, FileText, Calendar, Upload, ShieldAlert,
@@ -227,7 +228,7 @@ const BiomarkerRadarChart = ({ parameters }) => {
 };
 
 export default function LabReports() {
-  const { labReports, handleUploadLabReport, labUploadLoading } = useGlobalContext();
+  const { labReports, handleUploadLabReport, labUploadLoading, user } = useGlobalContext();
   const [activeReportIdx, setActiveReportIdx] = useState(0);
   const [searchQuery, setSearchQuery] = useState('');
   
@@ -419,6 +420,9 @@ export default function LabReports() {
           </div>
         </div>
       )}
+
+      {/* Longitudinal Biomarker Trajectories */}
+      <BiomarkerTrends userId={user?.id} />
 
       {/* MOBILE VIEW: Collapsible Sections */}
       <div className="flex flex-col gap-4 md:hidden">

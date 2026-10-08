@@ -21,6 +21,8 @@ import Community from './pages/Community';
 import CarePlan from './pages/CarePlan';
 import KnowledgeGraphPage from './pages/KnowledgeGraphPage';
 import SymptomTimelinePage from './pages/SymptomTimelinePage';
+import DoctorSharePackage from './pages/DoctorSharePackage';
+import PolypharmacyMatrix from './components/PolypharmacyMatrix';
 
 // Info/Legal Pages
 import UserGuide from './pages/UserGuide';
@@ -58,6 +60,8 @@ const AppRoutes = () => {
         <Route path="community" element={<Community />} />
         <Route path="knowledge-graph" element={<KnowledgeGraphPage />} />
         <Route path="timeline" element={<SymptomTimelinePage />} />
+        <Route path="doctor-share" element={<DoctorSharePackage />} />
+        <Route path="polypharmacy" element={<PolypharmacyMatrix />} />
       </Route>
       
       <Route element={<MainLayout />}>

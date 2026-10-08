@@ -151,9 +151,9 @@ export const GlobalProvider = ({ children }) => {
         }
       `;
       const createData = await gqlFetch(mutation, {
-        name: 'Sarah Connor',
-        age: 34,
-        gender: 'Female',
+        name: 'Sougata',
+        age: 28,
+        gender: 'Male',
         language: 'en',
         reminderChannel: 'Telegram'
       });

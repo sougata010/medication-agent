@@ -390,6 +390,96 @@ Lab Results Context: {payload.lab_results if payload.lab_results else 'No recent
             "supplementOtc": ["Consult before taking new supplements."]
         }
 
+class PolypharmacyAIRequest(BaseModel):
+    user_id: int
+    active_medications: List[str] = []
+
+@app.post("/api/polypharmacy-ai")
+async def polypharmacy_ai_endpoint(payload: PolypharmacyAIRequest):
+    try:
+        api_key = os.getenv("GOOGLE_API_KEY")
+        if not api_key:
+            raise Exception("GOOGLE_API_KEY not found.")
+            
+        from langchain_google_genai import ChatGoogleGenerativeAI
+        from langchain_core.messages import SystemMessage, HumanMessage
+        import json
+        import math
+
+        model_name = os.getenv("GEMINI_MODEL") or "gemini-2.5-flash"
+        llm = ChatGoogleGenerativeAI(model=model_name, google_api_key=api_key, temperature=0.1)
+        
+        system_prompt = """You are a clinical pharmacologist AI. Analyze the provided active medications for polypharmacy interaction risk.
+Return a strict JSON object with this exact structure:
+{
+  "overallRiskScore": 35,
+  "matrix": [
+    {
+      "med1": "Medication 1",
+      "med2": "Medication 2",
+      "severity": "High",
+      "mechanism": "Clinical mechanism of interaction",
+      "cypPathways": ["CYP3A4", "CYP2C9"],
+      "qtRisk": false,
+      "organSystem": "Cardiovascular",
+      "recommendation": "Clinical guidance"
+    }
+  ],
+  "pkProfiles": [
+    {
+      "medName": "Medication 1",
+      "dosage": "10mg",
+      "tMaxHours": 2.5,
+      "halfLifeHours": 12.0,
+      "cMax": 100.0
+    }
+  ]
+}
+Return ONLY the raw JSON object, without markdown formatting."""
+
+        meds_text = ", ".join(payload.active_medications) if payload.active_medications else "Lisinopril 10mg, Metformin 500mg, Atorvastatin 20mg"
+        msg = [
+            SystemMessage(content=system_prompt),
+            HumanMessage(content=f"Analyze polypharmacy interactions for these active medications:\n{meds_text}")
+        ]
+        response = llm.invoke(msg)
+        result_text = response.content.strip()
+        if result_text.startswith("```json"):
+            result_text = result_text[7:-3].strip()
+        elif result_text.startswith("```"):
+            result_text = result_text[3:-3].strip()
+            
+        parsed_json = json.loads(result_text)
+        
+        # Build 24h curve for each PK profile
+        for pk in parsed_json.get("pkProfiles", []):
+            tMax = float(pk.get("tMaxHours", 2.0))
+            halfLife = float(pk.get("halfLifeHours", 12.0))
+            cMax = float(pk.get("cMax", 100.0))
+            curve = []
+            for h in range(25):
+                conc = 0
+                if h > 0:
+                    ka = 1.5 / max(tMax, 0.5)
+                    ke = 0.693 / max(halfLife, 1.0)
+                    conc = max(0, cMax * (math.exp(-ke * h) - math.exp(-ka * h * 2.5)))
+                curve.append({
+                    "hour": float(h),
+                    "concentration": round(conc, 2),
+                    "medName": pk.get("medName", ""),
+                    "isPeak": abs(h - round(tMax)) == 0
+                })
+            pk["curve"] = curve
+
+        return parsed_json
+    except Exception as e:
+        print("FastAPI polypharmacy_ai Error:", e)
+        return {
+            "overallRiskScore": 25,
+            "matrix": [],
+            "pkProfiles": []
+        }
+
 @app.get("/health")
 async def health_check():
     return {"status": "HEALTHY", "service": "Python LangGraph AI Agent"}

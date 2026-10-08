@@ -223,6 +223,57 @@ const typeDefs = gql`
     timing: [String!]!
   }
 
+  type PolypharmacyCell {
+    med1: String!
+    med2: String!
+    severity: String!
+    mechanism: String!
+    cypPathways: [String!]!
+    qtRisk: Boolean!
+    organSystem: String!
+    recommendation: String!
+  }
+
+  type PharmacokineticCurvePoint {
+    hour: Float!
+    concentration: Float!
+    medName: String!
+    isPeak: Boolean
+  }
+
+  type PharmacokineticsPayload {
+    medName: String!
+    dosage: String!
+    tMaxHours: Float!
+    halfLifeHours: Float!
+    cMax: Float!
+    curve: [PharmacokineticCurvePoint!]!
+  }
+
+  type PolypharmacyPayload {
+    matrix: [PolypharmacyCell!]!
+    medications: [String!]!
+    overallRiskScore: Int!
+    pkProfiles: [PharmacokineticsPayload!]!
+  }
+
+  type BiomarkerDataPoint {
+    date: String!
+    value: Float!
+    status: String!
+  }
+
+  type BiomarkerTrendSeries {
+    name: String!
+    unit: String!
+    category: String!
+    normalMin: Float
+    normalMax: Float
+    history: [BiomarkerDataPoint!]!
+    projectedValue: Float
+    trendDirection: String!
+  }
+
   type Query {
     getUser(id: ID!): User
     getPrescriptions(userId: ID!): [Prescription!]!
@@ -236,6 +287,9 @@ const typeDefs = gql`
     getCarePlan(userId: ID!): CarePlan!
     getPatientKnowledgeGraph(userId: ID!): PatientKnowledgeGraph!
     getSymptomCorrelationTimeline(userId: ID!): SymptomCorrelationTimelinePayload!
+    getFHIRBundle(userId: ID!): String!
+    getPolypharmacyMatrix(userId: ID!): PolypharmacyPayload!
+    getBiomarkerTrends(userId: ID!): [BiomarkerTrendSeries!]!
   }
 
   type SymptomTimelineEvent {
