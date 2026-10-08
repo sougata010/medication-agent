@@ -79,16 +79,16 @@ const typeDefs = gql`
     id: ID!
     reportId: ID!
     name: String!
-    value: Float!
-    unit: String!
-    siValue: Float
+    value: String!
+    unit: String
+    siValue: String
     referenceRange: String
     status: String
     severity: String
     chemicalType: String
     category: String
-    normalMin: Float
-    normalMax: Float
+    normalMin: String
+    normalMax: String
     confidence: Float
     risk: String
     recommendation: String
@@ -234,6 +234,87 @@ const typeDefs = gql`
     getCommunityPosts: [CommunityPost!]!
     getPharmacyPrices(medicineName: String!): [PharmacyPrice!]!
     getCarePlan(userId: ID!): CarePlan!
+    getPatientKnowledgeGraph(userId: ID!): PatientKnowledgeGraph!
+    getSymptomCorrelationTimeline(userId: ID!): SymptomCorrelationTimelinePayload!
+  }
+
+  type SymptomTimelineEvent {
+    id: ID!
+    type: String!
+    title: String!
+    name: String!
+    date: String!
+    severity: String
+    notes: String
+    description: String
+  }
+
+  type SymptomCorrelationInsight {
+    id: ID!
+    symptom: String!
+    medication: String!
+    deltaDays: Int!
+    confidence: String!
+    isKnownFDAEffect: Boolean!
+    title: String!
+    text: String!
+    clinicalNote: String!
+  }
+
+  type SymptomTimelineSummary {
+    total_medications: Int!
+    total_symptom_logs: Int!
+    total_correlations: Int!
+  }
+
+  type SymptomCorrelationTimelinePayload {
+    events: [SymptomTimelineEvent!]!
+    insights: [SymptomCorrelationInsight!]!
+    summary: SymptomTimelineSummary!
+  }
+
+  type GraphNodeDetails {
+    raw_name: String
+    status: String
+    notes: String
+    name: String
+    allergen: String
+    severity: String
+    analyte: String
+    value: String
+    unit: String
+    effect: String
+    dietary_item: String
+  }
+
+  type GraphNode {
+    id: ID!
+    label: String!
+    category: String!
+    type: String!
+    details: GraphNodeDetails
+  }
+
+  type GraphEdge {
+    id: ID!
+    source: ID!
+    target: ID!
+    relationship: String!
+    label: String!
+    severity: String!
+    description: String!
+  }
+
+  type KnowledgeGraphSummary {
+    total_nodes: Int!
+    total_edges: Int!
+    high_severity_interactions: Int!
+  }
+
+  type PatientKnowledgeGraph {
+    nodes: [GraphNode!]!
+    edges: [GraphEdge!]!
+    summary: KnowledgeGraphSummary!
   }
 
   type AuthPayload {
@@ -325,6 +406,13 @@ const typeDefs = gql`
       userId: ID!
       symptoms: [String!]!
     ): Boolean!
+
+    logSymptomEvent(
+      userId: ID!
+      symptomName: String!
+      severity: String
+      notes: String
+    ): SymptomLog!
 
     createCommunityPost(
       content: String!

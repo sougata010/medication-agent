@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useGlobalContext } from '../context/GlobalContext';
-import { ArrowRight, Mail, Lock, User, Key, ShieldCheck, CheckCircle2, HeartPulse, Sparkles } from 'lucide-react';
+import { ArrowRight, Mail, Lock, User, Key, ShieldCheck, CheckCircle2, HeartPulse, Sparkles, AlertTriangle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { GoogleOAuthProvider, useGoogleLogin } from '@react-oauth/google';
 import { startAuthentication } from '@simplewebauthn/browser';

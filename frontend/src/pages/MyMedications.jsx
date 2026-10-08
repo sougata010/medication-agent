@@ -41,28 +41,28 @@ const MedicationInsights = ({ prescriptions, reminders }) => {
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      <div className="lg:col-span-1 rx-card p-6 flex flex-col justify-between bg-gradient-to-br from-indigo-900 to-indigo-800 text-white relative overflow-hidden">
-        <div className="absolute -right-6 -top-6 opacity-10 pointer-events-none">
-          <Activity className="w-32 h-32" />
+      <div className="lg:col-span-1 rx-card p-6 flex flex-col justify-between bg-white border border-indigo-100 text-slate-900 relative overflow-hidden shadow-sm">
+        <div className="absolute -right-6 -top-6 opacity-5 pointer-events-none">
+          <Activity className="w-32 h-32 text-indigo-600" />
         </div>
         <div className="relative z-10">
-          <h2 className="text-sm font-heading font-extrabold tracking-widest text-indigo-200 uppercase mb-4 flex items-center gap-2">
+          <h2 className="text-sm font-heading font-extrabold tracking-widest text-indigo-600 uppercase mb-4 flex items-center gap-2">
             <Stethoscope className="w-4 h-4" />
             Profile Summary
           </h2>
           <div className="space-y-6">
             <div>
-              <p className="text-4xl font-black font-heading tracking-tight">{totalMeds}</p>
-              <p className="text-sm font-medium text-indigo-200 mt-1">Total Active Medications</p>
+              <p className="text-4xl font-black font-heading tracking-tight text-slate-900">{totalMeds}</p>
+              <p className="text-sm font-medium text-slate-500 mt-1">Total Active Medications</p>
             </div>
-            <div className="flex items-center gap-4 border-t border-indigo-700/50 pt-4">
+            <div className="flex items-center gap-4 border-t border-slate-100 pt-4">
               <div className="flex-1">
-                <p className="text-xl font-bold">{verifiedMeds}</p>
-                <p className="text-xs text-indigo-300 font-medium">Verified by AI</p>
+                <p className="text-xl font-bold text-indigo-600">{verifiedMeds}</p>
+                <p className="text-xs text-slate-500 font-medium">Verified by AI</p>
               </div>
               <div className="flex-1">
-                <p className="text-xl font-bold">{prescriptions.length}</p>
-                <p className="text-xs text-indigo-300 font-medium">Rx Uploads</p>
+                <p className="text-xl font-bold text-slate-900">{prescriptions.length}</p>
+                <p className="text-xs text-slate-500 font-medium">Rx Uploads</p>
               </div>
             </div>
           </div>

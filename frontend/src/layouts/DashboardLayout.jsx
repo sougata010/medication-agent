@@ -5,7 +5,7 @@ import {
   LayoutDashboard, Pill, FlaskConical, Bell, MapPin,
   Upload, MessageSquare, Settings, LogOut, Search,
   AlertTriangle, ChevronRight, User, Users, Menu, X,
-  HeartPulse, Stethoscope, Flame, Sparkles
+  HeartPulse, Stethoscope, Flame, Sparkles, Network, Activity
 } from 'lucide-react';
 import ZenWidget from '../components/ZenWidget';
 
@@ -56,6 +56,8 @@ export default function DashboardLayout() {
 
   const navItems = [
     { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard, end: true },
+    { to: '/dashboard/knowledge-graph', label: 'Knowledge Graph', icon: Network },
+    { to: '/dashboard/timeline', label: 'Symptom Timeline', icon: Activity },
     { to: '/dashboard/care-plan', label: 'Care Plan', icon: Sparkles },
     { to: '/dashboard/medications', label: 'Medications', icon: Pill },
     { to: '/dashboard/reports', label: 'Lab Reports', icon: FlaskConical },

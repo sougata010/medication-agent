@@ -20,6 +20,8 @@ load_dotenv(dotenv_path=env_path)
 
 from agent.graph import run_agent
 from agent.tools.ocr import ocr
+from agent.tools.graph_builder import build_patient_knowledge_graph
+from agent.tools.correlation_analyzer import analyze_symptom_med_correlation
 
 app = FastAPI(title="MedGraph AI Orchestration Backend", version="1.0")
 
@@ -61,7 +63,44 @@ class CarePlanRequest(BaseModel):
     conditions: List[str] = []
     lab_results: str = ""
 
+class KnowledgeGraphRequest(BaseModel):
+    user_id: int
+    active_medications: List[str] = []
+    allergies: List[str] = []
+    conditions: List[str] = []
+    lab_results: List[Dict[str, Any]] = []
+
+class SymptomCorrelationRequest(BaseModel):
+    user_id: int
+    medications: List[Dict[str, Any]] = []
+    symptom_logs: List[Dict[str, Any]] = []
+
 # Endpoints
+@app.post("/api/symptom-correlation")
+async def symptom_correlation_endpoint(payload: SymptomCorrelationRequest):
+    try:
+        correlation_data = analyze_symptom_med_correlation(
+            medications=payload.medications,
+            symptom_logs=payload.symptom_logs
+        )
+        return correlation_data
+    except Exception as e:
+        print("FastAPI symptom_correlation_endpoint Error:", e)
+        raise HTTPException(status_code=500, detail=str(e))
+@app.post("/api/knowledge-graph")
+async def knowledge_graph_endpoint(payload: KnowledgeGraphRequest):
+    try:
+        graph_data = build_patient_knowledge_graph(
+            active_medications=payload.active_medications,
+            conditions=payload.conditions,
+            allergies=payload.allergies,
+            lab_results=payload.lab_results
+        )
+        return graph_data
+    except Exception as e:
+        print("FastAPI knowledge_graph_endpoint Error:", e)
+        raise HTTPException(status_code=500, detail=str(e))
+
 @app.post("/api/chat")
 async def chat_endpoint(payload: ChatRequest):
     try:
@@ -171,7 +210,8 @@ async def extract_document_endpoint(payload: OCRRequest):
         from langchain_core.messages import SystemMessage, HumanMessage
         import json
 
-        llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash", google_api_key=api_key, temperature=0.0)
+        model_name = os.getenv("GEMINI_MODEL") or os.getenv("MODEL_NAME") or "gemini-2.5-flash"
+        llm = ChatGoogleGenerativeAI(model=model_name, google_api_key=api_key, temperature=0.0)
         
         system_prompt = """You are an advanced medical document extractor. Analyze the provided image of a document (prescription, lab report, or both).
 Extract the information into a strict JSON format with the following structure:
@@ -296,7 +336,8 @@ async def generate_care_plan_endpoint(payload: CarePlanRequest):
         from langchain_core.messages import SystemMessage, HumanMessage
         import json
 
-        llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash", google_api_key=api_key, temperature=0.2)
+        model_name = os.getenv("GEMINI_MODEL") or os.getenv("MODEL_NAME") or "gemini-2.5-flash"
+        llm = ChatGoogleGenerativeAI(model=model_name, google_api_key=api_key, temperature=0.2)
         
         system_prompt = """You are an advanced medical AI assistant. Generate a highly personalized holistic care plan based on the user's active medications, medical conditions, allergies, and recent lab results.
 Return ONLY a strict JSON object with this exact structure:

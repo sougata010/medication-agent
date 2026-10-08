@@ -409,15 +409,15 @@ export default function Dashboard() {
           {/* Moved AI Components */}
           <div className="flex flex-col gap-6">
             {/* Predictive Health AI (Trend Forecasting) */}
-            <div className="bg-gradient-to-br from-indigo-900 to-indigo-800 rounded-2xl p-4 md:p-6 text-white shadow-md relative overflow-hidden">
-              <div className="absolute top-0 right-0 p-4 opacity-20 pointer-events-none">
-                <TrendingUp className="w-24 h-24" />
+            <div className="bg-white border border-indigo-100 rounded-2xl p-4 md:p-6 text-slate-900 shadow-sm relative overflow-hidden">
+              <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none">
+                <TrendingUp className="w-24 h-24 text-indigo-600" />
               </div>
-              <h3 className="text-sm font-heading font-extrabold tracking-tight uppercase mb-3 flex items-center gap-2 relative z-10 text-indigo-100">
-                <Sparkles className="w-4 h-4 text-indigo-300" />
+              <h3 className="text-sm font-heading font-extrabold tracking-tight uppercase mb-3 flex items-center gap-2 relative z-10 text-indigo-700">
+                <Sparkles className="w-4 h-4 text-indigo-500" />
                 AI Trend Forecast
               </h3>
-              <p className="text-sm text-indigo-50 leading-relaxed font-medium relative z-10">
+              <p className="text-sm text-slate-700 leading-relaxed font-medium relative z-10">
                 "{trendForecast || 'Fetching trend forecast...'}"
               </p>
             </div>

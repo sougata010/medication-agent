@@ -1,10 +1,10 @@
 import os
 import httpx
-from schema.checker import SafetyEvaluation
 from typing import List
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.messages import SystemMessage, HumanMessage
 from dotenv import load_dotenv
+from agent.schema.checker import SafetyEvaluation
 
 load_dotenv()
 api_key = os.getenv("GOOGLE_API_KEY")
@@ -14,7 +14,7 @@ if not api_key:
 class LiveSafetyChecker:
     def __init__(self):
         self.base_url = "https://api.fda.gov/drug/label.json"
-        self.model = "gemini-3.0-flash"
+        self.model = os.getenv("GEMINI_MODEL") or os.getenv("MODEL_NAME") or "gemini-2.5-flash"
     def cross_reference_safety(self, drug_name: str, active_list: List[str], allergies: List[str]) -> SafetyEvaluation:
         search_drug = drug_name.strip().lower()
         query_url = f"{self.base_url}?search=(openfda.brand_name:\"{search_drug}\"+openfda.generic_name:\"{search_drug}\")&limit=1"

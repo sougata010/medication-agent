@@ -736,6 +736,8 @@ export const GlobalProvider = ({ children }) => {
       setOcrFileName('');
       fetchReminders(userId);
       fetchPrescriptions(userId);
+      fetchLabReports(userId);
+      fetchCarePlan(userId);
       if (onSuccess) onSuccess();
     }
   };
@@ -916,7 +918,9 @@ export const GlobalProvider = ({ children }) => {
     checkFoodInteraction,
     trendForecast: dashboardMetrics?.trendForecast,
     carePlan,
-    generateCarePlanForReport
+    generateCarePlanForReport,
+    gqlFetch,
+    queryGraphQL: gqlFetch
   };
 
   return (

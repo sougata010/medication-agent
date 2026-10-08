@@ -62,7 +62,8 @@ def handle_general_query(state: AgentState) -> Dict[str, Any]:
     pregnancy = context.get("pregnancy_status", False)
     
     # Identify target drug from query using LLM
-    llm = ChatGoogleGenerativeAI(model="gemini-3.0-flash", google_api_key=api_key, temperature=0.0)
+    model_name = os.getenv("GEMINI_MODEL") or os.getenv("MODEL_NAME") or "gemini-2.5-flash"
+    llm = ChatGoogleGenerativeAI(model=model_name, google_api_key=api_key, temperature=0.0)
     msg = [
         SystemMessage(content="You are a clinical pharmacologist helper. Identify the name of the main drug/medication being asked about in the query. Return ONLY the single drug name. If no specific drug is found, return 'None'."),
         HumanMessage(content=query_text)
@@ -199,7 +200,8 @@ def handle_prescription_upload(state: AgentState) -> Dict[str, Any]:
 # 4. Lab Report Node
 def handle_lab_report(state: AgentState) -> Dict[str, Any]:
     ocr_text = state["ocr_raw"] or state["message"]
-    llm = ChatGoogleGenerativeAI(model="gemini-3.0-flash", google_api_key=api_key, temperature=0.0)
+    model_name = os.getenv("GEMINI_MODEL") or os.getenv("MODEL_NAME") or "gemini-2.5-flash"
+    llm = ChatGoogleGenerativeAI(model=model_name, google_api_key=api_key, temperature=0.0)
     
     msg = [
         SystemMessage(content="You are a clinical lab technician. Extract all lab parameters, their numerical values, reference ranges, and units. Format them as a clean, readable text list. Suggest if the parameters are normal or abnormal based on standard reference bounds."),

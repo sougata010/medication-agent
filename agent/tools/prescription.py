@@ -2,7 +2,7 @@ import os
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.messages import SystemMessage, HumanMessage
 from dotenv import load_dotenv
-from schema.precription import PrescriptionDossier
+from agent.schema.precription import PrescriptionDossier
 
 load_dotenv()
 api_key = os.getenv("GOOGLE_API_KEY")
@@ -11,7 +11,7 @@ if not api_key:
 
 class PrescriptionReader:
     def __init__(self):
-        self.model = "gemini-3.0-flash"
+        self.model = os.getenv("GEMINI_MODEL") or os.getenv("MODEL_NAME") or "gemini-2.5-flash"
         self.config = {
             "temperature": 0.2,
             "max_retries": 2,

@@ -19,6 +19,8 @@ import LabReports from './pages/LabReports';
 import PharmacyFinder from './pages/PharmacyFinder';
 import Community from './pages/Community';
 import CarePlan from './pages/CarePlan';
+import KnowledgeGraphPage from './pages/KnowledgeGraphPage';
+import SymptomTimelinePage from './pages/SymptomTimelinePage';
 
 // Info/Legal Pages
 import UserGuide from './pages/UserGuide';
@@ -54,6 +56,8 @@ const AppRoutes = () => {
         <Route path="chat" element={<ChatCompanion />} />
         <Route path="profile" element={<HealthProfile />} />
         <Route path="community" element={<Community />} />
+        <Route path="knowledge-graph" element={<KnowledgeGraphPage />} />
+        <Route path="timeline" element={<SymptomTimelinePage />} />
       </Route>
       
       <Route element={<MainLayout />}>
