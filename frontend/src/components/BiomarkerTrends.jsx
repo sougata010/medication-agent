@@ -126,53 +126,66 @@ export default function BiomarkerTrends({ userId }) {
 
             {/* SVG Trajectory Chart */}
             <div className="relative">
-              <svg className="w-full h-48" viewBox="0 0 300 120">
-                {/* Normal Range Reference Corridor */}
-                <rect x="10" y="25" width="280" height="50" fill="rgba(16, 185, 129, 0.08)" rx="4" />
-                <line x1="10" y1="25" x2="290" y2="25" stroke="rgba(16, 185, 129, 0.3)" strokeDasharray="3 3" />
-                <line x1="10" y1="75" x2="290" y2="75" stroke="rgba(16, 185, 129, 0.3)" strokeDasharray="3 3" />
-                <text x="285" y="22" textAnchor="end" className="text-[8px] fill-emerald-400 font-mono">Normal Max: {activeSeries.normalMax}</text>
-                <text x="285" y="85" textAnchor="end" className="text-[8px] fill-emerald-400 font-mono">Normal Min: {activeSeries.normalMin}</text>
-
-                {/* Line Path */}
+              <svg className="w-full h-56" viewBox="0 0 320 140">
                 {(() => {
                   const vals = activeSeries.history.map(h => h.value);
-                  const minV = Math.min(...vals, activeSeries.normalMin || 0) * 0.8;
-                  const maxV = Math.max(...vals, activeSeries.normalMax || 100) * 1.15;
+                  const projVal = activeSeries.projectedValue || vals[vals.length - 1];
+                  const allVals = [...vals, projVal, activeSeries.normalMin, activeSeries.normalMax].filter(v => v !== undefined && v !== null);
+                  
+                  const minV = Math.min(...allVals) * 0.9;
+                  const maxV = Math.max(...allVals) * 1.1;
                   const range = maxV - minV || 1;
 
+                  // Map Y coordinate (0 to 140px stage)
+                  const getY = (val) => 120 - ((val - minV) / range) * 95;
+
+                  const yNormMax = getY(activeSeries.normalMax);
+                  const yNormMin = getY(activeSeries.normalMin);
+                  const normHeight = Math.max(8, yNormMin - yNormMax);
+
                   const points = activeSeries.history.map((h, i) => {
-                    const x = 30 + (i / Math.max(activeSeries.history.length - 1, 1)) * 210;
-                    const y = 100 - ((h.value - minV) / range) * 80;
+                    const x = 35 + (i / Math.max(activeSeries.history.length - 1, 1)) * 200;
+                    const y = getY(h.value);
                     return { x, y, val: h.value, date: h.date };
                   });
 
                   const lineStr = points.map(p => `${p.x},${p.y}`).join(' ');
 
-                  // Projected point
-                  const projVal = activeSeries.projectedValue || vals[vals.length - 1];
-                  const projX = 270;
-                  const projY = 100 - ((projVal - minV) / range) * 80;
+                  const projX = 285;
+                  const projY = getY(projVal);
                   const lastPoint = points[points.length - 1];
 
                   return (
                     <>
-                      <polyline points={lineStr} fill="none" stroke="#38bdf8" strokeWidth="3" strokeLinecap="round" />
-                      {/* Projected dashed line */}
-                      <line x1={lastPoint.x} y1={lastPoint.y} x2={projX} y2={projY} stroke="#818cf8" strokeWidth="2" strokeDasharray="4 4" />
+                      {/* Normal Range Reference Corridor */}
+                      <rect x="15" y={yNormMax} width="290" height={normHeight} fill="rgba(16, 185, 129, 0.08)" rx="4" />
+                      <line x1="15" y1={yNormMax} x2="305" y2={yNormMax} stroke="rgba(16, 185, 129, 0.35)" strokeDasharray="3 3" />
+                      <line x1="15" y1={yNormMin} x2="305" y2={yNormMin} stroke="rgba(16, 185, 129, 0.35)" strokeDasharray="3 3" />
+                      
+                      {/* Corridor Labels positioned away from data points */}
+                      <text x="20" y={yNormMax - 4} className="text-[8px] fill-emerald-400 font-mono font-bold">Normal Max ({activeSeries.normalMax})</text>
+                      <text x="20" y={yNormMin + 11} className="text-[8px] fill-emerald-400 font-mono font-bold">Normal Min ({activeSeries.normalMin})</text>
 
-                      {/* Points */}
+                      {/* Line Path */}
+                      <polyline points={lineStr} fill="none" stroke="#38bdf8" strokeWidth="3" strokeLinecap="round" />
+                      
+                      {/* Projected dashed line */}
+                      <line x1={lastPoint.x} y1={lastPoint.y} x2={projX} y2={projY} stroke="#818cf8" strokeWidth="2.5" strokeDasharray="4 4" />
+
+                      {/* Historical Data Points */}
                       {points.map((p, i) => (
                         <g key={i}>
-                          <circle cx={p.x} cy={p.y} r="4" fill="#38bdf8" />
-                          <text x={p.x} y={p.y - 8} textAnchor="middle" className="text-[9px] fill-slate-200 font-mono font-bold">{p.val}</text>
+                          <circle cx={p.x} cy={p.y} r="4.5" fill="#38bdf8" />
+                          <text x={p.x} y={p.y - 8} textAnchor="middle" className="text-[9px] fill-white font-mono font-bold">{p.val}</text>
+                          <text x={p.x} y="132" textAnchor="middle" className="text-[8px] fill-slate-400 font-mono">{p.date}</text>
                         </g>
                       ))}
 
-                      {/* Projected Point */}
+                      {/* Projected Target Point */}
                       <circle cx={projX} cy={projY} r="5" fill="#818cf8" />
                       <circle cx={projX} cy={projY} r="9" fill="none" stroke="#818cf8" strokeWidth="1.5" className="animate-ping" />
                       <text x={projX} y={projY - 10} textAnchor="middle" className="text-[9px] fill-indigo-300 font-mono font-bold">Proj: {projVal}</text>
+                      <text x={projX} y="132" textAnchor="middle" className="text-[8px] fill-indigo-400 font-mono font-bold">+30 Days</text>
                     </>
                   );
                 })()}

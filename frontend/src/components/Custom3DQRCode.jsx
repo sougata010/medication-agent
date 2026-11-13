@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useRef } from 'react';
+import React, { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { QrCode, ShieldCheck, Sparkles, Activity, Dna, Zap, Shuffle, Layers3 } from 'lucide-react';
 
@@ -11,14 +11,12 @@ const COLOR_PALETTES = [
   { name: 'Prism Cobalt', finder: '#0284c7', active1: '#38bdf8', active2: '#818cf8', bgGlow: 'from-sky-600 via-blue-600 to-indigo-600', qrFill: '#ffffff' },
 ];
 
-// Global Static Caches to prevent re-computation across re-renders
+// Global Static Caches
 const QR_MATRIX_CACHE = new Map();
 const ACTIVE_NODES_CACHE = new Map();
 
 function getCachedQRMatrix(seed) {
-  if (QR_MATRIX_CACHE.has(seed)) {
-    return QR_MATRIX_CACHE.get(seed);
-  }
+  if (QR_MATRIX_CACHE.has(seed)) return QR_MATRIX_CACHE.get(seed);
   const size = 21;
   const grid = Array.from({ length: size }, () => Array(size).fill(false));
   
@@ -52,11 +50,10 @@ function getCachedQRMatrix(seed) {
 
 function getCachedActiveNodes(qrMatrix, currentShape, currentPalette, seed) {
   const cacheKey = `${seed}_${currentShape}_${currentPalette.name}`;
-  if (ACTIVE_NODES_CACHE.has(cacheKey)) {
-    return ACTIVE_NODES_CACHE.get(cacheKey);
-  }
+  if (ACTIVE_NODES_CACHE.has(cacheKey)) return ACTIVE_NODES_CACHE.get(cacheKey);
 
   const nodes = [];
+  const bonds = []; // 3D Wireframe Bond Connections
   const size = 21;
   const step = 9.5;
   const originX = (220 - 199.5) / 2;
@@ -77,19 +74,19 @@ function getCachedActiveNodes(qrMatrix, currentShape, currentPalette, seed) {
         let molX = 110;
         let molY = 110;
         let molZ = 0;
-
         const k = index;
 
         if (currentShape === 'helix') {
-          const angle = index * 0.28;
-          const radius = 58 + Math.sin(index * 0.35) * 18;
+          const strand = k % 2;
+          const angle = (k / 2) * 0.3 + (strand * Math.PI);
+          const radius = 55;
           molX = 110 + radius * Math.cos(angle);
-          molY = 25 + (index / totalActive) * 170;
+          molY = 25 + (k / totalActive) * 170;
           molZ = radius * Math.sin(angle);
         } else if (currentShape === 'torus') {
-          const u = index * 0.15;
+          const u = index * 0.16;
           const R = 60;
-          const rR = 25;
+          const rR = 24;
           molX = 110 + (R + rR * Math.cos(u * 3)) * Math.cos(u);
           molY = 110 + (R + rR * Math.cos(u * 3)) * Math.sin(u);
           molZ = rR * Math.sin(u * 3);
@@ -103,11 +100,11 @@ function getCachedActiveNodes(qrMatrix, currentShape, currentPalette, seed) {
         } else if (currentShape === 'galaxy') {
           const arms = 3;
           const armAngle = (k % arms) * ((Math.PI * 2) / arms);
-          const distance = (k / totalActive) * 75;
+          const distance = (k / totalActive) * 78;
           const angle = distance * 0.15 + armAngle;
           molX = 110 + distance * Math.cos(angle);
           molY = 110 + distance * Math.sin(angle);
-          molZ = Math.sin(distance * 0.2) * 20;
+          molZ = Math.sin(distance * 0.2) * 22;
         } else if (currentShape === 'hypercube') {
           const cols = 6;
           const rows = 6;
@@ -115,9 +112,9 @@ function getCachedActiveNodes(qrMatrix, currentShape, currentPalette, seed) {
           const ix = k % cols;
           const iy = Math.floor(k / cols) % rows;
           const iz = Math.floor(k / (cols * rows)) % layers;
-          molX = 50 + ix * 24;
-          molY = 50 + iy * 24;
-          molZ = (iz - 3) * 20;
+          molX = 45 + ix * 26;
+          molY = 45 + iy * 26;
+          molZ = (iz - 3) * 22;
         } else if (currentShape === 'wave') {
           const xVal = (k % 15) * 12 + 25;
           const yVal = Math.floor(k / 15) * 12 + 25;
@@ -133,9 +130,9 @@ function getCachedActiveNodes(qrMatrix, currentShape, currentPalette, seed) {
         } else { // pyramid
           const level = Math.floor(Math.sqrt(k));
           const sub = k - level * level;
-          molX = 110 + (sub - level / 2) * 14;
-          molY = 30 + level * 16;
-          molZ = (level - 5) * 15;
+          molX = 110 + (sub - level / 2) * 15;
+          molY = 25 + level * 18;
+          molZ = (level - 5) * 16;
         }
 
         const nodeColor = isFinder 
@@ -146,6 +143,7 @@ function getCachedActiveNodes(qrMatrix, currentShape, currentPalette, seed) {
           id: `node-${r}-${c}`,
           r,
           c,
+          index,
           isFinder,
           qrX,
           qrY,
@@ -159,15 +157,32 @@ function getCachedActiveNodes(qrMatrix, currentShape, currentPalette, seed) {
       }
     }
   }
-  ACTIVE_NODES_CACHE.set(cacheKey, nodes);
-  return nodes;
+
+  // Generate 3D structural bond lines connecting neighboring vertices
+  for (let i = 0; i < nodes.length; i++) {
+    const nodeA = nodes[i];
+    for (let j = i + 1; j < Math.min(nodes.length, i + 7); j++) {
+      const nodeB = nodes[j];
+      const dx = nodeA.molX - nodeB.molX;
+      const dy = nodeA.molY - nodeB.molY;
+      const dz = nodeA.molZ - nodeB.molZ;
+      const dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
+      
+      if (dist < 32) {
+        bonds.push({ id: `bond-${nodeA.id}-${nodeB.id}`, from: nodeA, to: nodeB });
+      }
+    }
+  }
+
+  const result = { nodes, bonds };
+  ACTIVE_NODES_CACHE.set(cacheKey, result);
+  return result;
 }
 
 export default function Custom3DQRCode({ payloadText = '', title = "Sougata's Medical Pass" }) {
   const [mode, setMode] = useState('qr'); // 'qr' | 'molecule'
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
 
-  // Compute deterministic seed from payloadText
   const userSeed = useMemo(() => {
     let hash = 0;
     const str = payloadText || 'VitaLeaf-User-Default-Seed';
@@ -178,7 +193,6 @@ export default function Custom3DQRCode({ payloadText = '', title = "Sougata's Me
     return Math.abs(hash);
   }, [payloadText]);
 
-  // Per-user dynamic structure state
   const [shapeIndex, setShapeIndex] = useState(() => userSeed % SHAPE_TYPES.length);
   const [paletteIndex, setPaletteIndex] = useState(() => (userSeed >> 2) % COLOR_PALETTES.length);
   const [variantId, setVariantId] = useState(() => (userSeed % 99) + 1);
@@ -186,17 +200,14 @@ export default function Custom3DQRCode({ payloadText = '', title = "Sougata's Me
   const currentShape = SHAPE_TYPES[shapeIndex];
   const currentPalette = COLOR_PALETTES[paletteIndex];
 
-  // Memoized & Cache-backed Matrix (re-computed ONLY if userSeed changes)
   const qrMatrix = useMemo(() => {
     return getCachedQRMatrix(userSeed);
   }, [userSeed]);
 
-  // Memoized & Cache-backed 3D Nodes (re-computed ONLY if shape, palette, or seed changes)
-  const activeNodes = useMemo(() => {
+  const { nodes: activeNodes, bonds: activeBonds } = useMemo(() => {
     return getCachedActiveNodes(qrMatrix, currentShape, currentPalette, userSeed);
   }, [qrMatrix, currentShape, currentPalette, userSeed]);
 
-  // Handle Shuffle Action
   const handleShuffle = () => {
     setShapeIndex((prev) => (prev + 1) % SHAPE_TYPES.length);
     setPaletteIndex((prev) => (prev + 1) % COLOR_PALETTES.length);
@@ -217,10 +228,8 @@ export default function Custom3DQRCode({ payloadText = '', title = "Sougata's Me
 
   return (
     <div className="relative group perspective-1000">
-      {/* Ambient glowing background */}
       <div className={`absolute -inset-2 bg-gradient-to-r ${currentPalette.bgGlow} rounded-3xl blur-xl opacity-30 group-hover:opacity-60 transition-all duration-700`}></div>
 
-      {/* Main 3D Card Glass Panel */}
       <motion.div 
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
@@ -228,7 +237,6 @@ export default function Custom3DQRCode({ payloadText = '', title = "Sougata's Me
         transition={{ type: "spring", stiffness: 180, damping: 18 }}
         className="relative bg-white/95 backdrop-blur-xl border border-white/80 rounded-[2.5rem] p-7 shadow-2xl flex flex-col items-center text-center overflow-hidden"
       >
-        {/* Header Bar */}
         <div className="w-full flex items-center justify-between mb-4 pb-3 border-b border-slate-100">
           <div className="flex items-center gap-2">
             <div className="w-7 h-7 rounded-full bg-slate-900 flex items-center justify-center text-white shadow-md">
@@ -241,7 +249,6 @@ export default function Custom3DQRCode({ payloadText = '', title = "Sougata's Me
           </span>
         </div>
 
-        {/* Morph & Shuffle Control Bar */}
         <div className="w-full flex items-center justify-between bg-slate-100/90 p-1 rounded-2xl mb-3 border border-slate-200/70 gap-1">
           <button
             onClick={() => setMode('molecule')}
@@ -251,7 +258,15 @@ export default function Custom3DQRCode({ payloadText = '', title = "Sougata's Me
                 : 'text-slate-600 hover:text-slate-900'
             }`}
           >
-            <Dna className="w-3.5 h-3.5 text-indigo-400" /> 3D Structure
+            <Dna className="w-3.5 h-3.5 text-indigo-400" /> 3D Wireframe
+          </button>
+
+          <button
+            onClick={() => setMode(mode === 'qr' ? 'molecule' : 'qr')}
+            title="Morph 3D Wireframe Structure"
+            className="p-1.5 bg-sky-50 text-sky-600 hover:bg-sky-100 rounded-xl transition-all border border-sky-200/60 active:scale-95 flex items-center gap-1 text-[11px] font-bold"
+          >
+            <Zap className="w-3.5 h-3.5 text-sky-500 animate-bounce" /> Morph
           </button>
 
           <button
@@ -274,20 +289,16 @@ export default function Custom3DQRCode({ payloadText = '', title = "Sougata's Me
           </button>
         </div>
 
-        {/* HUD Info */}
         <div className="w-full flex items-center justify-between px-2 mb-3 text-[10px] font-mono text-slate-500 font-semibold">
           <span className="capitalize flex items-center gap-1 text-slate-700">
-            <Layers3 className="w-3 h-3 text-indigo-500" /> <strong>{currentShape}</strong>
+            <Layers3 className="w-3 h-3 text-indigo-500" /> Mesh: <strong>{currentShape}</strong>
           </span>
           <span className="text-slate-400">Variant #{variantId} • {currentPalette.name}</span>
         </div>
 
-        {/* 3D Stage Container (220px x 220px) */}
         <div className="relative w-[220px] h-[220px] bg-slate-950 rounded-2xl shadow-2xl border border-slate-800 overflow-hidden flex items-center justify-center">
-          {/* Stage Background Grid */}
           <div className="absolute inset-0 bg-[linear-gradient(to_right,#1e293b_1px,transparent_1px),linear-gradient(to_bottom,#1e293b_1px,transparent_1px)] bg-[size:14px_14px] opacity-40"></div>
 
-          {/* Scanning Beam in QR Mode */}
           {mode === 'qr' && (
             <motion.div 
               animate={{ y: [-100, 100, -100] }}
@@ -296,13 +307,37 @@ export default function Custom3DQRCode({ payloadText = '', title = "Sougata's Me
             />
           )}
 
-          {/* PERSISTENT MORPHING 3D PARTICLE FIELD */}
+          {/* 3D WIREFRAME MESH & MOLECULAR BONDS STAGE */}
           <motion.div 
             className="absolute inset-0 w-full h-full z-20 pointer-events-none"
             style={{ transformStyle: 'preserve-3d', perspective: 800 }}
             animate={mode === 'molecule' ? { rotateY: [0, 360] } : { rotateY: 0 }}
             transition={mode === 'molecule' ? { duration: 12, repeat: Infinity, ease: "linear" } : { duration: 0.8, ease: "easeOut" }}
           >
+            {/* SVG 3D Wireframe Structural Bonds */}
+            {mode === 'molecule' && (
+              <svg className="absolute inset-0 w-full h-full overflow-visible pointer-events-none z-10">
+                {activeBonds.map((bond) => (
+                  <motion.line
+                    key={bond.id}
+                    initial={false}
+                    animate={{
+                      x1: bond.from.molX,
+                      y1: bond.from.molY,
+                      x2: bond.to.molX,
+                      y2: bond.to.molY,
+                      opacity: 0.4,
+                    }}
+                    transition={{ duration: 0.6 }}
+                    stroke={currentPalette.finder}
+                    strokeWidth="1.2"
+                    strokeDasharray={currentShape === 'helix' ? 'none' : '2 2'}
+                  />
+                ))}
+              </svg>
+            )}
+
+            {/* 3D Vertices / Atoms */}
             {activeNodes.map((node) => {
               const targetX = mode === 'qr' ? node.qrX : node.molX;
               const targetY = mode === 'qr' ? node.qrY : node.molY;
@@ -339,7 +374,7 @@ export default function Custom3DQRCode({ payloadText = '', title = "Sougata's Me
             })}
           </motion.div>
 
-          {/* Crisp Scannable Vector Overlay (Fades in smoothly during QR mode) */}
+          {/* Crisp Scannable Vector Overlay */}
           <motion.div 
             className="absolute inset-0 w-full h-full p-4.5 flex items-center justify-center z-25 pointer-events-none"
             initial={false}
@@ -367,7 +402,6 @@ export default function Custom3DQRCode({ payloadText = '', title = "Sougata's Me
               )}
             </svg>
 
-            {/* Central Emblem Badge */}
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-30">
               <div className="w-9 h-9 bg-slate-900/90 backdrop-blur-md rounded-xl border border-sky-400/60 shadow-lg flex items-center justify-center">
                 <Sparkles className="w-4.5 h-4.5 text-sky-400 animate-pulse" />
@@ -376,7 +410,6 @@ export default function Custom3DQRCode({ payloadText = '', title = "Sougata's Me
           </motion.div>
         </div>
 
-        {/* Footer info */}
         <div className="mt-4">
           <div className="flex items-center justify-center gap-2">
             <h4 className="text-sm font-heading font-extrabold text-slate-900">{title}</h4>
@@ -384,7 +417,7 @@ export default function Custom3DQRCode({ payloadText = '', title = "Sougata's Me
           </div>
           <p className="text-[11px] text-slate-500 font-medium mt-1">
             {mode === 'molecule' 
-              ? `Interactive 3D ${currentShape.toUpperCase()} Structure • Click Shuffle or QR to Morph`
+              ? `Interactive 3D ${currentShape.toUpperCase()} Wireframe Mesh • Click Morph or QR to Assemble`
               : 'Scan for instant physician EHR import & clinical verification'}
           </p>
         </div>
@@ -392,7 +425,3 @@ export default function Custom3DQRCode({ payloadText = '', title = "Sougata's Me
     </div>
   );
 }
-
-
-
-

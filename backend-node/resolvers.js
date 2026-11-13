@@ -744,16 +744,34 @@ const resolvers = {
           [userId]
         );
 
+        // Exclude drug active ingredients / excipients mistaken for lab parameters
+        const EXCLUDED_TERMS = [
+          "lisinopril", "metformin", "amoxicillin", "ibuprofen", "cellulose", "stearate",
+          "silicon", "croscarmellose", "sodium", "calcium phosphate", "hydrochloride", "tablet"
+        ];
+
         const grouped = {};
         for (const row of labsRes.rows) {
           const name = row.name;
+          const lower = name.toLowerCase();
+
+          // Skip non-biomarkers (excipients or drug names)
+          if (EXCLUDED_TERMS.some(term => lower.includes(term))) {
+            continue;
+          }
+
+          const minVal = row.normal_min !== null && row.normal_min !== undefined ? parseFloat(row.normal_min) : 70;
+          const maxVal = row.normal_max !== null && row.normal_max !== undefined ? parseFloat(row.normal_max) : 100;
+          const unitStr = row.unit || '';
+          const categoryStr = row.category || 'Clinical Marker';
+
           if (!grouped[name]) {
             grouped[name] = {
               name: name,
-              unit: row.unit || '',
-              category: row.category || 'Biomarker',
-              normalMin: parseFloat(row.normal_min) || 70,
-              normalMax: parseFloat(row.normal_max) || 100,
+              unit: unitStr,
+              category: categoryStr,
+              normalMin: minVal,
+              normalMax: maxVal,
               history: []
             };
           }
@@ -761,36 +779,23 @@ const resolvers = {
           grouped[name].history.push({
             date: row.uploaded_at ? new Date(row.uploaded_at).toLocaleDateString() : 'Today',
             value: numVal,
-            status: row.status || 'Normal'
+            status: row.status || (numVal > maxVal ? 'High' : numVal < minVal ? 'Low' : 'Normal')
           });
         }
 
         const seriesList = Object.values(grouped);
-        
-        return seriesList.map(s => {
-          if (s.history.length === 1) {
-            const latestVal = s.history[0].value;
-            const today = new Date();
-            const prev1 = new Date(today.getTime() - 60*24*60*60*1000).toLocaleDateString();
-            const prev2 = new Date(today.getTime() - 30*24*60*60*1000).toLocaleDateString();
-            
-            s.history = [
-              { date: prev1, value: parseFloat((latestVal * 1.12).toFixed(1)), status: "Warning" },
-              { date: prev2, value: parseFloat((latestVal * 1.05).toFixed(1)), status: "Warning" },
-              s.history[0]
-            ];
-          }
 
+        return seriesList.map(s => {
           const lastVal = s.history[s.history.length - 1].value;
           const firstVal = s.history[0].value;
           let trend = "stable";
           let proj = lastVal;
           if (lastVal < firstVal) {
             trend = "improving";
-            proj = parseFloat((lastVal * 0.95).toFixed(1));
+            proj = parseFloat((lastVal * 0.94).toFixed(1));
           } else if (lastVal > firstVal) {
             trend = "worsening";
-            proj = parseFloat((lastVal * 1.05).toFixed(1));
+            proj = parseFloat((lastVal * 1.06).toFixed(1));
           }
 
           return {
@@ -803,7 +808,7 @@ const resolvers = {
         console.error("Error fetching biomarker trends:", err);
         return [];
       }
-    }
+    },
   },
 
   User: {
