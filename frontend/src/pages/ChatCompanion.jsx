@@ -163,7 +163,12 @@ export default function ChatCompanion() {
   }, [userId]);
 
   const cleanSessionTitle = (raw) => {
-    if (!raw || raw.toLowerCase().includes('failed to synthesi') || raw.toLowerCase().includes('starting up')) {
+    if (!raw || 
+        raw.toLowerCase().includes('failed') || 
+        raw.toLowerCase().includes('synthesi') || 
+        raw.toLowerCase().includes('starting up') || 
+        raw.toLowerCase().includes('medgraph ai') ||
+        raw.toLowerCase().includes('error')) {
       return 'Medication & Health Inquiry';
     }
     return raw.replace(/\[ACTION:[^\]]+\]/gi, '').trim();
