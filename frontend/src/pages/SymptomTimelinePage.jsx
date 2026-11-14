@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useGlobalContext } from '../context/GlobalContext';
 import SymptomQuickLogger from '../components/SymptomQuickLogger';
-import { Activity, Pill, AlertTriangle, Sparkles, RefreshCw, Calendar, Clock, CheckCircle2, Eye, ShieldAlert, ArrowRight } from 'lucide-react';
+import SymptomDiseasePredictor from '../components/SymptomDiseasePredictor';
+import { Activity, Pill, AlertTriangle, Sparkles, RefreshCw, Calendar, Clock, CheckCircle2, Eye, ShieldAlert, ArrowRight, Brain } from 'lucide-react';
 
 const GET_SYMPTOM_CORRELATION_TIMELINE = `
   query GetSymptomCorrelationTimeline($userId: ID!) {
@@ -85,6 +86,7 @@ export default function SymptomTimelinePage() {
   const [loading, setLoading] = useState(true);
   const [timelineData, setTimelineData] = useState(null);
   const [useSampleMode, setUseSampleMode] = useState(false);
+  const [activeTab, setActiveTab] = useState('predictor'); // 'predictor' or 'timeline'
 
   const fetchTimelineData = async () => {
     setLoading(true);
@@ -145,21 +147,54 @@ export default function SymptomTimelinePage() {
 
   return (
     <div className="space-y-6 pb-12">
-      {/* Whitish Clean Header */}
-      <div className="relative bg-white border border-gray-100 rounded-tl-[3rem] rounded-br-[3rem] rounded-tr-2xl rounded-bl-2xl p-8 md:p-10 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-6 overflow-hidden">
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-emerald-50/40 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/3 pointer-events-none" />
-        <div className="relative z-10 max-w-2xl">
-          <div className="inline-flex items-center gap-2 bg-gray-50 border border-gray-200 px-3.5 py-1.5 rounded-full mb-4 shadow-xs">
-            <Sparkles className="w-4 h-4 text-emerald-600" />
-            <span className="text-[11px] font-bold uppercase tracking-widest text-gray-600">Temporal Insight Intelligence</span>
-          </div>
-          <h1 className="text-3xl font-black tracking-tight text-gray-900 sm:text-4xl">
-            Symptom ↔ Medication Timeline
-          </h1>
-          <p className="mt-2 text-sm text-gray-500 font-medium leading-relaxed">
-            Track side-effects against your medication start/change dates. Surface statistically grounded correlation insights like <em>"Your dry cough began 2 days after Lisinopril was added."</em>
-          </p>
-        </div>
+      {/* Interactive Mode Tabs */}
+      <div className="flex p-1.5 bg-gray-100/80 rounded-2xl border border-gray-200/80 max-w-xl mx-auto shadow-xs">
+        <button
+          type="button"
+          onClick={() => setActiveTab('predictor')}
+          className={`flex-1 py-3 px-4 rounded-xl text-xs md:text-sm font-bold flex items-center justify-center gap-2 transition-all ${
+            activeTab === 'predictor'
+              ? 'bg-white text-gray-900 shadow-sm border border-gray-200'
+              : 'text-gray-500 hover:text-gray-900'
+          }`}
+        >
+          <Brain className={`w-4 h-4 ${activeTab === 'predictor' ? 'text-indigo-600' : 'text-gray-400'}`} />
+          <span>Symptom → Disease Predictor</span>
+          <span className="px-1.5 py-0.5 rounded text-[10px] font-extrabold bg-indigo-100 text-indigo-700">DL AI</span>
+        </button>
+        <button
+          type="button"
+          onClick={() => setActiveTab('timeline')}
+          className={`flex-1 py-3 px-4 rounded-xl text-xs md:text-sm font-bold flex items-center justify-center gap-2 transition-all ${
+            activeTab === 'timeline'
+              ? 'bg-white text-gray-900 shadow-sm border border-gray-200'
+              : 'text-gray-500 hover:text-gray-900'
+          }`}
+        >
+          <Activity className={`w-4 h-4 ${activeTab === 'timeline' ? 'text-emerald-600' : 'text-gray-400'}`} />
+          <span>Medication Correlation Timeline</span>
+        </button>
+      </div>
+
+      {activeTab === 'predictor' ? (
+        <SymptomDiseasePredictor />
+      ) : (
+        <div className="space-y-6">
+          {/* Whitish Clean Header */}
+          <div className="relative bg-white border border-gray-100 rounded-tl-[3rem] rounded-br-[3rem] rounded-tr-2xl rounded-bl-2xl p-8 md:p-10 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-6 overflow-hidden">
+            <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-emerald-50/40 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/3 pointer-events-none" />
+            <div className="relative z-10 max-w-2xl">
+              <div className="inline-flex items-center gap-2 bg-gray-50 border border-gray-200 px-3.5 py-1.5 rounded-full mb-4 shadow-xs">
+                <Sparkles className="w-4 h-4 text-emerald-600" />
+                <span className="text-[11px] font-bold uppercase tracking-widest text-gray-600">Temporal Insight Intelligence</span>
+              </div>
+              <h1 className="text-3xl font-black tracking-tight text-gray-900 sm:text-4xl">
+                Symptom ↔ Medication Timeline
+              </h1>
+              <p className="mt-2 text-sm text-gray-500 font-medium leading-relaxed">
+                Track side-effects against your medication start/change dates. Surface statistically grounded correlation insights like <em>"Your dry cough began 2 days after Lisinopril was added."</em>
+              </p>
+            </div>
 
         <div className="relative z-10 flex flex-wrap items-center gap-3">
           <button
@@ -300,6 +335,8 @@ export default function SymptomTimelinePage() {
           </div>
         )}
       </div>
+        </div>
+      )}
     </div>
   );
 }

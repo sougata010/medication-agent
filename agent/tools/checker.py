@@ -14,7 +14,8 @@ if not api_key:
 class LiveSafetyChecker:
     def __init__(self):
         self.base_url = "https://api.fda.gov/drug/label.json"
-        self.model = os.getenv("GEMINI_MODEL") or os.getenv("MODEL_NAME") or "gemini-2.5-flash"
+        m = os.getenv("GEMINI_MODEL") or os.getenv("MODEL_NAME") or "gemini-flash-latest"
+        self.model = "gemini-flash-latest" if m == "gemini-2.5-flash" else m
     def cross_reference_safety(self, drug_name: str, active_list: List[str], allergies: List[str]) -> SafetyEvaluation:
         search_drug = drug_name.strip().lower()
         query_url = f"{self.base_url}?search=(openfda.brand_name:\"{search_drug}\"+openfda.generic_name:\"{search_drug}\")&limit=1"

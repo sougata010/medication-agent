@@ -1,12 +1,12 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { useGlobalContext } from '../context/GlobalContext';
+import { useNavigate } from 'react-router-dom';
 import { createPortal } from 'react-dom';
-import BiomarkerTrends from '../components/BiomarkerTrends';
 import {
   FlaskConical, CheckCircle2, AlertTriangle, AlertOctagon,
   Search, FileText, Calendar, Upload, ShieldAlert,
   Activity, Pill, ChevronRight, XOctagon, Info,
-  Database, X, HeartPulse, Stethoscope, ChevronDown
+  Database, X, HeartPulse, Stethoscope, ChevronDown, ShoppingBag
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -84,7 +84,7 @@ const StatusBadge = ({ status }) => {
 };
 
 // Mobile Collapsible Section
-const MobileMedicineSection = ({ med, onSelectChem }) => {
+const MobileMedicineSection = ({ med, onSelectChem, onBuyMed }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -93,16 +93,29 @@ const MobileMedicineSection = ({ med, onSelectChem }) => {
         className="p-4 flex items-center justify-between cursor-pointer bg-gray-50/50 hover:bg-gray-50 transition-colors"
         onClick={() => setIsOpen(!isOpen)}
       >
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 min-w-0">
           <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center shrink-0 border border-gray-200">
              <Pill className="w-5 h-5 text-gray-900" />
           </div>
-          <div>
-             <h3 className="text-base font-heading font-extrabold text-gray-900">{med.name}</h3>
+          <div className="min-w-0">
+             <h3 className="text-base font-heading font-extrabold text-gray-900 truncate">{med.name}</h3>
              <p className="text-xs font-bold text-gray-500 uppercase tracking-widest font-mono">{med.chemicals.length} Parameters</p>
           </div>
         </div>
-        <ChevronDown className={`w-5 h-5 text-gray-500 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
+        <div className="flex items-center gap-2 shrink-0">
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              onBuyMed(med);
+            }}
+            className="px-2.5 py-1 rounded-xl text-xs font-bold bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-1 shadow-xs"
+          >
+            <ShoppingBag className="w-3 h-3" />
+            <span>Buy</span>
+          </button>
+          <ChevronDown className={`w-5 h-5 text-gray-500 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
+        </div>
       </div>
 
       <AnimatePresence>
@@ -229,11 +242,17 @@ const BiomarkerRadarChart = ({ parameters }) => {
 
 export default function LabReports() {
   const { labReports, handleUploadLabReport, labUploadLoading, user } = useGlobalContext();
+  const navigate = useNavigate();
   const [activeReportIdx, setActiveReportIdx] = useState(0);
   const [searchQuery, setSearchQuery] = useState('');
   
   // Modal State
   const [selectedChemData, setSelectedChemData] = useState(null);
+
+  const handleOpenBuy = (med) => {
+    const medName = med?.name || 'Prescription Medicine';
+    navigate(`/dashboard/pharmacies?search=${encodeURIComponent(medName)}`);
+  };
 
   const currentReport = labReports && labReports.length > 0 ? labReports[activeReportIdx] : null;
   const parameters = currentReport ? currentReport.parameters : [];
@@ -330,6 +349,19 @@ export default function LabReports() {
         </div>
         
         <div className="flex items-center gap-3">
+          {/* Quick Buy / Search Pharmacy Button */}
+          <button
+            type="button"
+            onClick={() => {
+              const firstMed = medicines.length > 0 ? medicines[0] : null;
+              handleOpenBuy(firstMed);
+            }}
+            className="med-btn-outline !rounded-xl !py-2 !px-3.5 text-xs font-bold flex items-center gap-1.5 shadow-xs"
+          >
+            <ShoppingBag className="w-4 h-4 text-blue-600" />
+            <span>Buy / Search Pharmacy</span>
+          </button>
+
           {/* Search */}
           <div className="relative hidden md:block">
             <Search className="w-4 h-4 text-gray-500 absolute left-3 top-1/2 -translate-y-1/2" />
@@ -421,9 +453,6 @@ export default function LabReports() {
         </div>
       )}
 
-      {/* Longitudinal Biomarker Trajectories */}
-      <BiomarkerTrends userId={user?.id} />
-
       {/* MOBILE VIEW: Collapsible Sections */}
       <div className="flex flex-col gap-4 md:hidden">
         {medicines.map((med, idx) => (
@@ -431,6 +460,7 @@ export default function LabReports() {
             key={idx} 
             med={med} 
             onSelectChem={(chem) => setSelectedChemData({ chem, medName: med.name })} 
+            onBuyMed={(m) => handleOpenBuy(m)}
           />
         ))}
       </div>
@@ -451,6 +481,14 @@ export default function LabReports() {
                 </div>
               </div>
               <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => handleOpenBuy(med)}
+                  className="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-blue-600 hover:bg-blue-700 text-white shadow-xs flex items-center gap-1.5 transition-all"
+                >
+                  <ShoppingBag className="w-3.5 h-3.5" />
+                  <span>Buy Medicine</span>
+                </button>
                 {med.hasBanned && <span className="clinical-badge clinical-badge-danger"><XOctagon className="w-3 h-3" /> Has Banned</span>}
                 {med.hasWarning && !med.hasBanned && <span className="clinical-badge clinical-badge-warning"><AlertTriangle className="w-3 h-3" /> Has Warnings</span>}
                 {!med.hasBanned && !med.hasWarning && <span className="clinical-badge clinical-badge-success"><CheckCircle2 className="w-3 h-3" /> All Clear</span>}
@@ -517,6 +555,7 @@ export default function LabReports() {
             onClose={() => setSelectedChemData(null)}
             parseRecommendation={parseRecommendation}
             getRiskColor={getRiskColor}
+            onBuyMed={() => handleOpenBuy({ name: selectedChemData.medName, chemicals: [selectedChemData.chem] })}
           />
         )}
       </AnimatePresence>
@@ -525,7 +564,7 @@ export default function LabReports() {
 }
 
 // Clinical Detail Modal
-const ChemicalModal = ({ data, onClose, parseRecommendation, getRiskColor }) => {
+const ChemicalModal = ({ data, onClose, parseRecommendation, getRiskColor, onBuyMed }) => {
   const { chem, medName } = data;
   const { src, source, cleanName } = useChemicalImage(chem.name);
   
@@ -575,9 +614,22 @@ const ChemicalModal = ({ data, onClose, parseRecommendation, getRiskColor }) => 
 
             {/* TITLE & INFO */}
             <div className="flex-1 text-center sm:text-left pt-1">
-              <span className="inline-block px-3 py-1 bg-white/10 rounded-full text-[10px] font-bold uppercase tracking-widest text-gray-300 mb-2 border border-white/10">
-                Found in {medName}
-              </span>
+              <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 mb-2">
+                <span className="inline-block px-3 py-1 bg-white/10 rounded-full text-[10px] font-bold uppercase tracking-widest text-gray-300 border border-white/10">
+                  Found in {medName}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => {
+                    onClose();
+                    onBuyMed();
+                  }}
+                  className="px-3 py-1 rounded-full text-xs font-bold bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-1.5 shadow-md shadow-blue-500/30 transition-all cursor-pointer"
+                >
+                  <ShoppingBag className="w-3.5 h-3.5" />
+                  <span>Buy {medName}</span>
+                </button>
+              </div>
               <h2 className="text-2xl sm:text-3xl font-heading font-extrabold text-white leading-tight mb-3">{chem.name}</h2>
               
               <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">

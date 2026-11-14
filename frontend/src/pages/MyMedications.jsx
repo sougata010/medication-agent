@@ -1,9 +1,9 @@
 import React, { useMemo, useState } from 'react';
 import { useGlobalContext } from '../context/GlobalContext';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import {
   Pill, CheckCircle2, AlertTriangle, Upload, Calendar,
-  Info, ChevronRight, Clock, Beaker, Plus, Stethoscope, FileText, Activity
+  Info, ChevronRight, Clock, Beaker, Plus, Stethoscope, FileText, Activity, ShoppingBag
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import Modal from '../components/Modal';
@@ -120,6 +120,7 @@ const MedicationInsights = ({ prescriptions, reminders }) => {
 
 export default function MyMedications() {
   const { prescriptions = [], handleAddManualMedication, reminders = [] } = useGlobalContext();
+  const navigate = useNavigate();
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [manualMed, setManualMed] = useState({
     drugName: '',
@@ -129,6 +130,11 @@ export default function MyMedications() {
     timing: ['morning']
   });
   const [isAdding, setIsAdding] = useState(false);
+
+  const navigateToBuy = (med) => {
+    const medName = med?.name || med?.drugName || 'Prescription Medicine';
+    navigate(`/dashboard/pharmacies?search=${encodeURIComponent(medName)}`);
+  };
 
   const submitManualMed = async () => {
     if (!manualMed.drugName) return alert('Drug name is required');
@@ -185,6 +191,16 @@ export default function MyMedications() {
           <p className="text-gray-900/70 font-medium mt-1">Active prescriptions and medication details</p>
         </div>
         <div className="flex items-center gap-3">
+          <button
+            onClick={() => {
+              const firstMed = medications.length > 0 ? medications[0] : null;
+              navigateToBuy(firstMed);
+            }}
+            className="med-btn-outline !rounded-full !py-2 !px-4 text-xs font-bold flex items-center gap-1.5"
+          >
+            <ShoppingBag className="w-4 h-4 text-blue-600" />
+            Buy Medicine
+          </button>
           <button
             onClick={() => setIsAddModalOpen(true)}
             className="med-btn-outline !rounded-full"
@@ -265,6 +281,7 @@ export default function MyMedications() {
                   <th className="hidden lg:table-cell">Category</th>
                   <th className="hidden xl:table-cell">Mechanism</th>
                   <th>Status</th>
+                  <th>Action</th>
                 </tr>
               </thead>
               <motion.tbody 
@@ -317,6 +334,16 @@ export default function MyMedications() {
                         </span>
                       )}
                     </td>
+                    <td>
+                      <button
+                        type="button"
+                        onClick={() => navigateToBuy(med)}
+                        className="px-3 py-1.5 rounded-xl text-xs font-bold bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-1.5 shadow-xs transition-colors"
+                      >
+                        <ShoppingBag className="w-3.5 h-3.5" />
+                        <span>Buy</span>
+                      </button>
+                    </td>
                   </motion.tr>
                 ))}
               </motion.tbody>
@@ -362,12 +389,22 @@ export default function MyMedications() {
                 <div className="rx-divider" />
                 <div className="flex flex-col gap-2 relative z-10">
                   {(p.items || []).map((item, idx) => (
-                    <div key={idx} className="flex items-center gap-3 p-2 rounded-lg bg-gray-50/50 border border-gray-100/50">
-                      <Pill className="w-4 h-4 text-gray-500 shrink-0" />
-                      <div className="flex-1 min-w-0">
-                        <span className="text-sm font-medium text-gray-900 truncate block">{item.medicine?.name || 'Unknown'}</span>
-                        <span className="text-[11px] text-gray-400 font-mono">{item.dosage} · {item.frequency}</span>
+                    <div key={idx} className="flex items-center justify-between gap-3 p-2 rounded-lg bg-gray-50/50 border border-gray-100/50">
+                      <div className="flex items-center gap-3 min-w-0">
+                        <Pill className="w-4 h-4 text-gray-500 shrink-0" />
+                        <div className="flex-1 min-w-0">
+                          <span className="text-sm font-medium text-gray-900 truncate block">{item.medicine?.name || 'Unknown'}</span>
+                          <span className="text-[11px] text-gray-400 font-mono">{item.dosage} · {item.frequency}</span>
+                        </div>
                       </div>
+                      <button
+                        type="button"
+                        onClick={() => navigateToBuy({ name: item.medicine?.name, dosage: item.dosage })}
+                        className="p-1.5 rounded-lg bg-white border border-gray-200 text-gray-600 hover:text-blue-600 hover:border-blue-400 transition-colors shrink-0"
+                        title="Buy / Order this medicine"
+                      >
+                        <ShoppingBag className="w-3.5 h-3.5" />
+                      </button>
                     </div>
                   ))}
                 </div>

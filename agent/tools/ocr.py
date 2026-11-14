@@ -62,5 +62,6 @@ class OCR:
             return []
 
 ocr = OCR()
-ocr.uploader("pres.jpg")
-print(ocr.image_to_txt())
+if __name__ == "__main__":
+    ocr.uploader("pres.jpg")
+    print(ocr.image_to_txt())

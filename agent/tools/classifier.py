@@ -3,12 +3,13 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.messages import SystemMessage, HumanMessage
 from dotenv import load_dotenv
 from agent.schema.classifier import RouterDecision
-load_dotenv()
+load_dotenv(override=True)
 api_key = os.getenv("GOOGLE_API_KEY")
 
 class InputClassifier:
     def __init__(self):
-        self.model = os.getenv("GEMINI_MODEL") or os.getenv("MODEL_NAME") or "gemini-2.5-flash"
+        m = os.getenv("GEMINI_MODEL") or os.getenv("MODEL_NAME") or "gemini-3.1-flash-lite"
+        self.model = "gemini-3.1-flash-lite" if m in ["gemini-2.5-flash", "gemini-flash-latest", "gemini-3.8-flash", "gemini-2.5-flash-lite"] else m
         self.system_prompt = (
             "You are the central triage router for MedGraph AI. Your sole job is to classify raw user inputs "
             "and determine which downstream specialist agent node should handle the request. Analyze the input carefully."
@@ -18,7 +19,8 @@ class InputClassifier:
         base_model = ChatGoogleGenerativeAI(
             model=self.model,
             google_api_key=api_key,
-            temperature=0.0
+            temperature=0.0,
+            max_retries=1
         )
         # Force the model to output our exact routing schema layout
         structured_model = base_model.with_structured_output(RouterDecision)

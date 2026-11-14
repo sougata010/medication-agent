@@ -60,6 +60,7 @@ const AppRoutes = () => {
         <Route path="community" element={<Community />} />
         <Route path="knowledge-graph" element={<KnowledgeGraphPage />} />
         <Route path="timeline" element={<SymptomTimelinePage />} />
+        <Route path="symptom-predictor" element={<SymptomTimelinePage />} />
         <Route path="doctor-share" element={<DoctorSharePackage />} />
         <Route path="polypharmacy" element={<PolypharmacyMatrix />} />
       </Route>

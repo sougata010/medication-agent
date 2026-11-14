@@ -16,12 +16,33 @@ if root_dir not in sys.path:
 
 # Load env configurations from root directory
 env_path = os.path.join(root_dir, '.env')
-load_dotenv(dotenv_path=env_path)
+load_dotenv(dotenv_path=env_path, override=True)
+
+def get_model_name() -> str:
+    m = os.getenv("GEMINI_MODEL") or os.getenv("MODEL_NAME") or "gemini-3.1-flash-lite"
+    if m in ["gemini-2.5-flash", "gemini-flash-latest", "gemini-3.8-flash", "gemini-2.5-flash-lite"]:
+        return "gemini-3.1-flash-lite"
+    return m
+
+def extract_text(content: Any) -> str:
+    if isinstance(content, list):
+        parts = []
+        for c in content:
+            if isinstance(c, dict) and "text" in c:
+                parts.append(str(c["text"]))
+            elif hasattr(c, "text"):
+                parts.append(str(c.text))
+            else:
+                parts.append(str(c))
+        return " ".join(parts).strip()
+    return str(content).strip()
 
 from agent.graph import run_agent
 from agent.tools.ocr import ocr
 from agent.tools.graph_builder import build_patient_knowledge_graph
 from agent.tools.correlation_analyzer import analyze_symptom_med_correlation
+from agent.tools.disease_predictor import predict_from_symptoms, SYMPTOMS_LIST, SYMPTOM_CATEGORIES
+from agent.tools.price_lookup import fetch_medicine_pricing
 
 app = FastAPI(title="MedGraph AI Orchestration Backend", version="1.0")
 
@@ -75,7 +96,52 @@ class SymptomCorrelationRequest(BaseModel):
     medications: List[Dict[str, Any]] = []
     symptom_logs: List[Dict[str, Any]] = []
 
+class DiseasePredictionRequest(BaseModel):
+    symptoms: List[str]
+    top_k: Optional[int] = 5
+
+class MedicinePriceRequest(BaseModel):
+    query: str
+    dosage: Optional[str] = None
+
 # Endpoints
+@app.get("/api/medicine-prices")
+async def get_medicine_prices_endpoint(
+    query: str = "Atorvastatin",
+    dosage: Optional[str] = None,
+    pharmacy: Optional[str] = None,
+    type: Optional[str] = None
+):
+    try:
+        data = fetch_medicine_pricing(query, dosage, pharmacy, type)
+        return data
+    except Exception as e:
+        print("FastAPI get_medicine_prices Error:", e)
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/medicine-prices")
+async def post_medicine_prices_endpoint(payload: MedicinePriceRequest):
+    try:
+        data = fetch_medicine_pricing(payload.query, payload.dosage)
+        return data
+    except Exception as e:
+        print("FastAPI post_medicine_prices Error:", e)
+        raise HTTPException(status_code=500, detail=str(e))
+@app.get("/api/symptoms")
+async def get_symptoms_list():
+    return {
+        "symptoms": SYMPTOMS_LIST,
+        "categories": SYMPTOM_CATEGORIES
+    }
+
+@app.post("/api/predict-disease")
+async def predict_disease_endpoint(payload: DiseasePredictionRequest):
+    try:
+        results = predict_from_symptoms(payload.symptoms, payload.top_k or 5)
+        return results
+    except Exception as e:
+        print("FastAPI predict_disease_endpoint Error:", e)
+        raise HTTPException(status_code=500, detail=str(e))
 @app.post("/api/symptom-correlation")
 async def symptom_correlation_endpoint(payload: SymptomCorrelationRequest):
     try:
@@ -210,8 +276,8 @@ async def extract_document_endpoint(payload: OCRRequest):
         from langchain_core.messages import SystemMessage, HumanMessage
         import json
 
-        model_name = os.getenv("GEMINI_MODEL") or os.getenv("MODEL_NAME") or "gemini-2.5-flash"
-        llm = ChatGoogleGenerativeAI(model=model_name, google_api_key=api_key, temperature=0.0)
+        model_name = get_model_name()
+        llm = ChatGoogleGenerativeAI(model=model_name, google_api_key=api_key, temperature=0.0, max_retries=1)
         
         system_prompt = """You are an advanced medical document extractor. Analyze the provided image of a document (prescription, lab report, or both).
 Extract the information into a strict JSON format with the following structure:
@@ -286,7 +352,7 @@ Return ONLY the raw JSON object, without any markdown formatting like ```json.""
         
         response = llm.invoke(msg)
         
-        result_text = response.content.strip()
+        result_text = extract_text(response.content)
         if result_text.startswith("```json"):
             result_text = result_text[7:-3].strip()
         elif result_text.startswith("```"):
@@ -336,8 +402,8 @@ async def generate_care_plan_endpoint(payload: CarePlanRequest):
         from langchain_core.messages import SystemMessage, HumanMessage
         import json
 
-        model_name = os.getenv("GEMINI_MODEL") or os.getenv("MODEL_NAME") or "gemini-2.5-flash"
-        llm = ChatGoogleGenerativeAI(model=model_name, google_api_key=api_key, temperature=0.2)
+        model_name = get_model_name()
+        llm = ChatGoogleGenerativeAI(model=model_name, google_api_key=api_key, temperature=0.2, max_retries=1)
         
         system_prompt = """You are an advanced medical AI assistant. Generate a highly personalized holistic care plan based on the user's active medications, medical conditions, allergies, and recent lab results.
 Return ONLY a strict JSON object with this exact structure:
@@ -367,7 +433,7 @@ Lab Results Context: {payload.lab_results if payload.lab_results else 'No recent
         
         response = llm.invoke(msg)
         
-        result_text = response.content.strip()
+        result_text = extract_text(response.content)
         if result_text.startswith("```json"):
             result_text = result_text[7:-3].strip()
         elif result_text.startswith("```"):
@@ -406,8 +472,8 @@ async def polypharmacy_ai_endpoint(payload: PolypharmacyAIRequest):
         import json
         import math
 
-        model_name = os.getenv("GEMINI_MODEL") or "gemini-2.5-flash"
-        llm = ChatGoogleGenerativeAI(model=model_name, google_api_key=api_key, temperature=0.1)
+        model_name = get_model_name()
+        llm = ChatGoogleGenerativeAI(model=model_name, google_api_key=api_key, temperature=0.1, max_retries=1)
         
         system_prompt = """You are a clinical pharmacologist AI. Analyze the provided active medications for polypharmacy interaction risk.
 Return a strict JSON object with this exact structure:
@@ -443,7 +509,7 @@ Return ONLY the raw JSON object, without markdown formatting."""
             HumanMessage(content=f"Analyze polypharmacy interactions for these active medications:\n{meds_text}")
         ]
         response = llm.invoke(msg)
-        result_text = response.content.strip()
+        result_text = extract_text(response.content)
         if result_text.startswith("```json"):
             result_text = result_text[7:-3].strip()
         elif result_text.startswith("```"):

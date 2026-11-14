@@ -11,7 +11,20 @@ from agent.tools.internet import TavilySearcher
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
-load_dotenv()
+load_dotenv(override=True)
+
+def extract_text(content) -> str:
+    if isinstance(content, list):
+        parts = []
+        for c in content:
+            if isinstance(c, dict) and "text" in c:
+                parts.append(str(c["text"]))
+            elif hasattr(c, "text"):
+                parts.append(str(c.text))
+            else:
+                parts.append(str(c))
+        return " ".join(parts).strip()
+    return str(content).strip()
 
 api_key = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
 if not api_key:
@@ -21,7 +34,8 @@ class UnifiedMediaFetcher:
     def __init__(self):
         self.pubchem_base = "https://pubchem.ncbi.nlm.nih.gov/rest/pug"
         self.nih_rximage_base = "https://rximage.nlm.nih.gov/api/rximage/1/modules.json"
-        self.model = os.getenv("GEMINI_MODEL") or os.getenv("MODEL_NAME") or "gemini-2.5-flash"
+        m = os.getenv("GEMINI_MODEL") or os.getenv("MODEL_NAME") or "gemini-flash-latest"
+        self.model = "gemini-flash-latest" if m == "gemini-2.5-flash" else m
         self.internet_tool = TavilySearcher()
     def _get_active_compounds_via_llm(self, drug_name: str) -> List[str]:
         llm = ChatGoogleGenerativeAI(
@@ -43,7 +57,7 @@ class UnifiedMediaFetcher:
         ]
         try:
             response = llm.invoke(messages)
-            raw_text = response.content.strip()
+            raw_text = extract_text(response.content)
             if r"," in raw_text:
                 return [comp.strip().lower() for comp in raw_text.split(",")]
             return [raw_text.lower()]

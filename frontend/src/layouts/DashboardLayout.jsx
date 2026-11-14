@@ -5,7 +5,8 @@ import {
   LayoutDashboard, Pill, FlaskConical, Bell, MapPin,
   Upload, MessageSquare, Settings, LogOut, Search,
   AlertTriangle, ChevronRight, User, Users, Menu, X,
-  HeartPulse, Stethoscope, Flame, Sparkles, Network, Activity, QrCode, ShieldAlert
+  HeartPulse, Stethoscope, Flame, Sparkles, Network, Activity, QrCode, ShieldAlert,
+  Brain, ShoppingBag
 } from 'lucide-react';
 import ZenWidget from '../components/ZenWidget';
 
@@ -56,8 +57,8 @@ export default function DashboardLayout() {
 
   const navItems = [
     { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard, end: true },
+    { to: '/dashboard/timeline', label: 'Symptom & Disease AI', icon: Brain },
     { to: '/dashboard/knowledge-graph', label: 'Knowledge Graph', icon: Network },
-    { to: '/dashboard/timeline', label: 'Symptom Timeline', icon: Activity },
     { to: '/dashboard/doctor-share', label: 'Physician Pass (3D QR)', icon: QrCode },
     { to: '/dashboard/polypharmacy', label: 'Polypharmacy Matrix', icon: ShieldAlert },
     { to: '/dashboard/care-plan', label: 'Care Plan', icon: Sparkles },
@@ -66,7 +67,7 @@ export default function DashboardLayout() {
     { to: '/dashboard/reminders', label: 'Reminders', icon: Bell },
     { to: '/dashboard/upload', label: 'Upload Rx', icon: Upload },
     { to: '/dashboard/chat', label: 'AI Consult', icon: MessageSquare },
-    { to: '/dashboard/pharmacies', label: 'Pharmacies', icon: MapPin },
+    { to: '/dashboard/pharmacies', label: 'Buy & Pharmacies', icon: ShoppingBag },
     { to: '/dashboard/community', label: 'Community', icon: Users },
   ];
 
