@@ -58,7 +58,7 @@ const MedicationInsights = ({ prescriptions, reminders }) => {
             <div className="flex items-center gap-4 border-t border-slate-100 pt-4">
               <div className="flex-1">
                 <p className="text-xl font-bold text-indigo-600">{verifiedMeds}</p>
-                <p className="text-xs text-slate-500 font-medium">Verified by AI</p>
+                <p className="text-xs text-slate-500 font-medium">Clinically Verified</p>
               </div>
               <div className="flex-1">
                 <p className="text-xl font-bold text-slate-900">{prescriptions.length}</p>

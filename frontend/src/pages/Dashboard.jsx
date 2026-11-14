@@ -414,8 +414,8 @@ export default function Dashboard() {
                 <TrendingUp className="w-24 h-24 text-indigo-600" />
               </div>
               <h3 className="text-sm font-heading font-extrabold tracking-tight uppercase mb-3 flex items-center gap-2 relative z-10 text-indigo-700">
-                <Sparkles className="w-4 h-4 text-indigo-500" />
-                AI Trend Forecast
+                <TrendingUp className="w-4 h-4 text-indigo-500" />
+                Biomarker & Regimen Forecast
               </h3>
               <p className="text-sm text-slate-700 leading-relaxed font-medium relative z-10">
                 "{trendForecast || 'Fetching trend forecast...'}"
@@ -531,11 +531,11 @@ export default function Dashboard() {
             )}
           </div>
 
-          {/* AI Analysis Panel */}
+          {/* Clinical Risk Profile */}
           <div className="rx-card p-6">
             <h3 className="text-sm font-heading font-extrabold tracking-tight text-gray-900 uppercase mb-4 flex items-center gap-2">
-              <Brain className="w-4 h-4 text-gray-900" />
-              AI Clinical Analysis
+              <ShieldCheck className="w-4 h-4 text-blue-600" />
+              Pharmacological Risk Profile
             </h3>
             <div className="flex flex-col gap-2.5">
               {[
@@ -577,10 +577,10 @@ export default function Dashboard() {
                 />
                 <button 
                   onClick={() => setIsQuickAskOpen(true)}
-                  className="bg-gray-50 hover:bg-gray-100 border border-gray-200 text-gray-900 font-bold text-xs px-3 py-1.5 rounded-lg transition-colors flex items-center justify-center gap-1 whitespace-nowrap"
+                  className="bg-gray-50 hover:bg-gray-100 border border-gray-200 text-gray-900 font-bold text-xs px-3 py-1.5 rounded-lg transition-colors flex items-center justify-center gap-1.5 whitespace-nowrap"
                 >
-                  <Brain className="w-3.5 h-3.5" />
-                  Ask AI
+                  <Stethoscope className="w-3.5 h-3.5 text-blue-600" />
+                  Clinical Ask
                 </button>
               </div>
             </div>
@@ -679,12 +679,12 @@ export default function Dashboard() {
         </div>
       </Modal>
 
-      {/* Quick Ask AI Modal */}
+      {/* Quick Clinical Inquiry Modal */}
       <Modal 
         isOpen={isQuickAskOpen} 
         onClose={() => { setIsQuickAskOpen(false); setQuickAskResponse(''); setQuickAskInput(''); }} 
-        title="Quick Ask AI"
-        icon={Brain}
+        title="Quick Clinical Inquiry"
+        icon={Stethoscope}
       >
         <div className="flex flex-col gap-4">
           <p className="text-sm text-gray-500">Ask any quick medical question or check drug interactions.</p>

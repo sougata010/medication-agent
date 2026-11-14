@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import ArchitectureCanvas from '../components/ArchitectureCanvas';
 import MedicineModel from '../components/MedicineModel';
+import BrandIcon from '../components/BrandIcon';
 
 export default function LandingPage() {
   const navigate = useNavigate();
@@ -38,9 +39,12 @@ export default function LandingPage() {
       {/* Navigation */}
       <nav className="fixed w-full z-50 bg-white/80 backdrop-blur-md border-b border-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2 cursor-pointer" onClick={() => window.scrollTo(0, 0)}>
-            <img src="/logo.png" alt="VitaLeaf Logo" className="w-8 h-8 object-contain" />
-            <span className="font-extrabold text-xl tracking-tight text-gray-900">VitaLeaf</span>
+          <div className="flex items-center gap-2.5 cursor-pointer" onClick={() => window.scrollTo(0, 0)}>
+            <BrandIcon size={32} className="w-8 h-8 shrink-0" />
+            <div className="flex items-baseline gap-1.5">
+              <span className="font-extrabold text-xl tracking-tight text-gray-900">VitaLeaf</span>
+              <span className="text-[9px] font-bold uppercase tracking-wider text-blue-700 bg-blue-50 px-1.5 py-0.5 rounded border border-blue-200">Clinical</span>
+            </div>
           </div>
           
           <div className="hidden md:flex gap-8">
@@ -143,7 +147,7 @@ export default function LandingPage() {
               className="text-center mb-16"
             >
               <h2 className="text-4xl md:text-5xl font-heading font-extrabold tracking-tight text-gray-900 mb-4">Visualizing Posology</h2>
-              <p className="text-gray-500 font-medium max-w-xl mx-auto">Scroll to split the capsule and inspect the internal AI verification subsystems.</p>
+              <p className="text-gray-500 font-medium max-w-xl mx-auto">Scroll to split the capsule and inspect the internal clinical verification subsystems.</p>
             </motion.div>
             
             {/* Exploding WebGL 3D Medicine Visual */}
@@ -376,12 +380,15 @@ export default function LandingPage() {
         <footer id="resources" className="bg-white border-t border-gray-100 pt-20 pb-10 px-4">
           <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
             <div className="max-w-xs">
-              <div className="flex items-center gap-2 mb-6 cursor-pointer" onClick={() => window.scrollTo(0, 0)}>
-                <img src="/logo.png" alt="VitaLeaf Logo" className="w-8 h-8 object-contain drop-shadow-sm" />
-                <span className="font-extrabold text-lg tracking-tight text-gray-900">VitaLeaf</span>
+              <div className="flex items-center gap-2.5 mb-6 cursor-pointer" onClick={() => window.scrollTo(0, 0)}>
+                <BrandIcon size={28} className="w-7 h-7 shrink-0" />
+                <div className="flex items-baseline gap-1.5">
+                  <span className="font-extrabold text-lg tracking-tight text-gray-900">VitaLeaf</span>
+                  <span className="text-[9px] font-bold uppercase tracking-wider text-blue-700 bg-blue-50 px-1.5 py-0.5 rounded border border-blue-200">Clinical</span>
+                </div>
               </div>
               <p className="text-sm text-gray-500 font-medium">
-                The most advanced AI intelligence layer for healthcare data orchestration. Built for precision and scale.
+                The integrated clinical intelligence operating system for health data orchestration, medication safety, and diagnostics.
               </p>
             </div>
             <div>

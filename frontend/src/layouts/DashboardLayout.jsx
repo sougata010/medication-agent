@@ -6,9 +6,10 @@ import {
   Upload, MessageSquare, Settings, LogOut, Search,
   AlertTriangle, ChevronRight, User, Users, Menu, X,
   HeartPulse, Stethoscope, Flame, Sparkles, Network, Activity, QrCode, ShieldAlert,
-  Brain, ShoppingBag
+  Brain, ShoppingBag, FileText, ClipboardList
 } from 'lucide-react';
 import ZenWidget from '../components/ZenWidget';
+import BrandIcon from '../components/BrandIcon';
 
 export default function DashboardLayout() {
   const { user, logout, reminders, insights } = useGlobalContext();
@@ -56,19 +57,19 @@ export default function DashboardLayout() {
   };
 
   const navItems = [
-    { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard, end: true },
-    { to: '/dashboard/timeline', label: 'Symptom & Disease AI', icon: Brain },
-    { to: '/dashboard/knowledge-graph', label: 'Knowledge Graph', icon: Network },
-    { to: '/dashboard/doctor-share', label: 'Physician Pass (3D QR)', icon: QrCode },
-    { to: '/dashboard/polypharmacy', label: 'Polypharmacy Matrix', icon: ShieldAlert },
-    { to: '/dashboard/care-plan', label: 'Care Plan', icon: Sparkles },
-    { to: '/dashboard/medications', label: 'Medications', icon: Pill },
-    { to: '/dashboard/reports', label: 'Lab Reports', icon: FlaskConical },
-    { to: '/dashboard/reminders', label: 'Reminders', icon: Bell },
-    { to: '/dashboard/upload', label: 'Upload Rx', icon: Upload },
-    { to: '/dashboard/chat', label: 'AI Consult', icon: MessageSquare },
-    { to: '/dashboard/pharmacies', label: 'Buy & Pharmacies', icon: ShoppingBag },
-    { to: '/dashboard/community', label: 'Community', icon: Users },
+    { to: '/dashboard', label: 'Clinical Overview', icon: LayoutDashboard, end: true },
+    { to: '/dashboard/timeline', label: 'Diagnostic Assessment', icon: Stethoscope },
+    { to: '/dashboard/knowledge-graph', label: 'Knowledge Network', icon: Network },
+    { to: '/dashboard/doctor-share', label: 'Physician Summary Pass', icon: QrCode },
+    { to: '/dashboard/polypharmacy', label: 'Pharmacotherapy Matrix', icon: ShieldAlert },
+    { to: '/dashboard/care-plan', label: 'Clinical Care Protocol', icon: Activity },
+    { to: '/dashboard/medications', label: 'Active Medications', icon: Pill },
+    { to: '/dashboard/reports', label: 'Laboratory Diagnostics', icon: FlaskConical },
+    { to: '/dashboard/reminders', label: 'Adherence & Reminders', icon: Bell },
+    { to: '/dashboard/upload', label: 'Document Ingestion', icon: Upload },
+    { to: '/dashboard/chat', label: 'Clinical Consultation', icon: MessageSquare },
+    { to: '/dashboard/pharmacies', label: 'Pharmacy & Fulfillment', icon: ShoppingBag },
+    { to: '/dashboard/community', label: 'Clinical Community', icon: Users },
   ];
 
   const NavItem = ({ item }) => (
@@ -101,8 +102,11 @@ export default function DashboardLayout() {
         {/* Logo */}
         <div className="h-16 flex items-center px-6 border-b border-gray-100 shrink-0">
           <div className="flex items-center gap-2.5 cursor-pointer" onClick={() => navigate('/')}>
-            <img src="/logo.png" alt="VitaLeaf" className="w-7 h-7 object-contain" />
-            <span className="font-heading font-extrabold text-lg tracking-tight text-gray-900">VitaLeaf</span>
+            <BrandIcon size={28} className="w-7 h-7 shrink-0" />
+            <div className="flex items-baseline gap-1.5">
+              <span className="font-heading font-extrabold text-lg tracking-tight text-gray-900">VitaLeaf</span>
+              <span className="text-[9px] font-bold uppercase tracking-wider text-blue-700 bg-blue-50 px-1.5 py-0.5 rounded border border-blue-200">Clinical</span>
+            </div>
           </div>
         </div>
 
@@ -190,8 +194,9 @@ export default function DashboardLayout() {
 
           {/* Mobile Logo */}
           <div className="lg:hidden flex items-center gap-2">
-            <img src="/logo.png" alt="VitaLeaf" className="w-6 h-6 object-contain" />
+            <BrandIcon size={24} className="w-6 h-6 shrink-0" />
             <span className="font-heading font-extrabold text-base tracking-tight text-gray-900">VitaLeaf</span>
+            <span className="text-[8px] font-bold uppercase tracking-wider text-blue-700 bg-blue-50 px-1 py-0.5 rounded border border-blue-200">Clinical</span>
           </div>
 
           {/* Desktop Search */}

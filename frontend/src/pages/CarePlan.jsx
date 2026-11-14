@@ -83,9 +83,9 @@ const CarePlan = () => {
           <div className="absolute inset-0 bg-indigo-100 blur-3xl rounded-full opacity-60"></div>
           <Sparkles className="w-20 h-20 text-indigo-400 mb-6 relative z-10 animate-pulse" />
         </div>
-        <h2 className="text-3xl font-heading font-extrabold text-gray-900 mb-3">Initialize AI Advisor</h2>
+        <h2 className="text-3xl font-heading font-extrabold text-gray-900 mb-3">Clinical Care Protocol</h2>
         <p className="text-gray-500 max-w-md text-base leading-relaxed">
-          Upload a lab report to generate a dynamic, interactive health timeline tailored specifically to your biomolecular data.
+          Upload a diagnostic lab report to generate an evidence-based care protocol tailored specifically to your clinical parameters.
         </p>
       </div>
     );
@@ -319,12 +319,12 @@ const CarePlan = () => {
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-indigo-50/50 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
         
         <div className="relative z-10 max-w-2xl">
-          <div className="inline-flex items-center gap-2 bg-gray-50 border border-gray-200 px-4 py-2 rounded-full mb-6 shadow-sm">
-            <Sparkles className="w-4 h-4 text-indigo-500" />
-            <span className="text-[11px] font-bold uppercase tracking-widest text-gray-600">AI Intelligence Active</span>
+          <div className="inline-flex items-center gap-2 bg-blue-50 border border-blue-200 px-4 py-2 rounded-full mb-6 shadow-xs">
+            <Activity className="w-4 h-4 text-blue-600" />
+            <span className="text-[11px] font-bold uppercase tracking-widest text-blue-800">Clinical Protocol Active</span>
           </div>
           <h1 className="text-4xl md:text-5xl font-heading font-extrabold text-gray-900 mb-4 tracking-tight">
-            Professional Care Plan
+            Personalized Care Protocol
           </h1>
           <p className="text-gray-500 text-sm md:text-base font-medium leading-relaxed max-w-lg">
             Your personalized health roadmap, dynamically generated from your latest laboratory biomarkers and medical profile.
@@ -370,9 +370,9 @@ const CarePlan = () => {
             <Sparkles className="w-12 h-12 text-indigo-400" />
           </div>
           
-          <h2 className="text-3xl font-heading font-extrabold text-gray-900 mb-4 relative z-10">Synthesize Your Data</h2>
+          <h2 className="text-3xl font-heading font-extrabold text-gray-900 mb-4 relative z-10">Generate Care Protocol</h2>
           <p className="text-gray-500 text-base max-w-lg mb-10 leading-relaxed relative z-10">
-            Activate the AI engine to cross-reference your biomarkers with your medications and generate a comprehensive, actionable protocol.
+            Cross-reference your lab biomarkers with active medications to generate a comprehensive, evidence-based clinical management protocol.
           </p>
           
           <button 

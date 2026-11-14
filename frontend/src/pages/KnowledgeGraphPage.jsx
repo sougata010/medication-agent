@@ -122,15 +122,15 @@ export default function KnowledgeGraphPage() {
       <div className="relative bg-white border border-gray-100 rounded-tl-[3rem] rounded-br-[3rem] rounded-tr-2xl rounded-bl-2xl p-8 md:p-10 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-6 overflow-hidden">
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-indigo-50/40 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/3 pointer-events-none" />
         <div className="relative z-10 max-w-2xl">
-          <div className="inline-flex items-center gap-2 bg-gray-50 border border-gray-200 px-3.5 py-1.5 rounded-full mb-4 shadow-xs">
-            <Sparkles className="w-4 h-4 text-indigo-500" />
-            <span className="text-[11px] font-bold uppercase tracking-widest text-gray-600">Patient Knowledge Architecture</span>
+          <div className="inline-flex items-center gap-2 bg-blue-50 border border-blue-200 px-3.5 py-1.5 rounded-full mb-4 shadow-xs">
+            <Network className="w-4 h-4 text-blue-600" />
+            <span className="text-[11px] font-bold uppercase tracking-widest text-blue-800">Unified Clinical Ontology</span>
           </div>
           <h1 className="text-3xl font-black tracking-tight text-gray-900 sm:text-4xl">
-            Literal Knowledge Graph
+            Clinical Knowledge Network
           </h1>
           <p className="mt-2 text-sm text-gray-500 font-medium leading-relaxed">
-            Every medication, health condition, lab marker, side effect, and food warning in your profile mapped into an interactive 2D network. Drag nodes or use category filters to inspect safety connections.
+            Interactive topological network mapping medications, underlying clinical conditions, laboratory biomarkers, contraindications, and dietary warnings across your profile.
           </p>
         </div>
 

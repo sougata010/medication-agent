@@ -332,8 +332,8 @@ export default function LabReports() {
           <div className="w-20 h-20 rounded-2xl bg-gray-50 flex items-center justify-center mb-6 border border-gray-100 group-hover:bg-gray-100 transition-colors relative z-10">
             <Upload className="w-10 h-10 text-gray-500 group-hover:text-gray-900 transition-colors" />
           </div>
-          <h2 className="text-2xl font-heading font-extrabold text-gray-900 mb-3 relative z-10">Upload Lab Report</h2>
-          <p className="text-gray-900/70 font-medium text-center max-w-md leading-relaxed relative z-10">Upload a PDF or image. AI will extract parameters, identify compounds, and generate a clinical report.</p>
+          <h2 className="text-2xl font-heading font-extrabold text-gray-900 mb-3 relative z-10">Ingest Laboratory Report</h2>
+          <p className="text-gray-900/70 font-medium text-center max-w-md leading-relaxed relative z-10">Upload a medical PDF or lab scan. The diagnostic system extracts reference parameters, evaluates molecular entities, and generates a structured clinical report.</p>
         </div>
       </div>
     );
@@ -428,7 +428,7 @@ export default function LabReports() {
               Biomarker Profile Analysis
             </h2>
             <p className="text-sm text-gray-500 font-medium mb-6">
-              AI-driven multi-axis mapping of extracted compounds based on their chemical classification and frequency.
+              Multi-axis pharmacological taxonomy of extracted compounds based on chemical class, reference ranges, and occurrence.
             </p>
             
             <div className="grid grid-cols-3 gap-4">

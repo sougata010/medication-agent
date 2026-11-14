@@ -5,6 +5,7 @@ import { ArrowRight, Mail, Lock, User, Key, ShieldCheck, CheckCircle2, HeartPuls
 import { motion, AnimatePresence } from 'framer-motion';
 import { GoogleOAuthProvider, useGoogleLogin } from '@react-oauth/google';
 import { startAuthentication } from '@simplewebauthn/browser';
+import BrandIcon from '../components/BrandIcon';
 
 const GQL_ENDPOINT = 'http://localhost:4000/graphql';
 
@@ -154,10 +155,11 @@ function LoginContent() {
         {/* Brand Logo & Name */}
         <div className="absolute top-8 left-8 sm:left-16 xl:left-24">
           <div className="flex items-center gap-3 cursor-pointer" onClick={() => navigate('/')}>
-            <div className="w-10 h-10 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center overflow-hidden">
-               <img src="/logo.png" alt="VitaLeaf Logo" className="w-full h-full object-cover mix-blend-multiply" />
+            <BrandIcon size={38} className="w-9 h-9 shrink-0" />
+            <div className="flex items-baseline gap-1.5">
+              <span className="font-heading font-extrabold text-2xl tracking-tight text-blue-900">VitaLeaf</span>
+              <span className="text-[10px] font-bold uppercase tracking-wider text-blue-700 bg-blue-50 px-2 py-0.5 rounded-md border border-blue-200">Clinical</span>
             </div>
-            <span className="font-heading font-extrabold text-2xl tracking-tight text-blue-900">VitaLeaf</span>
           </div>
         </div>
 
@@ -299,7 +301,7 @@ function LoginContent() {
               Next-generation medication intelligence.
             </h3>
             <p className="text-blue-50 text-lg font-medium leading-relaxed opacity-90">
-              VitaLeaf combines advanced AI with clinical safety to ensure your health regimen is perfectly optimized and deeply understood.
+              VitaLeaf combines advanced clinical data science with patient safety to ensure your health regimen is continuously verified.
             </p>
             <div className="mt-8 flex items-center gap-4">
               <div className="flex -space-x-3">

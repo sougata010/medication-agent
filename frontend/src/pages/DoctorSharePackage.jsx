@@ -90,8 +90,8 @@ export default function DoctorSharePackage() {
             <ShieldCheck className="w-4 h-4 text-sky-600" />
             <span className="text-[11px] font-bold uppercase tracking-widest text-sky-800">HL7 FHIR R4 Interoperability</span>
           </div>
-          <h1 className="text-3xl md:text-4xl font-heading font-extrabold text-slate-900 tracking-tight">Physician Share Package</h1>
-          <p className="text-slate-500 font-medium mt-1">Export verifiable health pass & 3D medical decision tree for clinical visits</p>
+          <h1 className="text-3xl md:text-4xl font-heading font-extrabold text-slate-900 tracking-tight">Physician Summary Pass</h1>
+          <p className="text-slate-500 font-medium mt-1">Verifiable clinical export package & HL7 FHIR R4 interoperability for hospital visits</p>
         </div>
 
         <div className="flex flex-wrap items-center gap-3">

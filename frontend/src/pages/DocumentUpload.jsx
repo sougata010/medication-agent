@@ -59,8 +59,8 @@ export default function DocumentUpload() {
     return (
       <div className="flex flex-col gap-6 animate-fade-in">
         <div>
-          <h1 className="text-2xl md:text-3xl font-heading font-extrabold tracking-tight text-gray-900">Upload Document</h1>
-          <p className="text-gray-900/70 font-medium mt-1">Select document type and upload for AI extraction</p>
+          <h1 className="text-2xl md:text-3xl font-heading font-extrabold tracking-tight text-gray-900">Document Ingestion</h1>
+          <p className="text-gray-900/70 font-medium mt-1">Select document type and upload for automated clinical extraction</p>
         </div>
 
         {/* Document Type Selector */}
@@ -68,7 +68,7 @@ export default function DocumentUpload() {
           <button
             onClick={() => setDocType('smart')}
             className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-bold transition-all ${
-              docType === 'smart' ? 'bg-black text-white shadow-sm' : 'text-gray-900 hover:text-gray-900'
+              docType === 'smart' ? 'bg-blue-600 text-white shadow-sm' : 'text-gray-700 hover:text-gray-900'
             }`}
           >
             <Sparkles className="w-4 h-4" /> Smart Auto-Detect
@@ -76,7 +76,7 @@ export default function DocumentUpload() {
           <button
             onClick={() => setDocType('prescription')}
             className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-bold transition-all ${
-              docType === 'prescription' ? 'bg-black text-white shadow-sm' : 'text-gray-900 hover:text-gray-900'
+              docType === 'prescription' ? 'bg-blue-600 text-white shadow-sm' : 'text-gray-700 hover:text-gray-900'
             }`}
           >
             <FileText className="w-4 h-4" /> Prescription
@@ -84,7 +84,7 @@ export default function DocumentUpload() {
           <button
             onClick={() => setDocType('labReport')}
             className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-bold transition-all ${
-              docType === 'labReport' ? 'bg-black text-white shadow-sm' : 'text-gray-900 hover:text-gray-900'
+              docType === 'labReport' ? 'bg-blue-600 text-white shadow-sm' : 'text-gray-700 hover:text-gray-900'
             }`}
           >
             <FlaskConical className="w-4 h-4" /> Lab Report
@@ -109,19 +109,19 @@ export default function DocumentUpload() {
         {/* Info Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="rx-card p-5">
-            <Sparkles className="w-5 h-5 text-gray-500 mb-3" />
-            <h4 className="text-sm font-bold text-gray-900 mb-1">AI-Powered Extraction</h4>
-            <p className="text-xs text-gray-400">Neural extraction identifies medications, biomarkers, and schedules automatically.</p>
+            <Sparkles className="w-5 h-5 text-blue-600 mb-3" />
+            <h4 className="text-sm font-bold text-gray-900 mb-1">Clinical Data Extraction</h4>
+            <p className="text-xs text-gray-500">Optical parsing identifies medications, biomarkers, and schedules with high precision.</p>
           </div>
           <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-5 border-l-4 border-l-emerald-500">
-            <ShieldCheck className="w-5 h-5 text-sky-500 mb-3" />
+            <ShieldCheck className="w-5 h-5 text-emerald-600 mb-3" />
             <h4 className="text-sm font-bold text-gray-900 mb-1">Clinical Safety</h4>
-            <p className="text-xs text-gray-400">Review AI extractions against medical safety guidelines and your profile.</p>
+            <p className="text-xs text-gray-500">Review extracted parameters against medical safety guidelines and your health profile.</p>
           </div>
           <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-5 border-l-4 border-l-purple-500">
-            <Clock className="w-5 h-5 text-purple-500 mb-3" />
-            <h4 className="text-sm font-bold text-gray-900 mb-1">Actionable Insights</h4>
-            <p className="text-xs text-gray-400">Generate auto-reminders for prescriptions and detailed analysis for lab reports.</p>
+            <Clock className="w-5 h-5 text-purple-600 mb-3" />
+            <h4 className="text-sm font-bold text-gray-900 mb-1">Actionable Records</h4>
+            <p className="text-xs text-gray-500">Generate structured adherence schedules and longitudinal biomarker tracking.</p>
           </div>
         </div>
       </div>
@@ -141,11 +141,11 @@ export default function DocumentUpload() {
             <span className="text-[11px] text-gray-500 font-medium font-mono">Patient: {user?.name || 'Active'}</span>
           </div>
           <h1 className="text-2xl font-heading font-extrabold tracking-tight text-gray-900">Prescription Verification</h1>
-          <p className="text-gray-900/70 font-medium mt-1">Review and correct the AI-extracted data</p>
+          <p className="text-gray-900/70 font-medium mt-1">Review and verify extracted clinical data</p>
         </div>
         <div className="flex items-center gap-2 bg-gray-50 border border-gray-100 rounded-xl px-4 py-2.5">
-          <Sparkles className="w-4 h-4 text-gray-500" />
-          <span className="text-sm font-medium text-gray-900">AI Confidence:</span>
+          <ShieldCheck className="w-4 h-4 text-blue-600" />
+          <span className="text-sm font-medium text-gray-900">Extraction Confidence:</span>
           <span className={`text-sm font-heading font-extrabold ${avgConfidence >= 85 ? 'text-sky-600' : 'text-indigo-600'}`}>{avgConfidence}%</span>
         </div>
       </div>

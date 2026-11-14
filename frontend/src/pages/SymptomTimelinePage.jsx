@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useGlobalContext } from '../context/GlobalContext';
 import SymptomQuickLogger from '../components/SymptomQuickLogger';
 import SymptomDiseasePredictor from '../components/SymptomDiseasePredictor';
-import { Activity, Pill, AlertTriangle, Sparkles, RefreshCw, Calendar, Clock, CheckCircle2, Eye, ShieldAlert, ArrowRight, Brain } from 'lucide-react';
+import { Activity, Pill, AlertTriangle, Sparkles, RefreshCw, Calendar, Clock, CheckCircle2, Eye, ShieldAlert, ArrowRight, Brain, Stethoscope } from 'lucide-react';
 
 const GET_SYMPTOM_CORRELATION_TIMELINE = `
   query GetSymptomCorrelationTimeline($userId: ID!) {
@@ -158,9 +158,9 @@ export default function SymptomTimelinePage() {
               : 'text-gray-500 hover:text-gray-900'
           }`}
         >
-          <Brain className={`w-4 h-4 ${activeTab === 'predictor' ? 'text-indigo-600' : 'text-gray-400'}`} />
-          <span>Symptom → Disease Predictor</span>
-          <span className="px-1.5 py-0.5 rounded text-[10px] font-extrabold bg-indigo-100 text-indigo-700">DL AI</span>
+          <Stethoscope className={`w-4 h-4 ${activeTab === 'predictor' ? 'text-blue-600' : 'text-gray-400'}`} />
+          <span>Diagnostic Assessment</span>
+          <span className="px-1.5 py-0.5 rounded text-[10px] font-extrabold bg-blue-100 text-blue-700">CLINICAL</span>
         </button>
         <button
           type="button"
