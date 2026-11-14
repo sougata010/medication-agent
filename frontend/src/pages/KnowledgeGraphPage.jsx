@@ -119,7 +119,7 @@ export default function KnowledgeGraphPage() {
   return (
     <div className="space-y-6 pb-12">
       {/* Whitish Clean Header */}
-      <div className="relative bg-white border border-gray-100 rounded-tl-[3rem] rounded-br-[3rem] rounded-tr-2xl rounded-bl-2xl p-8 md:p-10 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-6 overflow-hidden">
+      <div className="relative bg-white border border-slate-200/80 rounded-3xl p-6 md:p-8 shadow-xs flex flex-col md:flex-row justify-between items-start md:items-center gap-6 overflow-hidden">
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-indigo-50/40 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/3 pointer-events-none" />
         <div className="relative z-10 max-w-2xl">
           <div className="inline-flex items-center gap-2 bg-blue-50 border border-blue-200 px-3.5 py-1.5 rounded-full mb-4 shadow-xs">

@@ -56,21 +56,43 @@ export default function DashboardLayout() {
     navigate('/');
   };
 
-  const navItems = [
-    { to: '/dashboard', label: 'Clinical Overview', icon: LayoutDashboard, end: true },
-    { to: '/dashboard/timeline', label: 'Diagnostic Assessment', icon: Stethoscope },
-    { to: '/dashboard/knowledge-graph', label: 'Knowledge Network', icon: Network },
-    { to: '/dashboard/doctor-share', label: 'Physician Summary Pass', icon: QrCode },
-    { to: '/dashboard/polypharmacy', label: 'Pharmacotherapy Matrix', icon: ShieldAlert },
-    { to: '/dashboard/care-plan', label: 'Clinical Care Protocol', icon: Activity },
-    { to: '/dashboard/medications', label: 'Active Medications', icon: Pill },
-    { to: '/dashboard/reports', label: 'Laboratory Diagnostics', icon: FlaskConical },
-    { to: '/dashboard/reminders', label: 'Adherence & Reminders', icon: Bell },
-    { to: '/dashboard/upload', label: 'Document Ingestion', icon: Upload },
-    { to: '/dashboard/chat', label: 'Clinical Consultation', icon: MessageSquare },
-    { to: '/dashboard/pharmacies', label: 'Pharmacy & Fulfillment', icon: ShoppingBag },
-    { to: '/dashboard/community', label: 'Clinical Community', icon: Users },
+  const navSections = [
+    {
+      title: 'Clinical Care',
+      items: [
+        { to: '/dashboard', label: 'Clinical Overview', icon: LayoutDashboard, end: true },
+        { to: '/dashboard/timeline', label: 'Diagnostic Assessment', icon: Stethoscope },
+        { to: '/dashboard/care-plan', label: 'Clinical Care Protocol', icon: Activity },
+      ]
+    },
+    {
+      title: 'Pharmacotherapy',
+      items: [
+        { to: '/dashboard/medications', label: 'Active Medications', icon: Pill },
+        { to: '/dashboard/polypharmacy', label: 'Pharmacotherapy Matrix', icon: ShieldAlert },
+        { to: '/dashboard/reminders', label: 'Adherence & Reminders', icon: Bell },
+      ]
+    },
+    {
+      title: 'Diagnostics & Network',
+      items: [
+        { to: '/dashboard/reports', label: 'Laboratory Diagnostics', icon: FlaskConical },
+        { to: '/dashboard/knowledge-graph', label: 'Knowledge Network', icon: Network },
+        { to: '/dashboard/doctor-share', label: 'Physician Summary Pass', icon: QrCode },
+      ]
+    },
+    {
+      title: 'Services & Community',
+      items: [
+        { to: '/dashboard/chat', label: 'Consultation Desk', icon: MessageSquare },
+        { to: '/dashboard/pharmacies', label: 'Pharmacy & Fulfillment', icon: ShoppingBag },
+        { to: '/dashboard/upload', label: 'Document Ingestion', icon: Upload },
+        { to: '/dashboard/community', label: 'Clinical Community', icon: Users },
+      ]
+    }
   ];
+
+  const flatNavItems = navSections.flatMap(s => s.items);
 
   const NavItem = ({ item }) => (
     <NavLink
@@ -127,29 +149,35 @@ export default function DashboardLayout() {
         </div>
 
         {/* Nav Links */}
-        <div className="flex-1 overflow-y-auto px-3 py-4 flex flex-col gap-1 relative z-10">
-          <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest px-4 mb-2">Clinical Menu</div>
-          {navItems.map(item => (
-            <NavLink
-              key={item.to}
-              to={item.to}
-              end={item.end}
-              onClick={() => setMobileMenuOpen(false)}
-              className={({ isActive }) =>
-                `flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${
-                  isActive
-                    ? 'bg-white text-black shadow-sm border border-gray-200'
-                    : 'text-gray-500 hover:text-gray-900 hover:bg-gray-100/50'
-                }`
-              }
-            >
-              {({ isActive }) => (
-                <>
-                  <item.icon className={`w-[18px] h-[18px] ${isActive ? 'text-black' : 'text-gray-400'}`} />
-                  <span>{item.label}</span>
-                </>
-              )}
-            </NavLink>
+        <div className="flex-1 overflow-y-auto px-3 py-3 flex flex-col gap-4 relative z-10">
+          {navSections.map((section, sIdx) => (
+            <div key={sIdx} className="space-y-1">
+              <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-3 mb-1">
+                {section.title}
+              </div>
+              {section.items.map(item => (
+                <NavLink
+                  key={item.to}
+                  to={item.to}
+                  end={item.end}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={({ isActive }) =>
+                    `flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold transition-all duration-150 ${
+                      isActive
+                        ? 'bg-blue-50/80 text-blue-700 shadow-2xs border border-blue-200/60 font-bold'
+                        : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/70 border border-transparent'
+                    }`
+                  }
+                >
+                  {({ isActive }) => (
+                    <>
+                      <item.icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-blue-600' : 'text-slate-400'}`} />
+                      <span className="truncate">{item.label}</span>
+                    </>
+                  )}
+                </NavLink>
+              ))}
+            </div>
           ))}
         </div>
 
@@ -287,30 +315,37 @@ export default function DashboardLayout() {
         {/* Mobile Nav Overlay */}
         {mobileMenuOpen && (
           <div className="lg:hidden fixed inset-0 top-16 z-40 bg-white border-t border-gray-100 overflow-y-auto">
-            <div className="px-4 py-4 flex flex-col gap-1">
-              {navItems.map(item => (
-                <NavLink
-                  key={item.to}
-                  to={item.to}
-                  end={item.end}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={({ isActive }) =>
-                    `flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${
-                      isActive
-                        ? 'bg-gray-100 text-black shadow-sm'
-                        : 'text-gray-500 hover:text-gray-900'
-                    }`
-                  }
-                >
-                  {({ isActive }) => (
-                    <>
-                      <item.icon className={`w-[18px] h-[18px] ${isActive ? 'text-black' : 'text-gray-400'}`} />
-                      <span>{item.label}</span>
-                    </>
-                  )}
-                </NavLink>
+            <div className="px-4 py-4 flex flex-col gap-4">
+              {navSections.map((section, sIdx) => (
+                <div key={sIdx} className="space-y-1">
+                  <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-3 mb-1">
+                    {section.title}
+                  </div>
+                  {section.items.map(item => (
+                    <NavLink
+                      key={item.to}
+                      to={item.to}
+                      end={item.end}
+                      onClick={() => setMobileMenuOpen(false)}
+                      className={({ isActive }) =>
+                        `flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all duration-150 ${
+                          isActive
+                            ? 'bg-blue-50/80 text-blue-700 shadow-2xs border border-blue-200/60 font-bold'
+                            : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/70'
+                        }`
+                      }
+                    >
+                      {({ isActive }) => (
+                        <>
+                          <item.icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-blue-600' : 'text-slate-400'}`} />
+                          <span>{item.label}</span>
+                        </>
+                      )}
+                    </NavLink>
+                  ))}
+                </div>
               ))}
-              <div className="border-t border-gray-100 mt-3 pt-3">
+              <div className="border-t border-gray-100 mt-2 pt-3 space-y-1">
                 <NavLink
                   to="/dashboard/profile"
                   onClick={() => setMobileMenuOpen(false)}

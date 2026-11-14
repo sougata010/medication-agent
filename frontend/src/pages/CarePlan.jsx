@@ -314,19 +314,19 @@ const CarePlan = () => {
     <div className="flex flex-col gap-8 animate-fade-in max-w-7xl mx-auto pb-16">
       
       {/* Whitish Clean Header */}
-      <div className="relative bg-white border border-gray-100 rounded-tl-[3rem] rounded-br-[3rem] rounded-tr-2xl rounded-bl-2xl p-8 md:p-10 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-end gap-6 overflow-hidden">
+      <div className="relative bg-white border border-slate-200/80 rounded-3xl p-6 md:p-8 shadow-xs flex flex-col md:flex-row justify-between items-start md:items-end gap-6 overflow-hidden">
         {/* Subtle background glow */}
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-indigo-50/50 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-50/40 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
         
         <div className="relative z-10 max-w-2xl">
-          <div className="inline-flex items-center gap-2 bg-blue-50 border border-blue-200 px-4 py-2 rounded-full mb-6 shadow-xs">
+          <div className="inline-flex items-center gap-2 bg-blue-50 border border-blue-200/70 px-3.5 py-1.5 rounded-full mb-4 shadow-2xs">
             <Activity className="w-4 h-4 text-blue-600" />
-            <span className="text-[11px] font-bold uppercase tracking-widest text-blue-800">Clinical Protocol Active</span>
+            <span className="text-[11px] font-bold uppercase tracking-wider text-blue-800">Clinical Protocol Active</span>
           </div>
-          <h1 className="text-4xl md:text-5xl font-heading font-extrabold text-gray-900 mb-4 tracking-tight">
+          <h1 className="text-3xl md:text-4xl font-heading font-extrabold text-slate-900 mb-2 tracking-tight">
             Personalized Care Protocol
           </h1>
-          <p className="text-gray-500 text-sm md:text-base font-medium leading-relaxed max-w-lg">
+          <p className="text-slate-500 text-sm md:text-base font-normal leading-relaxed max-w-lg">
             Your personalized health roadmap, dynamically generated from your latest laboratory biomarkers and medical profile.
           </p>
         </div>
@@ -365,7 +365,7 @@ const CarePlan = () => {
       </div>
 
       {!carePlan && (
-        <div className="flex flex-col items-center justify-center py-32 px-4 text-center bg-white border border-gray-100 rounded-tl-[3rem] rounded-br-[3rem] rounded-tr-2xl rounded-bl-2xl shadow-sm relative overflow-hidden group">
+        <div className="flex flex-col items-center justify-center py-28 px-4 text-center bg-white border border-slate-200/80 rounded-3xl shadow-xs relative overflow-hidden group">
           <div className="w-28 h-28 bg-gray-50 rounded-full flex items-center justify-center mb-8 shadow-inner border border-gray-100 group-hover:scale-105 transition-transform duration-500 relative z-10">
             <Sparkles className="w-12 h-12 text-indigo-400" />
           </div>

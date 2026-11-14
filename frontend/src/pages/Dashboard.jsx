@@ -142,50 +142,50 @@ export default function Dashboard() {
 
       </AnimatePresence>
 
-      {/* Quick Stats Row — Prescription Card Style */}
+      {/* Quick Stats Row — Clinical Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="rx-card p-5">
+        <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-2xs hover:shadow-xs transition-all">
           <div className="flex items-center justify-between mb-3">
-            <div className="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center border border-gray-100">
-              <Pill className="w-5 h-5 text-gray-900" />
+            <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center border border-blue-100">
+              <Pill className="w-5 h-5" />
             </div>
-            <span className="text-[11px] font-bold text-gray-500 uppercase tracking-wider">Active</span>
+            <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Active</span>
           </div>
-          <div className="text-3xl font-heading font-extrabold text-gray-900">{totalMeds}</div>
-          <p className="text-xs text-gray-400 font-medium mt-1">Medications</p>
+          <div className="text-3xl font-heading font-black text-slate-900">{totalMeds}</div>
+          <p className="text-xs text-slate-400 font-medium mt-1">Active Prescriptions</p>
         </div>
 
-        <div className="bg-white rounded-2xl border border-gray-200 p-5 shadow-sm border-l-4 border-l-emerald-500">
+        <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-2xs hover:shadow-xs transition-all">
           <div className="flex items-center justify-between mb-3">
-            <div className="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center border border-emerald-100">
-              <CheckCircle2 className="w-5 h-5 text-emerald-600" />
+            <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center border border-emerald-100">
+              <CheckCircle2 className="w-5 h-5" />
             </div>
-            <span className="text-[11px] font-bold text-emerald-500 uppercase tracking-wider">Today</span>
+            <span className="text-[11px] font-bold text-emerald-700 uppercase tracking-wider">Today</span>
           </div>
-          <div className="text-3xl font-heading font-extrabold text-gray-900">{takenToday.length}<span className="text-lg text-gray-400 font-bold">/{todaysReminders.length}</span></div>
-          <p className="text-xs text-gray-400 font-medium mt-1">Doses Taken</p>
+          <div className="text-3xl font-heading font-black text-slate-900">{takenToday.length}<span className="text-lg text-slate-400 font-bold">/{todaysReminders.length}</span></div>
+          <p className="text-xs text-slate-400 font-medium mt-1">Doses Confirmed Taken</p>
         </div>
 
-        <div className="bg-white rounded-2xl border border-gray-200 p-5 shadow-sm border-l-4 border-l-amber-500">
+        <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-2xs hover:shadow-xs transition-all">
           <div className="flex items-center justify-between mb-3">
-            <div className="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center border border-amber-100">
-              <Clock className="w-5 h-5 text-amber-600" />
+            <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center border border-amber-100">
+              <Clock className="w-5 h-5" />
             </div>
-            <span className="text-[11px] font-bold text-amber-500 uppercase tracking-wider">Pending</span>
+            <span className="text-[11px] font-bold text-amber-700 uppercase tracking-wider">Scheduled</span>
           </div>
-          <div className="text-3xl font-heading font-extrabold text-amber-600">{pendingToday.length}</div>
-          <p className="text-xs text-gray-400 font-medium mt-1">Remaining Today</p>
+          <div className="text-3xl font-heading font-black text-slate-900">{pendingToday.length}</div>
+          <p className="text-xs text-slate-400 font-medium mt-1">Remaining Doses Today</p>
         </div>
 
-        <div className="bg-white rounded-2xl border border-gray-200 p-5 shadow-sm border-l-4 border-l-purple-500">
+        <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-2xs hover:shadow-xs transition-all">
           <div className="flex items-center justify-between mb-3">
-            <div className="w-10 h-10 rounded-xl bg-purple-50 flex items-center justify-center border border-purple-100">
-              <FlaskConical className="w-5 h-5 text-purple-600" />
+            <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center border border-indigo-100">
+              <FlaskConical className="w-5 h-5" />
             </div>
-            <span className="text-[11px] font-bold text-purple-500 uppercase tracking-wider">Reports</span>
+            <span className="text-[11px] font-bold text-indigo-700 uppercase tracking-wider">Telemetry</span>
           </div>
-          <div className="text-3xl font-heading font-extrabold text-gray-900">{labReports?.length || 0}</div>
-          <p className="text-xs text-gray-400 font-medium mt-1">Lab Reports</p>
+          <div className="text-3xl font-heading font-black text-slate-900">{labReports?.length || 0}</div>
+          <p className="text-xs text-slate-400 font-medium mt-1">Diagnostic Lab Reports</p>
         </div>
       </div>
 
