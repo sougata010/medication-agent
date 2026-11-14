@@ -1096,7 +1096,7 @@ Verified via OpenFDA & Live Pharmacy Web Query
                             <span className="text-xs text-gray-500 block">{pharm.address}</span>
                             <div className="flex items-center gap-2 mt-2 pt-1 border-t border-gray-100">
                               <span className="text-xs font-bold text-blue-600">{pharm.distance}</span>
-                              <span className="text-xs font-bold text-amber-500">★ {pharm.rating}</span>
+                              <span className="text-xs font-bold text-amber-600">Rating: {pharm.rating} / 5</span>
                             </div>
                           </div>
                         </Popup>

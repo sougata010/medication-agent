@@ -1,15 +1,18 @@
 import React, { useState } from 'react';
-import { Activity, Plus, Check, AlertCircle } from 'lucide-react';
+import {
+  Activity, Plus, Check, AlertCircle, Wind, Brain, Zap,
+  RefreshCw, Thermometer, ShieldAlert, Heart
+} from 'lucide-react';
 
 const COMMON_SYMPTOMS = [
-  { name: 'Dizziness', icon: '🌀' },
-  { name: 'Dry Cough', icon: '🗣️' },
-  { name: 'Nausea', icon: '🤢' },
-  { name: 'Fatigue', icon: '😴' },
-  { name: 'Muscle Aches', icon: '💪' },
-  { name: 'Headache', icon: '🤕' },
-  { name: 'Stomach Upset', icon: '😣' },
-  { name: 'Swollen Ankles', icon: '🦶' }
+  { name: 'Dizziness', icon: Activity },
+  { name: 'Dry Cough', icon: Wind },
+  { name: 'Nausea', icon: AlertCircle },
+  { name: 'Fatigue', icon: Zap },
+  { name: 'Muscle Aches', icon: ShieldAlert },
+  { name: 'Headache', icon: Brain },
+  { name: 'Stomach Upset', icon: Thermometer },
+  { name: 'Swollen Ankles', icon: Heart }
 ];
 
 export default function SymptomQuickLogger({ onLogSymptom }) {
@@ -57,21 +60,25 @@ export default function SymptomQuickLogger({ onLogSymptom }) {
 
       {/* Quick Tap Pills */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mb-5">
-        {COMMON_SYMPTOMS.map((sym) => (
-          <button
-            key={sym.name}
-            type="button"
-            onClick={() => setSelectedSymptom(sym.name)}
-            className={`flex items-center gap-2 p-3 rounded-2xl text-xs font-semibold transition-all border text-left ${
-              selectedSymptom === sym.name
-                ? 'bg-emerald-600 text-white border-emerald-600 shadow-md shadow-emerald-600/20'
-                : 'bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-200'
-            }`}
-          >
-            <span className="text-base">{sym.icon}</span>
-            <span className="truncate">{sym.name}</span>
-          </button>
-        ))}
+        {COMMON_SYMPTOMS.map((sym) => {
+          const Icon = sym.icon;
+          const isSelected = selectedSymptom === sym.name;
+          return (
+            <button
+              key={sym.name}
+              type="button"
+              onClick={() => setSelectedSymptom(sym.name)}
+              className={`flex items-center gap-2 p-3 rounded-2xl text-xs font-semibold transition-all border text-left ${
+                isSelected
+                  ? 'bg-emerald-600 text-white border-emerald-600 shadow-md shadow-emerald-600/20'
+                  : 'bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-200'
+              }`}
+            >
+              <Icon className={`w-4 h-4 shrink-0 ${isSelected ? 'text-white' : 'text-emerald-600'}`} />
+              <span className="truncate">{sym.name}</span>
+            </button>
+          );
+        })}
       </div>
 
       {/* Form Details */}
@@ -122,7 +129,7 @@ export default function SymptomQuickLogger({ onLogSymptom }) {
             }`}
           >
             {submitting ? (
-              <span className="animate-spin text-sm">🌀</span>
+              <RefreshCw className="w-4 h-4 animate-spin text-white" />
             ) : successMsg ? (
               <>
                 <Check className="w-4 h-4 text-white" /> Logged!

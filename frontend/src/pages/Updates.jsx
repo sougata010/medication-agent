@@ -27,7 +27,7 @@ export default function Updates() {
 
   return (
     <div className="glass-panel animate-fade-in" style={{ padding: '40px' }}>
-      <h2 style={{ marginBottom: '32px' }}>✨ Platform Updates</h2>
+      <h2 style={{ marginBottom: '32px' }}>Platform Updates</h2>
       
       <div className="updates-timeline">
         {releases.map((release, index) => (

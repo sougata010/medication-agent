@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { useGlobalContext } from '../context/GlobalContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import {
@@ -137,11 +137,20 @@ export default function ChatCompanion() {
     chatSessionId, setChatSessionId, setChatMessages, userId
   } = useGlobalContext();
   const messagesEndRef = useRef(null);
+  const [searchParams] = useSearchParams();
   const [sessions, setSessions] = useState([]);
   const [showSessions, setShowSessions] = useState(false);
   const [loadingSessions, setLoadingSessions] = useState(false);
 
   const GQL_ENDPOINT = 'http://localhost:4000/graphql';
+
+  // Handle incoming referral inquiry from Diagnostic Assessment
+  useEffect(() => {
+    const inquiryParam = searchParams.get('inquiry');
+    if (inquiryParam) {
+      setChatInput(inquiryParam);
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });

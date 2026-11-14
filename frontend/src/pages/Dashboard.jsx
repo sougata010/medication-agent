@@ -5,7 +5,7 @@ import {
   Activity, Heart, Moon, Droplets, ShieldCheck, AlertTriangle,
   CheckCircle2, Clock, Pill, TrendingUp, ChevronRight, Brain,
   FlaskConical, Zap, ArrowUpRight, X, Plus, Activity as ActivityIcon,
-  HeartPulse, Stethoscope, Thermometer, Sparkles
+  HeartPulse, Stethoscope, Thermometer, Sparkles, Flame
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import confetti from 'canvas-confetti';
@@ -35,9 +35,9 @@ export default function Dashboard() {
   const [foodAlert, setFoodAlert] = useState(null);
 
   const NUDGES = [
-    "💧 Did you know? Taking medication with a full glass of water improves absorption by up to 15%.",
-    "🏃 A 10-minute walk after taking your morning meds can help boost your metabolism.",
-    "🌙 Consistent sleep schedules make your body more responsive to daily treatments."
+    "Clinical Tip: Taking medication with a full glass of water improves absorption by up to 15%.",
+    "Clinical Tip: A 10-minute walk after morning medications helps support metabolic uptake.",
+    "Clinical Tip: Consistent sleep schedules stabilize circadian biomarker responses to daily therapies."
   ];
   const activeNudge = useMemo(() => NUDGES[Math.floor(Math.random() * NUDGES.length)], []);
 
@@ -95,7 +95,7 @@ export default function Dashboard() {
         
         {/* Streak Badge */}
         <div className="flex items-center gap-2 bg-orange-50 border border-orange-100 px-4 py-2 rounded-full shadow-sm">
-          <span className="text-xl">🔥</span>
+          <Flame className="w-5 h-5 text-orange-500" />
           <div>
             <div className="text-xs font-bold text-orange-500 uppercase tracking-wider">Perfect Adherence</div>
             <div className="text-sm font-extrabold text-orange-700">{user?.streakDays || 0} Day Streak</div>
@@ -249,7 +249,7 @@ export default function Dashboard() {
                                 const msg = prices.map(p => `${p.pharmacy}: $${p.price.toFixed(2)} (${p.distance})`).join('\n');
                                 setGlobalAlert({
                                   isOpen: true,
-                                  title: `💰 Lowest Prices for ${r.medicine?.name || 'Unknown'}`,
+                                  title: `Verified Pricing for ${r.medicine?.name || 'Medication'}`,
                                   message: `${msg}\n\nShow your VitaLeaf digital coupon to save up to 40%.`
                                 });
                               }}
@@ -648,18 +648,18 @@ export default function Dashboard() {
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-gray-900 uppercase tracking-wider mb-1.5">Mood</label>
-            <div className="flex gap-2">
-              {['😢', '😐', '🙂', '😄', '🤩'].map(emoji => (
+            <label className="block text-xs font-bold text-gray-900 uppercase tracking-wider mb-1.5">Mood & Well-Being Status</label>
+            <div className="grid grid-cols-5 gap-1.5">
+              {['Low', 'Fair', 'Neutral', 'Good', 'Optimal'].map(mood => (
                 <button
-                  key={emoji}
+                  key={mood}
                   type="button"
-                  onClick={() => setMoodInput(emoji)}
-                  className={`w-10 h-10 rounded-full text-xl flex items-center justify-center transition-all ${
-                    moodInput === emoji ? 'bg-blue-100 scale-110 shadow-sm' : 'bg-gray-50 hover:bg-gray-100 grayscale hover:grayscale-0'
+                  onClick={() => setMoodInput(mood)}
+                  className={`py-2 px-1 rounded-xl text-xs font-bold transition-all border text-center ${
+                    moodInput === mood ? 'bg-blue-600 text-white border-blue-600 shadow-sm' : 'bg-gray-50 hover:bg-gray-100 text-gray-700 border-gray-200'
                   }`}
                 >
-                  {emoji}
+                  {mood}
                 </button>
               ))}
             </div>

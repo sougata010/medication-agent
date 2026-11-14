@@ -3,7 +3,7 @@ import React from 'react';
 export default function TermsOfService() {
   return (
     <div className="glass-panel animate-fade-in" style={{ padding: '40px' }}>
-      <h2 style={{ marginBottom: '24px' }}>⚖️ Terms of Service & Medical Disclaimer</h2>
+      <h2 style={{ marginBottom: '24px' }}>Terms of Service & Medical Disclaimer</h2>
       
       <div className="chat-message emergency" style={{ marginBottom: '32px', display: 'block', maxWidth: 'none' }}>
         <strong>CRITICAL NOTICE:</strong> VitaLeaf is a medication companion platform, NOT a licensed medical practitioner. The platform does not diagnose diseases, alter prescribed dosages, or guarantee complete coverage of all global drug interaction exceptions. Always consult your doctor before starting or stopping any medication.

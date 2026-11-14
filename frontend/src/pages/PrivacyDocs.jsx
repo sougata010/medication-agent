@@ -3,7 +3,7 @@ import React from 'react';
 export default function PrivacyPolicy() {
   return (
     <div className="glass-panel animate-fade-in" style={{ padding: '40px' }}>
-      <h2 style={{ marginBottom: '24px' }}>🔒 Privacy Policy</h2>
+      <h2 style={{ marginBottom: '24px' }}>Privacy Policy</h2>
       <p style={{ color: 'var(--text-secondary)', fontSize: '14px', marginBottom: '32px' }}>Last Updated: July 2026</p>
       
       <section style={{ marginBottom: '32px' }}>

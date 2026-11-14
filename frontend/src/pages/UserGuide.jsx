@@ -3,7 +3,7 @@ import React from 'react';
 export default function UserGuide() {
   return (
     <div className="glass-panel animate-fade-in" style={{ padding: '40px' }}>
-      <h2 style={{ marginBottom: '24px' }}>📘 VitaLeaf User Guide</h2>
+      <h2 style={{ marginBottom: '24px' }}>VitaLeaf User Guide</h2>
       
       <section style={{ marginBottom: '32px' }}>
         <h3 style={{ color: 'var(--primary-color)' }}>1. Using the Dashboard</h3>
