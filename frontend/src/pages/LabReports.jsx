@@ -504,6 +504,7 @@ export default function LabReports() {
                   <th>Type</th>
                   <th>Value</th>
                   <th>Status</th>
+                  <th className="hidden xl:table-cell">Reference Range</th>
                   <th className="hidden lg:table-cell">Risk</th>
                   <th className="w-12"></th>
                 </tr>
@@ -532,6 +533,21 @@ export default function LabReports() {
                     </td>
                     <td>
                       <StatusBadge status={chem.status} />
+                    </td>
+                    <td className="hidden xl:table-cell">
+                      <div className="w-36 space-y-1">
+                        <div className="flex justify-between text-[10px] text-slate-400 font-mono">
+                          <span>Low</span>
+                          <span className="text-emerald-700 font-bold">Optimal</span>
+                          <span>High</span>
+                        </div>
+                        <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden relative">
+                          <div className={`h-full rounded-full ${
+                            chem.status === 'Banned' ? 'bg-red-500 w-full' :
+                            chem.status === 'Warning' ? 'bg-amber-400 w-3/4' : 'bg-emerald-500 w-1/2'
+                          }`} />
+                        </div>
+                      </div>
                     </td>
                     <td className="hidden lg:table-cell">
                       <span className={`text-xs ${getRiskColor(chem.risk)}`}>{chem.risk || '—'}</span>
@@ -585,19 +601,19 @@ const ChemicalModal = ({ data, onClose, parseRecommendation, getRiskColor, onBuy
       
       {/* Modal Container */}
       <motion.div 
-        className="relative z-10 w-full max-w-3xl max-h-[90vh] bg-white rounded-[2rem] shadow-2xl flex flex-col overflow-hidden border border-gray-100"
+        className="relative z-10 w-full max-w-3xl max-h-[90vh] bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-slate-200"
         initial={{ opacity: 0, scale: 0.95, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 20 }}
         transition={{ type: "spring", damping: 25, stiffness: 300 }}
       >
-        {/* Teal accent strip */}
-        <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-blue-600 via-blue-400 to-blue-600 z-20" />
+        {/* Blue accent strip */}
+        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-600 via-sky-400 to-blue-600 z-20" />
 
         {/* HEADER */}
-        <div className="shrink-0 relative pt-8 pb-6 px-6 md:px-10 bg-black text-white overflow-hidden shadow-md z-20">
+        <div className="shrink-0 relative pt-8 pb-6 px-6 md:px-10 bg-slate-900 text-white overflow-hidden shadow-md z-20">
           {/* Rx watermark */}
-          <div className="absolute bottom-0 right-4 text-[8rem] font-black text-gray-900/20 leading-none pointer-events-none font-heading">℞</div>
+          <div className="absolute bottom-0 right-4 text-[8rem] font-black text-slate-800/40 leading-none pointer-events-none font-heading">℞</div>
           
           {/* Close Button */}
           <button onClick={onClose} className="absolute top-4 right-4 w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors z-30">
@@ -606,16 +622,16 @@ const ChemicalModal = ({ data, onClose, parseRecommendation, getRiskColor, onBuy
 
           <div className="relative z-10 flex flex-col sm:flex-row items-center sm:items-start gap-6">
             {/* IMAGE */}
-            <div className="w-24 h-24 sm:w-28 sm:h-28 bg-white rounded-2xl shadow-xl p-3 flex items-center justify-center shrink-0 relative overflow-hidden border-2 border-gray-200">
+            <div className="w-24 h-24 sm:w-28 sm:h-28 bg-white rounded-2xl shadow-xl p-3 flex items-center justify-center shrink-0 relative overflow-hidden border-2 border-slate-200">
               <div className="relative z-10 w-full h-full flex items-center justify-center">
-                {src ? <img src={src} alt={cleanName} className="w-full h-full object-contain mix-blend-multiply" /> : <div className="w-full h-full bg-gray-100 animate-pulse rounded-xl" />}
+                {src ? <img src={src} alt={cleanName} className="w-full h-full object-contain mix-blend-multiply" /> : <div className="w-full h-full bg-slate-100 animate-pulse rounded-xl" />}
               </div>
             </div>
 
             {/* TITLE & INFO */}
             <div className="flex-1 text-center sm:text-left pt-1">
               <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 mb-2">
-                <span className="inline-block px-3 py-1 bg-white/10 rounded-full text-[10px] font-bold uppercase tracking-widest text-gray-300 border border-white/10">
+                <span className="inline-block px-3 py-1 bg-white/10 rounded-full text-[10px] font-bold uppercase tracking-widest text-slate-300 border border-white/10">
                   Found in {medName}
                 </span>
                 <button
@@ -633,7 +649,7 @@ const ChemicalModal = ({ data, onClose, parseRecommendation, getRiskColor, onBuy
               <h2 className="text-2xl sm:text-3xl font-heading font-extrabold text-white leading-tight mb-3">{chem.name}</h2>
               
               <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
-                <span className="px-3 py-1.5 bg-white/10 rounded-lg border border-white/10 text-gray-300 text-xs font-bold flex items-center gap-1.5 uppercase tracking-wider">
+                <span className="px-3 py-1.5 bg-white/10 rounded-lg border border-white/10 text-slate-300 text-xs font-bold flex items-center gap-1.5 uppercase tracking-wider">
                   <Database className="w-3.5 h-3.5" /> {source}
                 </span>
                 <span className="px-3 py-1.5 bg-white/10 rounded-lg border border-white/10 text-white text-xs font-mono font-bold flex items-center gap-1.5 uppercase tracking-wider">
@@ -645,24 +661,27 @@ const ChemicalModal = ({ data, onClose, parseRecommendation, getRiskColor, onBuy
         </div>
 
         {/* BODY */}
-        <div className="flex-1 overflow-y-auto p-6 md:p-10 flex flex-col gap-6 md:gap-8 bg-gray-50/50 relative z-10">
+        <div className="flex-1 overflow-y-auto p-6 md:p-8 flex flex-col gap-6 bg-slate-50/50 relative z-10">
           {/* USES */}
-          <div className="rx-card p-6 md:p-8 !border-l-4 !border-l-blue-500">
-            <h4 className="text-xs md:text-sm font-heading font-extrabold text-gray-900 uppercase tracking-widest mb-3 flex items-center gap-2">
-              <Stethoscope className="w-4 h-4 md:w-5 md:h-5 text-gray-500" /> Clinical Uses & Purpose
+          <div className="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-xs">
+            <h4 className="text-xs md:text-sm font-heading font-extrabold text-slate-900 uppercase tracking-widest mb-3 flex items-center gap-2">
+              <Stethoscope className="w-4 h-4 md:w-5 md:h-5 text-blue-600" /> Clinical Uses & Purpose
             </h4>
-            <p className="text-gray-600 font-medium leading-relaxed text-sm md:text-base">
+            <p className="text-slate-600 font-medium leading-relaxed text-sm md:text-base">
               {rec?.uses || 'No standard uses provided.'}
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* WARNINGS */}
-            <div className="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-gray-200 border-l-4 border-l-amber-500 relative overflow-hidden">
-              <h4 className="text-xs md:text-sm font-heading font-extrabold text-gray-900 uppercase tracking-widest mb-3 flex items-center gap-2">
-                <ShieldAlert className="w-4 h-4 md:w-5 md:h-5 text-indigo-500" /> Health Warnings
-              </h4>
-              <p className="text-gray-600 font-medium leading-relaxed text-xs md:text-sm">
+            <div className="bg-white rounded-2xl p-6 shadow-xs border border-slate-200/80 relative overflow-hidden">
+              <div className="flex items-center justify-between mb-3">
+                <h4 className="text-xs md:text-sm font-heading font-extrabold text-slate-900 uppercase tracking-widest flex items-center gap-2">
+                  <ShieldAlert className="w-4 h-4 md:w-5 md:h-5 text-amber-500" /> Health Warnings
+                </h4>
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200">Advisory</span>
+              </div>
+              <p className="text-slate-600 font-medium leading-relaxed text-xs md:text-sm">
                 {rec?.cautions || 'None specified.'}
               </p>
               <div className="rx-divider" />
@@ -670,12 +689,21 @@ const ChemicalModal = ({ data, onClose, parseRecommendation, getRiskColor, onBuy
             </div>
 
             {/* BANNED STATUS */}
-            <div className={`bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-gray-200 border-l-4 relative overflow-hidden ${isBanned ? 'border-l-rose-500 ring-2 ring-rose-500/20' : 'border-l-emerald-500'}`}>
-              <h4 className="text-xs md:text-sm font-heading font-extrabold text-gray-900 uppercase tracking-widest mb-3 flex items-center gap-2">
-                {isBanned ? <AlertOctagon className="w-4 h-4 md:w-5 md:h-5 text-slate-500" /> : <CheckCircle2 className="w-4 h-4 md:w-5 md:h-5 text-sky-500" />}
-                Regulatory Status
-              </h4>
-              <p className="text-gray-600 font-medium leading-relaxed text-xs md:text-sm mb-4">
+            <div className={`bg-white rounded-2xl p-6 shadow-xs border relative overflow-hidden ${
+              isBanned ? 'border-red-200 bg-red-50/20' : 'border-slate-200/80'
+            }`}>
+              <div className="flex items-center justify-between mb-3">
+                <h4 className="text-xs md:text-sm font-heading font-extrabold text-slate-900 uppercase tracking-widest flex items-center gap-2">
+                  {isBanned ? <AlertOctagon className="w-4 h-4 md:w-5 md:h-5 text-red-600" /> : <CheckCircle2 className="w-4 h-4 md:w-5 md:h-5 text-emerald-600" />}
+                  Regulatory Status
+                </h4>
+                <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${
+                  isBanned ? 'bg-red-50 text-red-700 border-red-200' : 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                }`}>
+                  {isBanned ? 'Restricted' : 'Approved'}
+                </span>
+              </div>
+              <p className="text-slate-600 font-medium leading-relaxed text-xs md:text-sm mb-4">
                 {rec?.bannedIn || 'Not banned by major sports organizations or regulatory bodies.'}
               </p>
               {isBanned && rec?.text && (

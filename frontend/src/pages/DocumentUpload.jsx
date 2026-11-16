@@ -64,64 +64,93 @@ export default function DocumentUpload() {
         </div>
 
         {/* Document Type Selector */}
-        <div className="flex p-1 bg-gray-50 border border-gray-100 rounded-xl w-full max-w-lg mx-auto mb-2">
+        <div className="flex p-1 bg-slate-100/80 border border-slate-200/80 rounded-2xl w-full max-w-lg mx-auto mb-2">
           <button
             onClick={() => setDocType('smart')}
-            className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-bold transition-all ${
-              docType === 'smart' ? 'bg-blue-600 text-white shadow-sm' : 'text-gray-700 hover:text-gray-900'
+            className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer ${
+              docType === 'smart' ? 'bg-white text-slate-900 shadow-sm border border-slate-200' : 'text-slate-600 hover:text-slate-900'
             }`}
           >
-            <Sparkles className="w-4 h-4" /> Smart Auto-Detect
+            <Sparkles className="w-4 h-4 text-blue-600" /> Smart Auto-Detect
           </button>
           <button
             onClick={() => setDocType('prescription')}
-            className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-bold transition-all ${
-              docType === 'prescription' ? 'bg-blue-600 text-white shadow-sm' : 'text-gray-700 hover:text-gray-900'
+            className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer ${
+              docType === 'prescription' ? 'bg-white text-slate-900 shadow-sm border border-slate-200' : 'text-slate-600 hover:text-slate-900'
             }`}
           >
-            <FileText className="w-4 h-4" /> Prescription
+            <FileText className="w-4 h-4 text-emerald-600" /> Prescription
           </button>
           <button
             onClick={() => setDocType('labReport')}
-            className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-bold transition-all ${
-              docType === 'labReport' ? 'bg-blue-600 text-white shadow-sm' : 'text-gray-700 hover:text-gray-900'
+            className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer ${
+              docType === 'labReport' ? 'bg-white text-slate-900 shadow-sm border border-slate-200' : 'text-slate-600 hover:text-slate-900'
             }`}
           >
-            <FlaskConical className="w-4 h-4" /> Lab Report
+            <FlaskConical className="w-4 h-4 text-purple-600" /> Lab Report
           </button>
         </div>
 
-        {/* Upload Zone — Prescription pad */}
-        <div className="bg-white rounded-2xl border-2 border-dashed border-gray-200 hover:border-blue-400 transition-colors p-16 flex flex-col items-center justify-center text-center relative group cursor-pointer rx-watermark overflow-hidden">
+        {/* Upload Zone — Clinical Scanner Aesthetics */}
+        <div className="bg-white rounded-2xl border-2 border-dashed border-slate-300 hover:border-blue-500 transition-all p-12 sm:p-16 flex flex-col items-center justify-center text-center relative group cursor-pointer shadow-sm hover:shadow-md overflow-hidden">
           <input
             type="file"
             accept="image/*,.pdf"
             className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
             onChange={handleFileChange}
           />
-          <div className="w-16 h-16 rounded-2xl bg-gray-50 flex items-center justify-center mb-4 group-hover:bg-gray-100 transition-colors border border-gray-100 relative z-10">
-            <Upload className="w-8 h-8 text-gray-500 group-hover:text-gray-900 transition-colors" />
+          <div className="w-16 h-16 rounded-2xl bg-slate-50 flex items-center justify-center mb-4 group-hover:bg-blue-50 transition-colors border border-slate-200 relative z-10">
+            <Upload className="w-8 h-8 text-slate-500 group-hover:text-blue-600 transition-colors" />
           </div>
-          <h3 className="text-lg font-heading font-extrabold text-gray-900 mb-2 relative z-10">Click to upload or drag and drop</h3>
-          <p className="text-sm text-gray-900/60 font-medium relative z-10">PNG, JPG, PDF up to 10MB</p>
+          <h3 className="text-lg font-heading font-extrabold text-slate-900 mb-2 relative z-10">Click to upload or drag and drop</h3>
+          <p className="text-xs sm:text-sm text-slate-500 font-medium relative z-10 mb-4">PNG, JPG, PDF up to 10MB · Automated OCR & Clinical Verification</p>
+          
+          <div className="relative z-20 flex flex-wrap items-center justify-center gap-2 pt-2">
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                setOcrData({
+                  ocrRaw: "Dr. Arvind R. Sen, MD\nRx:\n1. Lisinopril 10mg - Once daily in morning\n2. Metformin 500mg - Twice daily with meals\n3. Atorvastatin 20mg - At bedtime",
+                  medications: [
+                    { drugName: "Lisinopril", dosage: "10mg", frequency: "Once Daily", duration: "30 Days", confidenceLevel: 98, clinicalReasoning: "Indicated for essential arterial hypertension." },
+                    { drugName: "Metformin", dosage: "500mg", frequency: "Twice Daily", duration: "60 Days", confidenceLevel: 96, clinicalReasoning: "Indicated for glycemic stabilization in type-2 diabetes." },
+                    { drugName: "Atorvastatin", dosage: "20mg", frequency: "At Bedtime", duration: "30 Days", confidenceLevel: 94, clinicalReasoning: "HMG-CoA reductase inhibitor for lipid profiling." }
+                  ]
+                });
+              }}
+              className="px-3.5 py-1.5 rounded-xl bg-slate-50 hover:bg-blue-50 text-slate-700 hover:text-blue-700 border border-slate-200 text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-2xs"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-blue-600" />
+              <span>Load Demo Prescription (Instant Test)</span>
+            </button>
+          </div>
         </div>
 
         {/* Info Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="rx-card p-5">
-            <Sparkles className="w-5 h-5 text-blue-600 mb-3" />
-            <h4 className="text-sm font-bold text-gray-900 mb-1">Clinical Data Extraction</h4>
-            <p className="text-xs text-gray-500">Optical parsing identifies medications, biomarkers, and schedules with high precision.</p>
+          <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-2xs hover:shadow-xs transition-all">
+            <div className="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center mb-3 border border-blue-100">
+              <Sparkles className="w-5 h-5" />
+            </div>
+            <h4 className="text-sm font-bold text-slate-900 mb-1">Clinical Data Extraction</h4>
+            <p className="text-xs text-slate-500 leading-relaxed">Optical parsing identifies medications, biomarkers, and schedules with high precision.</p>
           </div>
-          <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-5 border-l-4 border-l-emerald-500">
-            <ShieldCheck className="w-5 h-5 text-emerald-600 mb-3" />
-            <h4 className="text-sm font-bold text-gray-900 mb-1">Clinical Safety</h4>
-            <p className="text-xs text-gray-500">Review extracted parameters against medical safety guidelines and your health profile.</p>
+
+          <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-2xs hover:shadow-xs transition-all">
+            <div className="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center mb-3 border border-emerald-100">
+              <ShieldCheck className="w-5 h-5" />
+            </div>
+            <h4 className="text-sm font-bold text-slate-900 mb-1">Clinical Safety</h4>
+            <p className="text-xs text-slate-500 leading-relaxed">Review extracted parameters against medical safety guidelines and your health profile.</p>
           </div>
-          <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-5 border-l-4 border-l-purple-500">
-            <Clock className="w-5 h-5 text-purple-600 mb-3" />
-            <h4 className="text-sm font-bold text-gray-900 mb-1">Actionable Records</h4>
-            <p className="text-xs text-gray-500">Generate structured adherence schedules and longitudinal biomarker tracking.</p>
+
+          <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-2xs hover:shadow-xs transition-all">
+            <div className="w-9 h-9 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center mb-3 border border-indigo-100">
+              <Clock className="w-5 h-5" />
+            </div>
+            <h4 className="text-sm font-bold text-slate-900 mb-1">Actionable Records</h4>
+            <p className="text-xs text-slate-500 leading-relaxed">Generate structured adherence schedules and longitudinal biomarker tracking.</p>
           </div>
         </div>
       </div>

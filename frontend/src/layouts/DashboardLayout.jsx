@@ -66,7 +66,7 @@ export default function DashboardLayout() {
       ]
     },
     {
-      title: 'Pharmacotherapy',
+      title: 'Pharmacotherapy & Safety',
       items: [
         { to: '/dashboard/medications', label: 'Active Medications', icon: Pill },
         { to: '/dashboard/polypharmacy', label: 'Pharmacotherapy Matrix', icon: ShieldAlert },
@@ -74,20 +74,17 @@ export default function DashboardLayout() {
       ]
     },
     {
-      title: 'Diagnostics & Network',
+      title: 'Diagnostics & Telemetry',
       items: [
         { to: '/dashboard/reports', label: 'Laboratory Diagnostics', icon: FlaskConical },
-        { to: '/dashboard/knowledge-graph', label: 'Knowledge Network', icon: Network },
         { to: '/dashboard/doctor-share', label: 'Physician Summary Pass', icon: QrCode },
       ]
     },
     {
-      title: 'Services & Community',
+      title: 'Care Delivery',
       items: [
         { to: '/dashboard/chat', label: 'Consultation Desk', icon: MessageSquare },
         { to: '/dashboard/pharmacies', label: 'Pharmacy & Fulfillment', icon: ShoppingBag },
-        { to: '/dashboard/upload', label: 'Document Ingestion', icon: Upload },
-        { to: '/dashboard/community', label: 'Clinical Community', icon: Users },
       ]
     }
   ];
@@ -239,14 +236,29 @@ export default function DashboardLayout() {
           </div>
 
           {/* Right side */}
-          <div className="flex items-center gap-3 relative">
+          <div className="flex items-center gap-2.5 relative">
+            {/* Quick Upload Action */}
+            <button
+              onClick={() => navigate('/dashboard/upload')}
+              className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold transition-all border border-slate-200/80 cursor-pointer shadow-2xs"
+            >
+              <Upload className="w-3.5 h-3.5 text-blue-600" />
+              <span>Upload Record</span>
+            </button>
+
+            {/* Live Telemetry Pill */}
+            <div className="hidden xl:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 border border-emerald-200/70">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              <span className="text-[10px] font-bold text-emerald-800 uppercase tracking-wider">Clinical Telemetry</span>
+            </div>
+
             <button 
               onClick={() => setNotificationsOpen(!notificationsOpen)}
-              className="relative p-2 text-gray-500 hover:text-gray-900 transition-colors"
+              className="relative p-2 text-slate-500 hover:text-slate-900 transition-colors"
             >
               <Bell className="w-5 h-5" />
               {notifications.length > 0 && (
-                <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-black rounded-full border-2 border-white animate-pulse" />
+                <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-blue-600 rounded-full border-2 border-white animate-pulse" />
               )}
             </button>
 

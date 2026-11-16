@@ -17,9 +17,7 @@ import MyMedications from './pages/MyMedications';
 import RemindersHub from './pages/RemindersHub';
 import LabReports from './pages/LabReports';
 import PharmacyFinder from './pages/PharmacyFinder';
-import Community from './pages/Community';
 import CarePlan from './pages/CarePlan';
-import KnowledgeGraphPage from './pages/KnowledgeGraphPage';
 import SymptomTimelinePage from './pages/SymptomTimelinePage';
 import DoctorSharePackage from './pages/DoctorSharePackage';
 import PolypharmacyMatrix from './components/PolypharmacyMatrix';
@@ -57,12 +55,13 @@ const AppRoutes = () => {
         <Route path="upload" element={<DocumentUpload />} />
         <Route path="chat" element={<ChatCompanion />} />
         <Route path="profile" element={<HealthProfile />} />
-        <Route path="community" element={<Community />} />
-        <Route path="knowledge-graph" element={<KnowledgeGraphPage />} />
         <Route path="timeline" element={<SymptomTimelinePage />} />
-        <Route path="symptom-predictor" element={<SymptomTimelinePage />} />
         <Route path="doctor-share" element={<DoctorSharePackage />} />
         <Route path="polypharmacy" element={<PolypharmacyMatrix />} />
+        {/* Redirects for legacy/pruned routes */}
+        <Route path="knowledge-graph" element={<Navigate to="/dashboard/polypharmacy" replace />} />
+        <Route path="community" element={<Navigate to="/dashboard" replace />} />
+        <Route path="symptom-predictor" element={<Navigate to="/dashboard/timeline" replace />} />
       </Route>
       
       <Route element={<MainLayout />}>
